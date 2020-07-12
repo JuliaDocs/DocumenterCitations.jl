@@ -5,7 +5,7 @@ using Documenter.Selectors
 
 using Markdown
 using Bibliography
-using Bibliography: xnames
+using Bibliography: xnames, xyear
 
 abstract type Citations <: Builder.DocumentPipeline end
 
@@ -38,8 +38,8 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
         @info "Expanding citation: $citation_name."
         for entry in BIBLIOGRAPHY
             if entry.id == citation_name
-                @info "Citation found: $(xnames(entry))"
-                link.text = xnames(entry)
+                link.text = xnames(entry) * " (" * xyear(entry) * ")"
+                @info "Citation found: $(link.text)"
                 link.url = "https://google.com/search?q=sweet#$citation_name"
                 return true
             end
