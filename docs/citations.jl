@@ -2,6 +2,7 @@ using Documenter
 using Documenter.Builder
 using Documenter.Documents
 using Documenter.Selectors
+using Documenter.Anchors
 
 using Markdown
 using Bibliography
@@ -40,7 +41,19 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
             if entry.id == citation_name
                 link.text = xnames(entry) * " (" * xyear(entry) * ")"
                 @info "Citation found: $(link.text)"
-                link.url = "https://google.com/search?q=sweet#$citation_name"
+
+                headers = doc.internal.headers
+                if Anchors.exists(headers, entry.id)
+                    @info "anchor exists"
+                    if Anchors.isunique(headers, entry.id)
+                        @info "anchor is unique"
+                        # Replace the `@ref` url with a path to the referenced header.
+                        anchor   = Anchors.anchor(headers, entry.id)
+                        path     = relpath(anchor.file, dirname(page.build))
+                        link.url = string(path, Anchors.fragment(anchor))
+                    end
+                end
+                
                 return true
             end
         end
