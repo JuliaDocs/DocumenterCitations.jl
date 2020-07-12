@@ -1,6 +1,8 @@
 using Documenter
 using Bibliography
 
+include("citations.jl")
+
 const BIBLIOGRAPHY = import_bibtex("test.bib")
 
 makedocs(
