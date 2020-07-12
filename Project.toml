@@ -1,0 +1,8 @@
+name = "DocumenterBibliographyTest"
+uuid = "daee34ce-89f3-4625-b898-19384cb65244"
+authors = ["ali-ramadhan <ali.hh.ramadhan@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Bibliography = "f1be7e48-bf82-45af-a471-ae754a193061"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
