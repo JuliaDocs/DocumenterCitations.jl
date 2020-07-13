@@ -10,19 +10,21 @@ version = "0.8.0"
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[BibInternal]]
-git-tree-sha1 = "b0cfec106aa6efee0ecf91a6a4d691912974b310"
+git-tree-sha1 = "61a22f9ae85122c5c6881956bb591a8a3d4b6a8a"
 uuid = "2027ae74-3657-4b95-ae00-e2f7d55c3e64"
-version = "0.1.0"
+version = "0.1.2"
 
 [[BibParser]]
 deps = ["Automa", "BibInternal", "DataStructures"]
-git-tree-sha1 = "b74d7fce1f1721e775bd433794e249fc6e9bc105"
+git-tree-sha1 = "f59702440bec84fc5f9f2804219867d610ccd289"
 uuid = "13533e5b-e1c2-4e57-8cef-cac5e52f6474"
-version = "0.1.0"
+version = "0.1.1"
 
 [[Bibliography]]
 deps = ["BibInternal", "BibParser", "DataStructures"]
-git-tree-sha1 = "0483982e2152767af12d181e3a8a2a8f8c05bd05"
+git-tree-sha1 = "83551179d4eb73acd2699daed565871593658d6a"
+repo-rev = "master"
+repo-url = "https://github.com/Azzaare/Bibliography.jl.git"
 uuid = "f1be7e48-bf82-45af-a471-ae754a193061"
 version = "0.1.0"
 
