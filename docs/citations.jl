@@ -1,8 +1,9 @@
 using Documenter
+using Documenter.Anchors
 using Documenter.Builder
 using Documenter.Documents
 using Documenter.Selectors
-using Documenter.Anchors
+using Documenter.Utilities
 
 using Markdown
 using Bibliography
@@ -10,7 +11,7 @@ using Bibliography: xnames, xyear
 
 abstract type Citations <: Builder.DocumentPipeline end
 
-Selectors.order(::Type{Citations}) = 3.1
+Selectors.order(::Type{Citations}) = 3.1  # After cross-references
 
 function Selectors.runner(::Type{Citations}, doc::Documents.Document)
     @info "Citations: building citations."
@@ -26,7 +27,6 @@ function expand_citations(doc::Documents.Document)
     end
 end
 
-
 function expand_citation(elem, page, doc)
     Documents.walk(page.globals.meta, elem) do link
         expand_citation(link, page.globals.meta, page, doc)
@@ -37,24 +37,28 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
     if length(link.text) === 1 && isa(link.text[1], String)
         citation_name = link.text[1]
         @info "Expanding citation: $citation_name."
+        
+        # TODO: Inefficient search through a set!
+        # See: https://github.com/Azzaare/Bibliography.jl/issues/2
         for entry in BIBLIOGRAPHY
             if entry.id == citation_name
-                link.text = xnames(entry) * " (" * xyear(entry) * ")"
-                @info "Citation found: $(link.text)"
-
                 headers = doc.internal.headers
                 if Anchors.exists(headers, entry.id)
-                    @info "anchor exists"
                     if Anchors.isunique(headers, entry.id)
-                        @info "anchor is unique"
-                        # Replace the `@ref` url with a path to the referenced header.
+                        # Replace the `@cite` url with a path to the referenced header.
                         anchor   = Anchors.anchor(headers, entry.id)
                         path     = relpath(anchor.file, dirname(page.build))
+                        link.text = xnames(entry) * " (" * xyear(entry) * ")"
                         link.url = string(path, Anchors.fragment(anchor))
+                        return true
+                    else
+                        push!(doc.internal.errors, :citations)
+                        @warn "'$(entry.id)' is not unique in $(Utilities.locrepr(page.source))."
                     end
-                end
-                
-                return true
+                else
+                    push!(doc.internal.errors, :citations)
+                    @warn "reference for '$(entry.id)' could not be found in $(Utilities.locrepr(page.source))."
+                end   
             end
         end
         error("Citation not found in bibliography: $(citation_name)")
