@@ -1,10 +1,9 @@
 using Documenter
+using DocumenterCitations
+import DocumenterCitations
 using Bibliography
 
-const BIBLIOGRAPHY = import_bibtex("test.bib")
-
-include("bibliography.jl")
-include("citations.jl")
+DocumenterCitations.BIBLIOGRAPHY() = import_bibtex(joinpath(@__DIR__, "test.bib"))
 
 makedocs(
     sitename = "Testing BibTeX citations and references",

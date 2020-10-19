@@ -1,3 +1,4 @@
+
 using Documenter
 using Documenter.Anchors
 using Documenter.Builder
@@ -39,9 +40,9 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
     if length(link.text) === 1 && isa(link.text[1], String)
         citation_name = link.text[1]
         @info "Expanding citation: $citation_name."
-        
-        if haskey(BIBLIOGRAPHY, citation_name)
-            entry = BIBLIOGRAPHY[citation_name]
+
+        if haskey(BIBLIOGRAPHY(), citation_name)
+            entry = BIBLIOGRAPHY()[citation_name]
             headers = doc.internal.headers
             if Anchors.exists(headers, entry.id)
                 if Anchors.isunique(headers, entry.id)
@@ -58,7 +59,7 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
             else
                 push!(doc.internal.errors, :citations)
                 @warn "reference for '$(entry.id)' could not be found in $(Utilities.locrepr(page.source))."
-            end   
+            end
         else
             error("Citation not found in bibliography: $(citation_name)")
         end
@@ -69,3 +70,4 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
 end
 
 expand_citation(other, meta, page, doc) = true # Continue to `walk` through element `other`.
+
