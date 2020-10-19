@@ -1,6 +1,5 @@
-name = "DocumenterBibliographyTest"
+name = "DocumenterCitations"
 uuid = "daee34ce-89f3-4625-b898-19384cb65244"
-authors = ["ali-ramadhan <ali.hh.ramadhan@gmail.com>"]
 version = "0.1.0"
 
 [deps]
