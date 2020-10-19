@@ -10,29 +10,27 @@ version = "0.8.0"
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[BibInternal]]
-git-tree-sha1 = "61a22f9ae85122c5c6881956bb591a8a3d4b6a8a"
+git-tree-sha1 = "71045cd344c6be7c5d5977053f74fc6567f897ff"
 uuid = "2027ae74-3657-4b95-ae00-e2f7d55c3e64"
-version = "0.1.2"
+version = "0.2.2"
 
 [[BibParser]]
 deps = ["Automa", "BibInternal", "DataStructures"]
-git-tree-sha1 = "f59702440bec84fc5f9f2804219867d610ccd289"
+git-tree-sha1 = "f2f7cb0ff38227bfecbc30265a684d7e623659a9"
 uuid = "13533e5b-e1c2-4e57-8cef-cac5e52f6474"
-version = "0.1.1"
+version = "0.1.7"
 
 [[Bibliography]]
 deps = ["BibInternal", "BibParser", "DataStructures"]
-git-tree-sha1 = "83551179d4eb73acd2699daed565871593658d6a"
-repo-rev = "master"
-repo-url = "https://github.com/Azzaare/Bibliography.jl.git"
+git-tree-sha1 = "6467bd14a1f712ec6dfaf115910920124af54bf4"
 uuid = "f1be7e48-bf82-45af-a471-ae754a193061"
-version = "0.1.0"
+version = "0.2.3"
 
 [[DataStructures]]
 deps = ["InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "edad9434967fdc0a2631a65d902228400642120c"
+git-tree-sha1 = "88d48e133e6d3dd68183309877eac74393daa7eb"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.17.19"
+version = "0.17.20"
 
 [[Dates]]
 deps = ["Printf"]
@@ -82,9 +80,9 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[OrderedCollections]]
-git-tree-sha1 = "293b70ac1780f9584c89268a6e2a560d938a7065"
+git-tree-sha1 = "16c08bf5dba06609fe45e30860092d6fa41fde7b"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.3.0"
+version = "1.3.1"
 
 [[Parsers]]
 deps = ["Dates", "Test"]
