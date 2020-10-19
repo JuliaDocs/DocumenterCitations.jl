@@ -1,15 +1,4 @@
 
-using Documenter
-using Documenter.Anchors
-using Documenter.Builder
-using Documenter.Documents
-using Documenter.Selectors
-using Documenter.Utilities
-
-using Markdown
-using Bibliography
-using Bibliography: xnames, xyear
-
 abstract type Citations <: Builder.DocumentPipeline end
 
 Selectors.order(::Type{Citations}) = 3.1  # After cross-references
@@ -41,8 +30,8 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
         citation_name = link.text[1]
         @info "Expanding citation: $citation_name."
 
-        if haskey(BIBLIOGRAPHY(), citation_name)
-            entry = BIBLIOGRAPHY()[citation_name]
+        if haskey(doc.plugins[CitationBibliography].bib, citation_name)
+            entry = doc.plugins[CitationBibliography].bib[citation_name]
             headers = doc.internal.headers
             if Anchors.exists(headers, entry.id)
                 if Anchors.isunique(headers, entry.id)
