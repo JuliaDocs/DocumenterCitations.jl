@@ -3,6 +3,18 @@ abstract type BibliographyBlock <: Expanders.ExpanderPipeline end
 Selectors.order(::Type{BibliographyBlock}) = 12.0  # Expand bibliography last
 Selectors.matcher(::Type{BibliographyBlock}, node, page, doc) = Expanders.iscode(node, r"^@bibliography")
 
+const tex2unicode_replacements = (
+    "--"  => "–",
+    "---" => "—"
+)
+
+function tex2unicode(s)
+    for replacement in tex2unicode_replacements
+        s = replace(s, replacement)
+    end
+    return s
+end
+
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     @info "Expanding bibliography."
     raw_bib = "<dl>"
@@ -15,9 +27,8 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         authors = xnames(entry)
         year = xyear(entry)
         link = xlink(entry)
-        title = xtitle(entry)
+        title = xtitle(entry) |> tex2unicode
         published_in = xin(entry)
-
 
         entry_text = """<dt>$id</dt>
         <dd>
