@@ -9,10 +9,7 @@ const tex2unicode_replacements = (
 )
 
 function tex2unicode(s)
-    for replacement in tex2unicode_replacements
-        s = replace(s, replacement)
-    end
-    return s
+        replace(s, tex2unicode_replacements...)
 end
 
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
@@ -40,4 +37,3 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
 
     page.mapping[x] = Documents.RawNode(:html, raw_bib)
 end
-
