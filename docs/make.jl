@@ -8,7 +8,7 @@ cite_bib = CitationBibliography(joinpath(doc_dir, "test.bib"))
 
 makedocs(
     cite_bib,
-    sitename = "Testing BibTeX citations and references",
+    sitename = "DocumenterCitations.jl",
     strict = true,
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true"

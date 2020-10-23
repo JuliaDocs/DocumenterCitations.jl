@@ -1,4 +1,4 @@
-# DocumenterBibliographyTest.jl documentation
+# How to use DocumenterCitations.jl
 
 Hi!
 
