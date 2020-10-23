@@ -28,7 +28,7 @@ to see a new feature, or if you have any questions.
   <a href="https://github.com/ali-ramadhan/DocumenterCitations.jl/actions?query=workflow%3ADocumentation">
     <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/ali-ramadhan/DocumenterCitations.jl/Documentation/master?label=Documentation&logo=github&style=flat-square">
   </a>
-  <a href="https://ali-ramadhan.github.io/DocumenterCitations.jl/stable">
+  <a href="https://ali-ramadhan.github.io/DocumenterCitations.jl/dev">
     <img alt="Stable documentation" src="https://img.shields.io/badge/documentation-stable%20release-blue?style=flat-square">
   </a>
   <a href="https://ali-ramadhan.github.io/DocumenterCitations.jl/dev">
