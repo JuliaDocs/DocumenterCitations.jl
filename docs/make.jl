@@ -1,23 +1,23 @@
-using DocumenterCitations
-const root_dir = dirname(dirname(pathof(DocumenterCitations)))
-const doc_dir = joinpath(root_dir, "docs")
-import DocumenterCitations
-
 using Documenter
-using Bibliography
+using DocumenterCitations
 
-cite_bib = CitationBibliography(joinpath(doc_dir, "test.bib"))
+bib = CitationBibliography(joinpath(@__DIR__, "example.bib"))
 
 makedocs(
-    cite_bib,
-    sitename = "Testing BibTeX citations and references",
+    bib,
+    sitename = "DocumenterCitations.jl",
     strict = true,
-      format = Documenter.HTML(
-          prettyurls = get(ENV, "CI", nothing) == "true"
-      ),
-       pages = [
-           "Home"       => "index.md",
-           "References" => "references.md"
-       ]
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true"
+    ),
+    pages = [
+        "Home"       => "index.md",
+        "References" => "references.md"
+    ]
+)
+
+deploydocs(
+    repo = "github.com/ali-ramadhan/DocumenterCitations.jl.git",
+    push_preview = true
 )
 
