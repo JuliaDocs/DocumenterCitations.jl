@@ -14,7 +14,7 @@ julia>]
 (v1.5) pkg> add DocumenterCitations
 ```
 
-## Quickstart
+## Telling Documenter.jl about your bibliography
 
 You just need a BibTeX `.bib` file to get started! Let's call it `some_references.bib`. You want to create a `CitationBibliography` and pass it to `makedocs`:
 
@@ -25,5 +25,13 @@ bib = CitationBibliography("some_references.bib")
 makedocs(bib, ...)
 ```
 
-Now you can use citations anywhere in your docs! Now I cite `Mayer2012`, a useful article, via `[Mayer2012](@cite)` [Mayer2012](@cite). I also cite `useful_proof`, a book you might not want to read with `[useful_proof](@cite)` [useful_proof](@cite). Clicking on these citations should take you to the bibliography.
+## How to cite references in your documentation
+
+You can now use citations anywhere in your docs!
+
+Here I cite `Mayer2012`, a useful article, via `[Mayer2012](@cite)`: [Mayer2012](@cite).
+
+I also cite `useful_proof`, a book you might not want to read, with `[useful_proof](@cite)` [useful_proof](@cite).
+
+Clicking on the citations takes you to the bibliography.
 
