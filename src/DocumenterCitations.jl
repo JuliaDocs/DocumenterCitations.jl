@@ -11,6 +11,7 @@ using Documenter.Expanders
 using Markdown
 using Bibliography
 using Bibliography: xnames, xyear, xlink, xtitle, xin
+using Unicode
 
 export CitationBibliography
 struct CitationBibliography <: Documenter.Plugin
