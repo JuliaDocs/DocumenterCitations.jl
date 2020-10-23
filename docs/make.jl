@@ -1,13 +1,10 @@
 using Documenter
 using DocumenterCitations
 
-const root_dir = dirname(dirname(pathof(DocumenterCitations)))
-const doc_dir = joinpath(root_dir, "docs")
-
-cite_bib = CitationBibliography(joinpath(doc_dir, "test.bib"))
+bib = CitationBibliography(joinpath(@__DIR__, "example.bib"))
 
 makedocs(
-    cite_bib,
+    bib,
     sitename = "DocumenterCitations.jl",
     strict = true,
     format = Documenter.HTML(
