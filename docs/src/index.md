@@ -37,3 +37,8 @@ Some TeX diacritical marks are supported, e.g. [Heun1900](@cite).
 
 Clicking on the citations takes you to the bibliography.
 
+# Example
+
+```@docs
+DocumenterCitations.Example
+```
