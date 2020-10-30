@@ -23,6 +23,14 @@ function CitationBibliography(filename::AbstractString="")
     return CitationBibliography(bf)
 end
 
+"""
+    Example
+
+Foo.
+
+[Mayer2012](@cite)
+"""
+struct Example end
 
 include("citations.jl")
 include("bibliography.jl")
