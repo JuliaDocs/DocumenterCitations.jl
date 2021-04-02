@@ -50,11 +50,18 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         link = xlink(entry)
         title = xtitle(entry) |> tex2unicode
         published_in = xin(entry)
-
-        entry_text = """<dt>$id</dt>
-        <dd>
-          <div id="$id">$authors ($year), <a href="$link">$title</a>, $published_in</a>
-        </dd>"""
+        
+        if isempty(link)
+            entry_text = """<dt>$id</dt>
+            <dd>
+              <div id="$id">$authors ($year), $title, $published_in</a>
+            </dd>"""
+        else
+            entry_text = """<dt>$id</dt>
+            <dd>
+              <div id="$id">$authors ($year), <a href="$link">$title</a>, $published_in</a>
+            </dd>"""
+        end
         raw_bib *= entry_text
     end
     raw_bib *= "\n</dl>"
