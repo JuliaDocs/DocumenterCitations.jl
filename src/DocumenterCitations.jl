@@ -11,11 +11,12 @@ using Documenter.Expanders
 using Markdown
 using Bibliography
 using Bibliography: xnames, xyear, xlink, xtitle, xin
+using DataStructures: OrderedDict
 using Unicode
 
 export CitationBibliography
 struct CitationBibliography <: Documenter.Plugin
-    bib::Dict
+    bib::OrderedDict{String,Bibliography.Entry}
 end
 function CitationBibliography(filename::AbstractString = "";
                               sorting::Symbol = :none)
