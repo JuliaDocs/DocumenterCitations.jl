@@ -4,9 +4,9 @@
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[BibInternal]]
-git-tree-sha1 = "3cdd672174e3bae099195cf949f21c1a9ded98e5"
+git-tree-sha1 = "cf9e376a6cbac1dd70ee491bc64de29c3ea8ff86"
 uuid = "2027ae74-3657-4b95-ae00-e2f7d55c3e64"
-version = "0.2.9"
+version = "0.2.10"
 
 [[BibParser]]
 deps = ["BibInternal", "DataStructures"]
@@ -16,9 +16,9 @@ version = "0.1.14"
 
 [[Bibliography]]
 deps = ["BibInternal", "BibParser", "DataStructures"]
-git-tree-sha1 = "c3d1de7c7eaa693a7cce11b20ec6f896a4b8e44a"
+git-tree-sha1 = "8190dc076a020c92a7a78a069244ff6cd08e86ac"
 uuid = "f1be7e48-bf82-45af-a471-ae754a193061"
-version = "0.2.8"
+version = "0.2.9"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
@@ -52,15 +52,15 @@ version = "0.8.5"
 
 [[Documenter]]
 deps = ["Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
-git-tree-sha1 = "5acbebf1be22db43589bc5aa1bb5fcc378b17780"
+git-tree-sha1 = "621850838b3e74dd6dd047b5432d2e976877104e"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.27.0"
+version = "0.27.2"
 
 [[IOCapture]]
-deps = ["Logging"]
-git-tree-sha1 = "1868e4e7ad2f93d8de0904d89368c527b46aa6a1"
+deps = ["Logging", "Random"]
+git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
-version = "0.2.1"
+version = "0.2.2"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]

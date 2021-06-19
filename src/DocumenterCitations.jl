@@ -17,9 +17,13 @@ export CitationBibliography
 struct CitationBibliography <: Documenter.Plugin
     bib::Dict
 end
-function CitationBibliography(filename::AbstractString="")
+function CitationBibliography(filename::AbstractString = "";
+                              sorting::Symbol = :none)
     filename == "" && return CitationBibliography(Dict())
     bf = import_bibtex(filename)
+    if sorting != :none
+        sort_bibliography!(bf, sorting)
+    end
     return CitationBibliography(bf)
 end
 
