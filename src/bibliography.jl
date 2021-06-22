@@ -54,12 +54,12 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         if isempty(link)
             entry_text = """<dt>$id</dt>
             <dd>
-              <div id="$id">$authors ($year), $title, $published_in</a>
+              <div id="$id">$authors, $title, $published_in</a>
             </dd>"""
         else
             entry_text = """<dt>$id</dt>
             <dd>
-              <div id="$id">$authors ($year), <a href="$link">$title</a>, $published_in</a>
+              <div id="$id">$authors, <a href="$link">$title</a>, $published_in</a>
             </dd>"""
         end
         raw_bib *= entry_text
