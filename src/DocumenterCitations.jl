@@ -16,7 +16,7 @@ using Unicode
 
 export CitationBibliography
 struct CitationBibliography <: Documenter.Plugin
-    bib::OrderedDict{String,Bibliography.Entry}
+    bib::OrderedDict{String,<:Bibliography.AbstractEntry}
 end
 function CitationBibliography(filename::AbstractString = "";
                               sorting::Symbol = :none)
