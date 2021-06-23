@@ -21,12 +21,18 @@ const tex2unicode_replacements = (
     r"\\c\{(\S)\}" => s"\1\u327",  # \c{c} 	ç 	cedilla
     r"\\k\{(\S)\}" => s"\1\u328",  # \k{a} 	ą 	ogonek
     r"\\b\{(\S)\}" => s"\1\u331",  # \b{b} 	ḇ 	bar under the letter
+    r"\{\}" => s"",  # empty curly braces should not have any effect
+    r"\\o" => s"\u00F8",  # \o 	ø 	latin small letter O with stroke
+    r"\\O" => s"\u00D8",  # \O 	Ø 	latin capital letter O with stroke
+    r"\\l" => s"\u0142",  # \l 	ł 	latin small letter L with stroke
+    r"\\L" => s"\u0141",  # \L 	Ł 	latin capital letter L with stroke
+    r"\\i" => s"\u0131",  # \i 	ı 	latin small letter dotless I
 
     # TODO:
     # \t{oo} 	o͡o 	"tie" (inverted u) over the two letters
-    # \o{} 	ø 	slashed o (o with stroke)
-    # {\i} 	ı 	dotless i (i without tittle)
-    # \l{} 	ł 	barred l (l with stroke)
+    # \"{\i} 	ï 	Latin Small Letter I with Diaeresis
+
+    # Sources : https://www.compart.com/en/unicode/U+0131 enter the unicode character into the search box
 )
 
 function tex2unicode(s)
@@ -47,12 +53,11 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         # Add anchor that citations can link to from anywhere in the docs.
         Anchors.add!(doc.internal.headers, entry, entry.id, page.build)
 
-        authors = xnames(entry)
-        year = xyear(entry)
+        authors = xnames(entry) |> tex2unicode
         link = xlink(entry)
         title = xtitle(entry) |> tex2unicode
-        published_in = xin(entry)
-        
+        published_in = xin(entry) |> tex2unicode
+
         raw_bib *= """<dt>$id</dt>
         <dd>
           <div id="$id">$authors, $(linkify(title, link)), $published_in</div>
