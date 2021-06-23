@@ -36,6 +36,8 @@ function tex2unicode(s)
     return Unicode.normalize(s)
 end
 
+linkify(text, link) = isempty(link) ? text : "<a href='$link'>$text</a>"
+
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     @info "Expanding bibliography."
     raw_bib = "<dl>"
@@ -51,18 +53,10 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         title = xtitle(entry) |> tex2unicode
         published_in = xin(entry)
         
-        if isempty(link)
-            entry_text = """<dt>$id</dt>
-            <dd>
-              <div id="$id">$authors, $title, $published_in</a>
-            </dd>"""
-        else
-            entry_text = """<dt>$id</dt>
-            <dd>
-              <div id="$id">$authors, <a href="$link">$title</a>, $published_in</a>
-            </dd>"""
-        end
-        raw_bib *= entry_text
+        raw_bib *= """<dt>$id</dt>
+        <dd>
+          <div id="$id">$authors, $(linkify(title, link)), $published_in</div>
+        </dd>"""
     end
     raw_bib *= "\n</dl>"
 
