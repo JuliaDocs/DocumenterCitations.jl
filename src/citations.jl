@@ -38,7 +38,8 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
                     # Replace the `@cite` url with a path to the referenced header.
                     anchor   = Anchors.anchor(headers, entry.id)
                     path     = relpath(anchor.file, dirname(page.build))
-                    link.text = xnames(entry) * " (" * xyear(entry) * ")"
+                    authors = xnames(entry) |> tex2unicode
+                    link.text = authors * " (" * xyear(entry) * ")"
                     link.url = string(path, Anchors.fragment(anchor))
                     return true
                 else
@@ -59,4 +60,3 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
 end
 
 expand_citation(other, meta, page, doc) = true # Continue to `walk` through element `other`.
-
