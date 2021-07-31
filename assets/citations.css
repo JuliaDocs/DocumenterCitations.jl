@@ -1,0 +1,8 @@
+.citation dl {
+  display: grid;
+  grid-template-columns: max-content auto; }
+.citation dt {
+  grid-column-start: 1; }
+.citation dd {
+  grid-column-start: 2;
+  margin-bottom: 0.75em; }

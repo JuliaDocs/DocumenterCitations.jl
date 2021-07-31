@@ -10,4 +10,9 @@ using Test
         raw"\i{}\o{}\O{}\l{}\L{}\i\o\O\l\L") == "ıøØłŁıøØłŁ"
     @test DocumenterCitations.tex2unicode(
         raw"\t{oo}{testText}\t{az}") == "o͡otestTexta͡z"
+    @test DocumenterCitations.tex2unicode(
+        raw"\t{oo}\\\"{\i}{abcdefg}") == "o͡oïabcdefg"
+    @test_skip DocumenterCitations.tex2unicode(
+        raw"{abcd\~{o}efg}") == "abcdõefg"
+
 end

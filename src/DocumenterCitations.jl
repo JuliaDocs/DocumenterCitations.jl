@@ -7,6 +7,7 @@ using Documenter.Documents
 using Documenter.Selectors
 using Documenter.Utilities
 using Documenter.Expanders
+using Documenter.Writers.HTMLWriter
 
 using Markdown
 using Bibliography
@@ -18,6 +19,7 @@ export CitationBibliography
 struct CitationBibliography <: Documenter.Plugin
     bib::OrderedDict{String,<:Bibliography.AbstractEntry}
 end
+
 function CitationBibliography(filename::AbstractString = "";
                               sorting::Symbol = :none)
     filename == "" && return CitationBibliography(Dict())

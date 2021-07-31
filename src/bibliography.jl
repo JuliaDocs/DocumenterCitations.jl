@@ -13,6 +13,7 @@ const tex2unicode_replacements = (
     r"\\=\{(\S{1})\}" => s"\1\u304", # \={o} 	ō 	macron accent (a bar over the letter)
     r"\\u\{(\S{1})\}" => s"\1\u306",  # \u{o} 	ŏ 	breve over the letter
     r"\\\.\{(\S{1})\}" => s"\1\u307", # \.{o} 	ȯ 	dot over the letter
+    r"\\\\\"\{\\i\}" => s"\u0069\u308", # \"{\i} 	ï 	Latin Small Letter I with Diaeresis
     r"\\\\\"\{(\S{1})\}" => s"\1\u308", # \"{o} 	ö 	umlaut, trema or dieresis
     r"\\r\{(\S{1})\}" => s"\1\u30A",  # \r{a} 	å 	ring over the letter (for å there is also the special command \aa)
     r"\\H\{(\S{1})\}" => s"\1\u30B",  # \H{o} 	ő 	long Hungarian umlaut (double acute)
@@ -30,9 +31,6 @@ const tex2unicode_replacements = (
     r"\\i" => s"\u0131",  # \i 	ı 	latin small letter dotless I
     r"\{([[:alnum:]]+)\}" => s"\1",  # {<text>} 	<text> 	bracket stripping after applying all rules
 
-    # TODO:
-    # \"{\i} 	ï 	Latin Small Letter I with Diaeresis
-
     # Sources : https://www.compart.com/en/unicode/U+0131 enter the unicode character into the search box
 )
 
@@ -47,7 +45,7 @@ linkify(text, link) = isempty(link) ? text : "<a href='$link'>$text</a>"
 
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     @info "Expanding bibliography."
-    raw_bib = "<dl>"
+    raw_bib = """<div class="citation"><dl>"""
     for (id, entry) in doc.plugins[CitationBibliography].bib
         @info "Expanding bibliography entry: $id."
 
@@ -64,7 +62,7 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
           <div id="$id">$authors, $(linkify(title, link)), $published_in</div>
         </dd>"""
     end
-    raw_bib *= "\n</dl>"
+    raw_bib *= "\n</dl></div>"
 
     page.mapping[x] = Documents.RawNode(:html, raw_bib)
 end
