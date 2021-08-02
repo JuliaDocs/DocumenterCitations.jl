@@ -21,21 +21,21 @@ version = "0.3.0"
 
 [[BibParser]]
 deps = ["BibInternal", "DataStructures"]
-git-tree-sha1 = "9a5f851504682eb7712cf4078be05246e7a57d71"
+git-tree-sha1 = "a8890e709d452d2aa378ed3fa7235e1054a02751"
 uuid = "13533e5b-e1c2-4e57-8cef-cac5e52f6474"
-version = "0.1.17"
+version = "0.1.18"
 
 [[Bibliography]]
 deps = ["BibInternal", "BibParser", "DataStructures"]
-git-tree-sha1 = "5d1cc36d092a1996854662e2552d3d7fd495ea29"
+git-tree-sha1 = "9ddfae2c660040aa866ae2a3d355d2d9d0ee61ef"
 uuid = "f1be7e48-bf82-45af-a471-ae754a193061"
-version = "0.2.14"
+version = "0.2.15"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
-git-tree-sha1 = "dc7dedc2c2aa9faf59a55c622760a25cbefbe941"
+git-tree-sha1 = "344f143fa0ec67e47917848795ab19c6a455f32c"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "3.31.0"
+version = "3.32.0"
 
 [[DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -137,9 +137,9 @@ version = "1.4.1"
 
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "c8abc88faa3f7a3950832ac5d6e690881590d6dc"
+git-tree-sha1 = "94bf17e83a0e4b20c8d77f6af8ffe8cc3b386c0a"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "1.1.0"
+version = "1.1.1"
 
 [[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]

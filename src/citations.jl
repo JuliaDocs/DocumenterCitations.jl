@@ -5,7 +5,7 @@ Selectors.order(::Type{Citations}) = 3.1  # After cross-references
 const asset_dir = normpath(abspath(joinpath(@__DIR__, "..", "assets")))
 const asset_list = [ asset(joinpath(asset_dir,"citations.css"),class=:css,islocal=true) ]
 
-function HTMLWriter.add_plugin_assets(::Type{CitationBibliography})::Vector{HTMLWriter.HTMLAsset}
+function HTMLWriter.plugin_html_assets(::Type{CitationBibliography})::Vector{HTMLWriter.HTMLAsset}
   return DocumenterCitations.asset_list
 end
 
