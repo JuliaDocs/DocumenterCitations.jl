@@ -3,9 +3,23 @@ abstract type BibliographyBlock <: Expanders.ExpanderPipeline end
 Selectors.order(::Type{BibliographyBlock}) = 12.0  # Expand bibliography last
 Selectors.matcher(::Type{BibliographyBlock}, node, page, doc) = Expanders.iscode(node, r"^@bibliography")
 
+const tex2unicode_chars = Dict(
+    'o' => "\u00F8",  # \o 	ø 	latin small letter O with stroke
+    'O' => "\u00D8",  # \O 	Ø 	latin capital letter O with stroke
+    'l' => "\u0142",  # \l 	ł 	latin small letter L with stroke
+    'L' => "\u0141",  # \L 	Ł 	latin capital letter L with stroke
+    'i' => "\u0131",  # \i 	ı 	latin small letter dotless I
+)
+
 const tex2unicode_replacements = (
     "---" => "—", # em dash needs to go first
     "--"  => "–",
+
+    # replace quoted single letters before the remaining replacements, and do
+    # them all at once, as these patterns rely on word boundaries which can
+    # change due to the replacements we perform
+    r"\\[oOlLi]\b" => c -> tex2unicode_chars[c[2]],
+
     r"\\`\{(\S{1})\}" => s"\1\u300", # \`{o} 	ò 	grave accent
     r"\\'\{(\S{1})\}" => s"\1\u301", # \'{o} 	ó 	acute accent
     r"\\\^\{(\S{1})\}" => s"\1\u302", # \^{o} 	ô 	circumflex
@@ -23,11 +37,6 @@ const tex2unicode_replacements = (
     r"\\b\{(\S{1})\}" => s"\1\u331",  # \b{b} 	ḇ 	bar under the letter
     r"\\t\{(\S{1})(\S{1})\}" => s"\1\u0361\2",  # \t{oo} 	o͡o 	"tie" (inverted u) over the two letters
     r"\{\}" => s"",  # empty curly braces should not have any effect
-    r"\\o" => s"\u00F8",  # \o 	ø 	latin small letter O with stroke
-    r"\\O" => s"\u00D8",  # \O 	Ø 	latin capital letter O with stroke
-    r"\\l" => s"\u0142",  # \l 	ł 	latin small letter L with stroke
-    r"\\L" => s"\u0141",  # \L 	Ł 	latin capital letter L with stroke
-    r"\\i" => s"\u0131",  # \i 	ı 	latin small letter dotless I
     r"\{([[:alnum:]]+)\}" => s"\1",  # {<text>} 	<text> 	bracket stripping after applying all rules
 
     # TODO:

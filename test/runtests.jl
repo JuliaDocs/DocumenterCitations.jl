@@ -10,4 +10,8 @@ using Test
         raw"\i{}\o{}\O{}\l{}\L{}\i\o\O\l\L") == "ıøØłŁıøØłŁ"
     @test DocumenterCitations.tex2unicode(
         raw"\t{oo}{testText}\t{az}") == "o͡otestTexta͡z"
+    @test DocumenterCitations.tex2unicode(
+        raw"{\o}verline") == "øverline"
+    @test DocumenterCitations.tex2unicode(
+        raw"\overline") == "\\overline"
 end
