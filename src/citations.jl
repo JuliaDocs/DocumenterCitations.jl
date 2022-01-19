@@ -11,8 +11,8 @@ end
 function expand_citations(doc::Documents.Document)
     for (src, page) in doc.blueprint.pages
         empty!(page.globals.meta)
-        for element in page.elements
-            expand_citation(page.mapping[element], page, doc)
+        for expanded in values(page.mapping)
+            expand_citation(expanded, page, doc)
         end
     end
 end

@@ -1,4 +1,5 @@
 using DocumenterCitations
+using Documenter
 using Test
 
 
@@ -14,4 +15,9 @@ using Test
         raw"{\o}verline") == "øverline"
     @test DocumenterCitations.tex2unicode(
         raw"\overline") == "\\overline"
+end
+
+@testset "doctest fix" begin
+    # verify https://github.com/ali-ramadhan/DocumenterCitations.jl/issues/55 is fixed
+    doctest(DocumenterCitations; fix=true)
 end
