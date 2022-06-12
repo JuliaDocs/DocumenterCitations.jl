@@ -22,11 +22,11 @@ to see a new feature, or if you have any questions.
 
 <!-- CI and documentation badges -->
 <p align="center">
-  <a href="https://travis-ci.com/ali-ramadhan/DocumenterCitations.jl">
-    <img alt="Travis build status" src="https://img.shields.io/travis/com/ali-ramadhan/DocumenterCitations.jl/master?label=Tests&logo=travis&logoColor=white&style=flat-square">
+  <a href="https://github.com/ali-ramadhan/DocumenterCitations.jl/actions/workflows/ci.yml">
+    <img alt="CI build status" src="https://github.com/ali-ramadhan/DocumenterCitations.jl/actions/workflows/ci.yml/badge.svg">
   </a>
-  <a href="https://github.com/ali-ramadhan/DocumenterCitations.jl/actions?query=workflow%3ADocumentation">
-    <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/ali-ramadhan/DocumenterCitations.jl/Documentation/master?label=Documentation&logo=github&style=flat-square">
+  <a href="https://github.com/ali-ramadhan/DocumenterCitations.jl/actions/workflows/Docs.yml">
+    <img alt="Doc build status" src="https://github.com/ali-ramadhan/DocumenterCitations.jl/actions/workflows/Docs.yml/badge.svg">
   </a>
   <a href="https://ali-ramadhan.github.io/DocumenterCitations.jl/dev">
     <img alt="Stable documentation" src="https://img.shields.io/badge/documentation-stable%20release-blue?style=flat-square">

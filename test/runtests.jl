@@ -1,4 +1,5 @@
 using DocumenterCitations
+using Documenter
 using Test
 
 
@@ -11,8 +12,16 @@ using Test
     @test DocumenterCitations.tex2unicode(
         raw"\t{oo}{testText}\t{az}") == "o͡otestTexta͡z"
     @test DocumenterCitations.tex2unicode(
+        raw"{\o}verline") == "øverline"
+    @test DocumenterCitations.tex2unicode(
         raw"\t{oo}\\\"{\i}{abcdefg}") == "o͡oïabcdefg"
     @test_skip DocumenterCitations.tex2unicode(
         raw"{abcd\~{o}efg}") == "abcdõefg"
+    @test DocumenterCitations.tex2unicode(
+        raw"\overline") == "\\overline"
+end
 
+@testset "doctest fix" begin
+    # verify https://github.com/ali-ramadhan/DocumenterCitations.jl/issues/55 is fixed
+    doctest(DocumenterCitations; fix=true)
 end
