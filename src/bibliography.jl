@@ -15,6 +15,9 @@ const tex2unicode_replacements = (
     "---" => "—", # em dash needs to go first
     "--"  => "–",
 
+    # do this before tex2unicode_chars or it wont be recognized
+    r"\\\\\"\{\\i\}" => s"\u0069\u308", # \"{\i} 	ï 	Latin Small Letter I with Diaeresis
+
     # replace quoted single letters before the remaining replacements, and do
     # them all at once, as these patterns rely on word boundaries which can
     # change due to the replacements we perform
@@ -27,7 +30,6 @@ const tex2unicode_replacements = (
     r"\\=\{(\S{1})\}" => s"\1\u304", # \={o} 	ō 	macron accent (a bar over the letter)
     r"\\u\{(\S{1})\}" => s"\1\u306",  # \u{o} 	ŏ 	breve over the letter
     r"\\\.\{(\S{1})\}" => s"\1\u307", # \.{o} 	ȯ 	dot over the letter
-    r"\\\\\"\{\\i\}" => s"\u0069\u308", # \"{\i} 	ï 	Latin Small Letter I with Diaeresis
     r"\\\\\"\{(\S{1})\}" => s"\1\u308", # \"{o} 	ö 	umlaut, trema or dieresis
     r"\\r\{(\S{1})\}" => s"\1\u30A",  # \r{a} 	å 	ring over the letter (for å there is also the special command \aa)
     r"\\H\{(\S{1})\}" => s"\1\u30B",  # \H{o} 	ő 	long Hungarian umlaut (double acute)
