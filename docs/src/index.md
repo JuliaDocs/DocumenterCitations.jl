@@ -39,11 +39,11 @@ The currently supported sorting orders and their behaviours are managed by [`Bib
 
 You can now use citations anywhere in your docs!
 
-Here I cite `Mayer2012`, a useful article, via `[Mayer2012](@cite)`: [Mayer2012](@cite).
+Here I cite `GoerzQ2022`, a useful article, via `[GoerzQ2022](@cite)`: [GoerzQ2022](@cite).
 
-I also cite `useful_proof`, a book you might not want to read, with `[useful_proof](@cite)` [useful_proof](@cite).
+I also cite `Tannor2007`, a book you might want to read, with `[Tannor2007](@cite)` [Tannor2007](@cite).
 
-Some TeX diacritical marks are supported, e.g. [Heun1900](@cite).
+Some TeX diacritical marks are supported, e.g. [FuerstNJP2014](@cite).
 
 Clicking on the citations takes you to the bibliography.
 

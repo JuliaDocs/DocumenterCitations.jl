@@ -35,7 +35,7 @@ end
 
 Foo.
 
-[Mayer2012](@cite)
+[GoerzQ2022](@cite)
 """
 struct Example end
 
