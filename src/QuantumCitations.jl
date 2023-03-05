@@ -35,7 +35,7 @@ end
 
 Foo.
 
-[GoerzQ2022](@cite)
+See [Goerz et. al. Quantum 6, 871 (2022)](@cite GoerzQ2022)
 """
 struct Example end
 

@@ -43,6 +43,8 @@ Here I cite `GoerzQ2022`, a useful article, via `[GoerzQ2022](@cite)`: [GoerzQ20
 
 I also cite `Tannor2007`, a book you might want to read, with `[Tannor2007](@cite)` [Tannor2007](@cite).
 
+Use e.g. `[arbitrary text](@cite GoerzQ2022)` to cite a reference with an [arbitrary text](@cite GoerzQ2022).
+
 Some TeX diacritical marks are supported, e.g. [FuerstNJP2014](@cite).
 
 Clicking on the citations takes you to the bibliography.
