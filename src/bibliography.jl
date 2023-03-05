@@ -54,6 +54,18 @@ end
 
 linkify(text, link) = isempty(link) ? text : "<a href='$link'>$text</a>"
 
+function format_bibliography_entry(entry)
+    authors = xnames(entry) |> tex2unicode
+    link = xlink(entry)
+    title = xtitle(entry) |> tex2unicode
+    published_in = xin(entry) |> tex2unicode
+    return "$authors, $(linkify(title, link)), $published_in"
+end
+
+function format_bibliography_key(id, entry)
+    return id
+end
+
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     @info "Expanding bibliography."
     raw_bib = """<div class="citation"><dl>"""
@@ -63,14 +75,9 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         # Add anchor that citations can link to from anywhere in the docs.
         Anchors.add!(doc.internal.headers, entry, entry.id, page.build)
 
-        authors = xnames(entry) |> tex2unicode
-        link = xlink(entry)
-        title = xtitle(entry) |> tex2unicode
-        published_in = xin(entry) |> tex2unicode
-
-        raw_bib *= """<dt>$id</dt>
+        raw_bib *= """<dt>$(format_bibliography_key(id, entry))</dt>
         <dd>
-          <div id="$id">$authors, $(linkify(title, link)), $published_in</div>
+          <div id="$id">$(format_bibliography_entry(entry))</div>
         </dd>"""
     end
     raw_bib *= "\n</dl></div>"

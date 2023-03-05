@@ -33,6 +33,12 @@ function expand_citation(elem, page, doc)
     end
 end
 
+function format_citation(entry)
+    authors = xnames(entry) |> tex2unicode
+    text = authors * " (" * xyear(entry) * ")"
+    return text
+end
+
 function expand_citation(link::Markdown.Link, meta, page, doc)
     occursin("@cite", link.url) || return false
     if length(link.text) === 1 && isa(link.text[1], String)
@@ -55,9 +61,8 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
                     # Replace the `@cite` url with a path to the referenced header.
                     anchor   = Anchors.anchor(headers, entry.id)
                     path     = relpath(anchor.file, dirname(page.build))
-                    authors = xnames(entry) |> tex2unicode
                     if link.url == "@cite"
-                        link.text = authors * " (" * xyear(entry) * ")"
+                        link.text = format_citation(entry)
                     else
                         # keep original link.text
                     end
