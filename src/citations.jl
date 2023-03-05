@@ -2,14 +2,6 @@ abstract type Citations <: Builder.DocumentPipeline end
 
 Selectors.order(::Type{Citations}) = 3.1  # After cross-references
 
-# TODO
-#const asset_dir = normpath(abspath(joinpath(@__DIR__, "..", "citations_assets")))
-#const asset_list = [ asset(joinpath("citations_assets","citations.css"),class=:css,islocal=true) ]
-#
-#function HTMLWriter.plugin_html_assets(::Type{CitationBibliography})::Tuple{String, Vector{HTMLWriter.HTMLAsset}}
-#  return asset_dir, QuantumCitations.asset_list
-#end
-
 function Selectors.runner(::Type{Citations}, doc::Documents.Document)
     @info "Citations: building citations."
     expand_citations(doc)
