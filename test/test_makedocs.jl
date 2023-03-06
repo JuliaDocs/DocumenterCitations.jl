@@ -33,5 +33,6 @@ using Test
         ∈ₛ(needle, haystack) = occursin(needle, haystack)
         @test "Optimizing Robust Quantum Gates in Open Quantum Systems" ∈ₛ html
     end
+    @test bib.citations["GoerzQ2022"] == 2
 
 end

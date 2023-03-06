@@ -47,6 +47,12 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
 
         if haskey(doc.plugins[CitationBibliography].bib, citation_name)
             entry = doc.plugins[CitationBibliography].bib[citation_name]
+            citations = doc.plugins[CitationBibliography].citations
+            if haskey(citations, entry.id)
+                citations[entry.id] += 1
+            else
+                citations[entry.id] = 1
+            end
             headers = doc.internal.headers
             if Anchors.exists(headers, entry.id)
                 if Anchors.isunique(headers, entry.id)

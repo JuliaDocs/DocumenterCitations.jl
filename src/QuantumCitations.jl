@@ -17,7 +17,10 @@ using Unicode
 
 export CitationBibliography
 struct CitationBibliography <: Documenter.Plugin
+    # citation key => entry
     bib::OrderedDict{String,<:Bibliography.AbstractEntry}
+    # citation key => number of citations
+    citations::OrderedDict{String,Int64}
 end
 
 function CitationBibliography(filename::AbstractString = "";
@@ -27,7 +30,8 @@ function CitationBibliography(filename::AbstractString = "";
     if sorting != :none
         sort_bibliography!(bf, sorting)
     end
-    return CitationBibliography(bf)
+    citations = Dict{String,Int64}()
+    return CitationBibliography(bf, citations)
 end
 
 """
