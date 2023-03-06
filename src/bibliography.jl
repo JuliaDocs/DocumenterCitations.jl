@@ -54,12 +54,158 @@ end
 
 linkify(text, link) = isempty(link) ? text : "<a href='$link'>$text</a>"
 
+function _initial(name)
+    initial = ""
+    _name = Unicode.normalize(strip(name))
+    if length(_name) > 0
+        initial = "$(_name[1])."
+        for part in split(_name, "-")[2:end]
+            initial *= "-$(part[1])."
+        end
+    end
+    return initial
+end
+
+function format_names(
+    entry,
+    editors=false;
+    names=:full,
+    and=true,
+)
+    # forces the names to be editors' name if the entry are Proceedings
+    if !editors && entry.type ∈ ["proceedings"]
+        return format_names(entry, true)
+    end
+    entry_names = editors ? entry.editors : entry.authors
+
+    if names == :full
+        parts = map(s -> [s.first, s.middle, s.particle, s.last, s.junior], entry_names)
+    elseif names == :last
+        parts = map(s -> [_initial(s.first), _initial(s.middle), s.particle, s.last, s.junior], entry_names)
+    elseif names  == :lastonly
+        parts = map(s -> [s.particle, s.last, s.junior], entry_names)
+    else
+        error("Invalid names=$(repr(names)) not in :full, :last, :lastonly")
+    end
+
+    entry_names = map(parts) do s
+        return join(filter(!isempty, s), " ")
+    end
+    if and
+        str = join(entry_names, ", ", " and ")
+    else
+        str = join(entry_names, ", ")
+    end
+    return replace(str, r"[\n\r ]+" => " ")
+end
+
+
+function format_published_in(entry)
+    str = ""
+    if entry.type == "article"
+        str *= entry.in.journal
+        if !isempty(entry.in.volume)
+            str *= " <b>$(entry.in.volume)</b>"
+        end
+        if !isempty(entry.in.pages)
+            str *= ", $(entry.in.pages)"
+        end
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "book"
+        parts = [entry.in.publisher, entry.in.address]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+        return str
+    elseif entry.type == "booklet"
+        parts = [entry.access.howpublished, ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "eprint"
+        if isempty(entry.eprint.archive_prefix)
+            str *= entry.eprint.eprint
+        else
+            str *= "$(entry.eprint.archive_prefix):$(entry.eprint.eprint) [$(entry.eprint.primary_class)]"
+        end
+    elseif entry.type == "inbook"
+        parts = [
+            entry.booktitle,
+            isempty(entry.in.chapter) ? entry.in.pages : entry.in.chapter,
+            entry.in.publisher,
+            entry.in.address,
+        ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "incollection"
+        parts = [
+            "In $(entry.booktitle)",
+            "editors",
+            format_names(entry, true),
+            entry.in.pages * ". " * entry.in.publisher,
+            entry.in.address,
+        ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "inproceedings"
+        parts = [
+            " In " * entry.booktitle,
+            entry.in.series,
+            entry.in.pages,
+            entry.in.address,
+            entry.in.publisher,
+        ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "manual"
+        parts = [entry.in.organization, entry.in.address]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type ∈ ["mastersthesis", "phdthesis"]
+        parts = [
+            (entry.type == "mastersthesis" ? "Master's" : "PhD") * " thesis",
+            entry.in.school,
+            entry.in.address,
+        ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "misc"
+        parts = [
+            entry.access.howpublished
+            get(entry.fields, "note", "")
+        ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "proceedings"
+        parts = [
+            (entry.in.volume != "" ? "Volume $(entry.in.volume) of " : "") *
+            entry.in.series,
+            entry.in.address,
+            entry.in.publisher,
+        ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "techreport"
+        parts = [
+            entry.in.number != "" ? "Technical Report $(entry.in.number)" : "",
+            entry.in.institution,
+            entry.in.address,
+        ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    elseif entry.type == "unpublished"
+        parts = [get(entry.fields, "note", ""), ]
+        str *= join(filter!(!isempty, parts), ", ")
+        str *= " ($(entry.date.year))"
+    end
+    return str
+end
+
+
 function format_bibliography_entry(entry)
-    authors = xnames(entry) |> tex2unicode
+    authors = format_names(entry; names=:last) |> tex2unicode
     link = xlink(entry)
     title = xtitle(entry) |> tex2unicode
-    published_in = xin(entry) |> tex2unicode
-    return "$authors, $(linkify(title, link)), $published_in"
+    published_in = format_published_in(entry) |> tex2unicode
+    return "$authors. <i>$title</i>. $(linkify(published_in, link))."
 end
 
 function format_bibliography_key(id, entry)

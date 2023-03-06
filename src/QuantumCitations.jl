@@ -11,7 +11,7 @@ using Documenter.Writers.HTMLWriter
 
 using Markdown
 using Bibliography
-using Bibliography: xnames, xyear, xlink, xtitle, xin
+using Bibliography: xyear, xlink, xtitle
 using DataStructures: OrderedDict
 using Unicode
 
@@ -33,9 +33,11 @@ end
 """
     Example
 
-Foo.
+An example object with a "References" section in its docstring.
 
-See [Goerz et. al. Quantum 6, 871 (2022)](@cite GoerzQ2022)
+# References
+
+* [Goerz et al. Quantum 6, 871 (2022)](@cite GoerzQ2022)
 """
 struct Example end
 

@@ -26,7 +26,7 @@ function expand_citation(elem, page, doc)
 end
 
 function format_citation(entry)
-    authors = xnames(entry) |> tex2unicode
+    authors = format_names(entry; names=:lastonly) |> tex2unicode
     text = authors * " (" * xyear(entry) * ")"
     return text
 end
