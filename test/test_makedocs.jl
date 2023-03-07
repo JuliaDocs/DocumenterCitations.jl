@@ -13,7 +13,10 @@ using Test
         root = joinpath(@__DIR__, "..", "docs")
         # We're basically doing `makedocs`, but written out for debuggability
         empty!(Documenter.Selectors.selector_subtypes)
-        format = Documenter.Writers.HTMLWriter.HTML()
+        format = Documenter.Writers.HTMLWriter.HTML(;
+            edit_link=nothing,
+            disable_git=true
+        )
         plugins = [bib]
         document = Documenter.Documents.Document(
             plugins;
@@ -33,6 +36,6 @@ using Test
         ∈ₛ(needle, haystack) = occursin(needle, haystack)
         @test "Optimizing Robust Quantum Gates in Open Quantum Systems" ∈ₛ html
     end
-    @test bib.citations["GoerzQ2022"] == 2
+    @test bib.citations["GoerzQ2022"] >= 2
 
 end

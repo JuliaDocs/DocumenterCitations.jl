@@ -1,7 +1,22 @@
-abstract type BibliographyBlock <: Expanders.ExpanderPipeline end
+abstract type ExpandBibliography <: Builder.DocumentPipeline end
 
-Selectors.order(::Type{BibliographyBlock}) = 12.0  # Expand bibliography last
-Selectors.matcher(::Type{BibliographyBlock}, node, page, doc) = Expanders.iscode(node, r"^@bibliography")
+Selectors.order(::Type{ExpandBibliography}) = 2.12  # after CollectCitations
+
+function Selectors.runner(::Type{ExpandBibliography}, doc::Documents.Document)
+    Documenter.Builder.is_doctest_only(doc, "ExpandBibliography") && return
+    @info "ExpandBibliography: expanding `@bibliography` blocks."
+    for src in keys(doc.blueprint.pages)
+        page = doc.blueprint.pages[src]
+        empty!(page.globals.meta)
+        for element in page.elements
+            if Expanders.iscode(element, r"^@bibliography")
+                Selectors.dispatch(BibliographyBlock, element, page, doc)
+            end
+        end
+    end
+end
+
+abstract type BibliographyBlock <: Selectors.AbstractSelector end
 
 const tex2unicode_chars = Dict(
     'o' => "\u00F8",  # \o 	ø 	latin small letter O with stroke
@@ -215,8 +230,12 @@ end
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     @info "Expanding bibliography."
     raw_bib = """<div class="citation"><dl>"""
-    for (id, entry) in doc.plugins[CitationBibliography].bib
+    bib = doc.plugins[CitationBibliography].bib
+    citations = doc.plugins[CitationBibliography].citations
+    ids = keys(bib)
+    for id in ids
         @info "Expanding bibliography entry: $id."
+        entry = bib[id]
 
         # Add anchor that citations can link to from anywhere in the docs.
         Anchors.add!(doc.internal.headers, entry, entry.id, page.build)
