@@ -1,4 +1,4 @@
-Here we create a full list of formatted references contained in our `.bib` file using
+Here we create a full list of formatted references that are cited in the documentation, using
 
 ````markdown
 ```@bibliography

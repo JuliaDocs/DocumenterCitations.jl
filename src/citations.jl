@@ -26,9 +26,9 @@ function collect_citations(doc::Documents.Document)
         page = doc.blueprint.pages[src]
         @debug "Collecting citations in $src"
         empty!(page.globals.meta)
-        for elem in values(page.mapping)
-            Documents.walk(page.globals.meta, elem) do sub_elem
-                collect_citation(sub_elem, page.globals.meta, page, doc)
+        for elem in page.elements
+            Documents.walk(page.globals.meta, page.mapping[elem]) do component
+                collect_citation(component, page.globals.meta, page, doc)
             end
         end
     end
@@ -36,33 +36,34 @@ function collect_citations(doc::Documents.Document)
     @debug "Collected citations" citations
 end
 
-function get_citation_name(link)
+function get_citation_key(link)
     if link.url == "@cite"   # citation format: [key](@cite)
-        citation_name = link.text[1]
+        key = link.text[1]
     else  # citation format:                    [text](@cite key)
         if (m = match(r"^@cite\s*([^\s},]+)\s*$", link.url)) ≢ nothing
-            citation_name = m[1]
+            key = m[1]
         else
             error("Invalid citation: [$(link.text)]($(link.url))")
         end
     end
+    return key
 end
 
 function collect_citation(link::Markdown.Link, meta, page, doc)
     if occursin("@cite", link.url)
         if length(link.text) === 1 && isa(link.text[1], String)
-            citation_name = get_citation_name(link)
-            @debug "Collect citation: $citation_name."
-            if haskey(doc.plugins[CitationBibliography].bib, citation_name)
-                entry = doc.plugins[CitationBibliography].bib[citation_name]
+            key = get_citation_key(link)
+            if haskey(doc.plugins[CitationBibliography].bib, key)
+                entry = doc.plugins[CitationBibliography].bib[key]
                 citations = doc.plugins[CitationBibliography].citations
                 if haskey(citations, entry.id)
-                    citations[entry.id] += 1
+                    @debug "Found non-new citation $(entry.id)"
                 else
-                    citations[entry.id] = 1
+                    citations[entry.id] = length(citations) + 1
+                    @debug "Found new citation $(citations[entry.id]): $(entry.id)"
                 end
             else
-                error("Citation not found in bibliography: $(citation_name)")
+                error("Citation not found in bibliography: $(key)")
             end
         else
             error("Invalid citation: $(link.text)")
@@ -92,6 +93,7 @@ function Selectors.runner(::Type{ExpandCitations}, doc::Documents.Document)
 end
 
 function expand_citations(doc::Documents.Document)
+    citations = doc.plugins[CitationBibliography].citations
     for (src, page) in doc.blueprint.pages
         @info "Expanding citations in $src"
         empty!(page.globals.meta)
@@ -107,20 +109,24 @@ function expand_citation(elem, page, doc)
     end
 end
 
-function format_citation(entry)
-    authors = format_names(entry; names=:lastonly) |> tex2unicode
-    text = authors * " (" * xyear(entry) * ")"
-    return text
+function format_citation(entry, doc)
+    citations = doc.plugins[CitationBibliography].citations
+    return "[$(citations[entry.id])]"
+    # alternative style:
+    # authors = format_names(entry; names=:lastonly) |> tex2unicode
+    # text = authors * " (" * xyear(entry) * ")"
+    # return text
 end
 
 function expand_citation(link::Markdown.Link, meta, page, doc)
     occursin("@cite", link.url) || return false
     if length(link.text) === 1 && isa(link.text[1], String)
-        citation_name = get_citation_name(link)
-        @debug "Expanding citation: $citation_name."
+        key = get_citation_key(link)
+        @debug "Expanding citation: $key."
 
-        if haskey(doc.plugins[CitationBibliography].bib, citation_name)
-            entry = doc.plugins[CitationBibliography].bib[citation_name]
+        bib = doc.plugins[CitationBibliography].bib
+        if haskey(bib, key)
+            entry = bib[key]
             headers = doc.internal.headers
             if Anchors.exists(headers, entry.id)
                 if Anchors.isunique(headers, entry.id)
@@ -128,7 +134,7 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
                     anchor   = Anchors.anchor(headers, entry.id)
                     path     = relpath(anchor.file, dirname(page.build))
                     if link.url == "@cite"
-                        link.text = format_citation(entry)
+                        link.text = format_citation(entry, doc)
                     else
                         # keep original link.text
                     end
@@ -151,4 +157,6 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
     return false
 end
 
-expand_citation(other, meta, page, doc) = true # Continue to `walk` through element `other`.
+function expand_citation(other, meta, page, doc)
+    return true  # Continue to `walk` through element `other`.
+end

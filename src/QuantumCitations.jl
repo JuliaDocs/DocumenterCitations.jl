@@ -19,7 +19,7 @@ export CitationBibliography
 struct CitationBibliography <: Documenter.Plugin
     # citation key => entry
     bib::OrderedDict{String,<:Bibliography.AbstractEntry}
-    # citation key => number of citations
+    # citation key => order index (when citation was first seen)
     citations::OrderedDict{String,Int64}
 end
 
@@ -37,11 +37,12 @@ end
 """
     Example
 
-An example object with a "References" section in its docstring.
+An example object citing Ref. [GoerzQ2022](@cite) with a "References" section
+in its docstring.
 
 # References
 
-* [Goerz et al. Quantum 6, 871 (2022)](@cite GoerzQ2022)
+* [GoerzQ2022](@cite) Goerz et al. Quantum 6, 871 (2022)
 """
 struct Example end
 

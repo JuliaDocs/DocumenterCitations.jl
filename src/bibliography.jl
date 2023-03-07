@@ -223,8 +223,14 @@ function format_bibliography_entry(entry)
     return "$authors. <i>$title</i>. $(linkify(published_in, link))."
 end
 
-function format_bibliography_key(id, entry)
-    return id
+function format_bibliography_key(key, entry, doc)
+    citations = doc.plugins[CitationBibliography].citations
+    i = get(citations, key, 0)
+    if i == 0
+        i = length(citations) + 1
+        citations[key] = i
+    end
+    return "[$i]"
 end
 
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
@@ -232,17 +238,17 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     raw_bib = """<div class="citation"><dl>"""
     bib = doc.plugins[CitationBibliography].bib
     citations = doc.plugins[CitationBibliography].citations
-    ids = keys(bib)
-    for id in ids
-        @info "Expanding bibliography entry: $id."
-        entry = bib[id]
+    bib_keys = keys(citations)
+    for key in bib_keys
+        @info "Expanding bibliography entry: $key."
+        entry = bib[key]
 
         # Add anchor that citations can link to from anywhere in the docs.
         Anchors.add!(doc.internal.headers, entry, entry.id, page.build)
 
-        raw_bib *= """<dt>$(format_bibliography_key(id, entry))</dt>
+        raw_bib *= """<dt>$(format_bibliography_key(key, entry, doc))</dt>
         <dd>
-          <div id="$id">$(format_bibliography_entry(entry))</div>
+          <div id="$key">$(format_bibliography_entry(entry))</div>
         </dd>"""
     end
     raw_bib *= "\n</dl></div>"

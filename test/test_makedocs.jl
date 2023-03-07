@@ -3,7 +3,10 @@ using Documenter
 using Test
 
 
-@testset "Full documentation build" begin
+@testset "Integration Test" begin
+
+    # we build the complete documentation of QuantumCitations in a test
+    # environment
 
     bib = CitationBibliography(
         joinpath(@__DIR__, "..", "docs", "example.bib"),
@@ -34,8 +37,8 @@ using Test
         end
         html = read(joinpath(tmpdir, "references", "index.html"), String)
         ∈ₛ(needle, haystack) = occursin(needle, haystack)
-        @test "Optimizing Robust Quantum Gates in Open Quantum Systems" ∈ₛ html
+        @test "Quantum Optimal Control" ∈ₛ html
     end
-    @test bib.citations["GoerzQ2022"] >= 2
+    @test bib.citations["GoerzQ2022"] == 1
 
 end
