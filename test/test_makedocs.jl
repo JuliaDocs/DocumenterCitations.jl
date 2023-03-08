@@ -8,8 +8,10 @@ using Test
     # we build the complete documentation of QuantumCitations in a test
     # environment
 
-    bib =
-        CitationBibliography(joinpath(@__DIR__, "..", "docs", "example.bib"), sorting=:nyt)
+    bib = CitationBibliography(
+        joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),
+        sorting=:nyt
+    )
     mktempdir() do tmpdir
         root = joinpath(@__DIR__, "..", "docs")
         # We're basically doing `makedocs`, but written out for debuggability

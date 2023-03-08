@@ -25,12 +25,12 @@ pkg> add QuantumCitations
 
 ## Telling Documenter.jl about your bibliography
 
-First, place a BibTeX `refs.bib` file in the `docs` folder of your project.  Then, in `docs/make.jl`, instantiate the [`CitationBibliography`](@ref) plugin and pass it to `makedocs`:
+First, place a BibTeX [`refs.bib`](./refs.bib) file in the `docs/src` folder of your project.  Then, in `docs/make.jl`, instantiate the [`CitationBibliography`](@ref) plugin and pass it to `makedocs`:
 
 ```julia
 using QuantumCitations
 
-bib = CitationBibliography("refs.bib")
+bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
 makedocs(bib, ...)
 ```
 
@@ -45,7 +45,7 @@ to insert the bibliography for all cited references in the project. See [Syntax 
 
 ## How to cite references in your documentation
 
-You can put citations anywhere in your docs, both in the markdown pages and in the docstrings of any functions that are shown as part of the API documentation: The basic syntax is e.g. `[GoerzQ2022](@cite)`, for a BibTeX key [GoerzQ2022](@cite GoerzQ2022) in `refs.bib`,  which will be rendered as "[GoerzQ2022](@cite)".  See [Syntax for Citations](@ref) for more details.
+You can put citations anywhere in your docs, both in the markdown pages and in the docstrings of any functions that are shown as part of the API documentation: The basic syntax is e.g. `[GoerzQ2022](@cite)`, for a BibTeX key [GoerzQ2022](@cite GoerzQ2022) in [`refs.bib`](./refs.bib),  which will be rendered as "[GoerzQ2022](@cite)".  See [Syntax for Citations](@ref) for more details.
 
 Clicking on the citations takes you to the bibliography ("[References](@ref)").
 
