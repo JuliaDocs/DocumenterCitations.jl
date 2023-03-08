@@ -159,7 +159,7 @@ in the documentation of the following `Example`:
 QuantumCitations.Example
 ```
 
-(cf. the source of the `Example` type).
+(cf. the [source of the `Example` type](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/38693339ba8da08aebacdd664acb2c7e23cf1628/src/QuantumCitations.jl#L67-L76)).
 
 If there was no explicit numerical citation in the main text of the docstring,
 

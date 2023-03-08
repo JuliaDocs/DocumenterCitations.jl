@@ -1,6 +1,6 @@
 # CSS Styling
 
-For optimal rendering of the bibliography, place a file `citations.css` in the `docs/src/assets` folder of your project, containing e.g.
+For optimal rendering of the bibliography, place a file [`citations.css`](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/master/docs/src/assets/citations.css) in the `docs/src/assets` folder of your project, containing e.g.
 
 ```css
 .citation dl {
@@ -13,7 +13,7 @@ For optimal rendering of the bibliography, place a file `citations.css` in the `
   margin-bottom: 0.75em; }
 ```
 
-The `citations.css` file must be listed as an `asset` for `Documenter.HTML` in `docs/make.jl`:
+The `citations.css` file must be listed as an `asset` for `Documenter.HTML` in [`docs/make.jl`](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/master/docs/make.jl):
 
 ```julia
 makedocs(

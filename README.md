@@ -23,7 +23,7 @@ pkg> add QuantumCitations
 
 ## Usage
 
-*   Place a BibTeX `refs.bib` file in the `docs/src` folder of your project.  Then, in `docs/make.jl`, instantiate the `CitationBibliography` plugin and pass it to `makedocs`:
+*   Place a BibTeX [`refs.bib`](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/master/docs/src/refs.bib) file in the `docs/src` folder of your project.  Then, in [`docs/make.jl`](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/master/docs/make.jl), instantiate the `CitationBibliography` plugin and pass it to [`makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs):
 
     ```julia
     using QuantumCitations
