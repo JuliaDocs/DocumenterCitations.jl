@@ -10,6 +10,10 @@ using SafeTestsets
         include("test_tex2unicode.jl")
     end
 
+    print("\n* parse_bibliography_block (test_parse_bibliography_block.jl):")
+    @time @safetestset "* parse_bibliography_block" begin
+        include("test_parse_bibliography_block.jl")
+    end
 
     print("\n* integration test (test_makedocs.jl):")
     @time @safetestset "makedocs" begin
