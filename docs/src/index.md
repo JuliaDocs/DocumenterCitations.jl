@@ -6,7 +6,7 @@ By default, [QuantumCitations.jl](https://github.com/JuliaQuantumControl/Quantum
 
 [QuantumCitations.jl](https://github.com/JuliaQuantumControl/QuantumCitations.jl) by default differs from [DocumenterCitations.jl](https://github.com/ali-ramadhan/DocumenterCitations.jl) in the following ways:
 
-* A numeric citation style is used, with citations numbers that are sequential throughout the entire documentation.
+* A numeric citation style is used, with citation numbers that are sequential throughout the entire documentation.
 * Only cited references are included in the main bibliography by default.
 * The `@bibligraphy` block can have additional options to customize which references are included, see [Syntax for the Bibliography Block](@ref).
 * It is possible to generate secondary bibliographies, e.g., for a specific page.
