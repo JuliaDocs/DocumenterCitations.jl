@@ -29,3 +29,4 @@ Manifest.toml
 # Documenter output
 docs/build/
 
+/.vscode

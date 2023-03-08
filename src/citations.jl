@@ -173,7 +173,7 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
                 @warn "reference for '$(entry.id)' could not be found in $(Utilities.locrepr(page.source))."
             end
         else
-            error("Citation not found in bibliography: $(citation_name)")
+            error("Citation not found in bibliography: $(key)")
         end
     else
         error("Invalid citation: $(link.text)")
