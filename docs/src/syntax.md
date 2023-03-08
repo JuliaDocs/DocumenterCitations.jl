@@ -1,5 +1,18 @@
 # Syntax
 
+## Syntax for the .bib file
+
+The [`refs.bib`](./refs.bib) file in the [BibTeX format](https://www.bibtex.com/g/bibtex-format/). It must be parseable by [BibParser.jl](https://github.com/Humans-of-Julia/BibParser.jl).
+
+The use of `@string` macros for abbreviated journal names is encouraged, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
+
+Also, even though `QuantumCitations` has limited support for [escaped symbols](http://www.bibtex.org/SpecialSymbols/), the full use of unicode is both supported and strongly encouraged.
+
+All entries should have a DOI field, or a Url field if no DOI is available.
+
+You may be interested to use the [`getbibtex` script](https://github.com/goerz/getbibtex) to generate consistent `.bib` files.
+
+
 ## Syntax for the Bibliography Block
 
 ### Default `@bibliograph` block
