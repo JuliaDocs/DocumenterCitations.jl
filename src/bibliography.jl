@@ -64,7 +64,7 @@ const tex2unicode_replacements = (
     r"\\b\{(\S{1})\}" => s"\1\u331",  # \b{b} 	ḇ 	bar under the letter
     r"\\t\{(\S{1})(\S{1})\}" => s"\1\u0361\2",  # \t{oo} 	o͡o 	"tie" (inverted u) over the two letters
     r"\{\}" => s"",  # empty curly braces should not have any effect
-    r"\{([[:alnum:]]+)\}" => s"\1",  # {<text>} 	<text> 	bracket stripping after applying all rules
+    r"\{([\w-]+)\}" => s"\1",  # {<text>} 	<text> 	bracket stripping after applying all rules
 
     # Sources : https://www.compart.com/en/unicode/U+0131 enter the unicode character into the search box
 )
