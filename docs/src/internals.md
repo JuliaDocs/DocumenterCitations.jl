@@ -27,11 +27,11 @@ ExpandCitations
 
 ## Customization
 
-Even though `QuantumCitations` targets the APS/REVTeX numeric citation style, it is technically possible to completely customize the rendering of citations and references by overwriting the [`format_bibliography_key`](@ref), [`format_bibliography_entry`](@ref), and [`format_citation`](@ref) methods detailed below for a user-defined `style`.
+Even though `QuantumCitations` targets the APS/REVTeX numeric citation style, it is technically possible to completely customize the rendering of citations and references by overwriting the [`format_bibliography_label`](@ref), [`format_bibliography_reference`](@ref), and [`format_citation`](@ref) methods detailed below for a user-defined `style`.
 
 ```@docs
-format_bibliography_key
-format_bibliography_entry
+format_bibliography_label
+format_bibliography_reference
 format_citation
 ```
 

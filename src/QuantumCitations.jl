@@ -68,5 +68,6 @@ struct Example end
 
 include("citations.jl")
 include("bibliography.jl")
+include("formatting.jl")
 
 end
