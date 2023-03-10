@@ -361,8 +361,17 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         html = """<div class="citation canonical"><dl>"""
     end
     headers = doc.internal.headers
-    for key in keys_to_show
-        entry = bib[key]
+    entries = OrderedDict{String,Bibliography.Entry}(
+        key => bib[key] for key in keys_to_show
+    )
+    sorting = get(fields, :Sorting, :citation)
+    # The "Sorting" field is undocumented, because the sorting is really tied
+    # to the citation style. If someone wants to mess with that, they can, but
+    # we probably shouldn't encourage it.
+    if sorting ≠ :citation
+        Bibliography.sort_bibliography!(entries, sorting)
+    end
+    for (key, entry) in entries
         @assert entry.id == key
         if fields[:Canonical]
             # Add anchor that citations can link to from anywhere in the docs.
