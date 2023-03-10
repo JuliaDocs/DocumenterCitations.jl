@@ -327,11 +327,10 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     block = x.code
     @debug "Evaluating @bibliography block" block
 
-    bib_plugin = doc.plugins[CitationBibliography]
-    bib = bib_plugin.bib
-    citations = bib_plugin.citations
-    style = bib_plugin.style
-    page_citations = bib_plugin.page_citations
+    bib = doc.plugins[CitationBibliography]
+    citations = bib.citations
+    style = bib.style
+    page_citations = bib.page_citations
 
     fields, lines = parse_bibliography_block(block, doc, page)
 
@@ -357,11 +356,11 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     # second, explicitly listed keys
     for key in lines
         if key == "*"
-            push!(keys_to_show, keys(bib)...)
-            @debug "Add all keys from $(bib_plugin.filename) to keys_to_show" keys_to_show
+            push!(keys_to_show, keys(bib.entries)...)
+            @debug "Add all keys from $(bib.bibfile) to keys_to_show" keys_to_show
             break  # we don't need to look at the rest of the lines
         else
-            if key in keys(bib)
+            if key in keys(bib.entries)
                 push!(keys_to_show, key)
                 @debug "Add listed $key to keys_to_show" keys_to_show
             else
@@ -375,8 +374,9 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         html = """<div class="citation canonical"><dl>"""
     end
     headers = doc.internal.headers
-    entries =
-        OrderedDict{String,Bibliography.Entry}(key => bib[key] for key in keys_to_show)
+    entries = OrderedDict{String,Bibliography.Entry}(
+        key => bib.entries[key] for key in keys_to_show
+    )
     sorting = get(fields, :Sorting, :citation)
     # The "Sorting" field is undocumented, because the sorting is really tied
     # to the citation style. If someone wants to mess with that, they can, but

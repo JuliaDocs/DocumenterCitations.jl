@@ -107,26 +107,25 @@ end
 # `doc.plugins[CitationBibliography]` object. The `src` is the name of the
 # markdown file containing the `link` and `page` is a `Page` object.
 function collect_citation(link::Markdown.Link, meta, src, page, doc)
-    bib_plugin = doc.plugins[CitationBibliography]
+    bib = doc.plugins[CitationBibliography]
     if occursin("@cite", link.url)
         cit = CitationLink(link)
         for key in cit.keys
-            if haskey(doc.plugins[CitationBibliography].bib, key)
-                entry = bib_plugin.bib[key]
-                citations = bib_plugin.citations
-                page_citations = bib_plugin.page_citations
-                if haskey(citations, entry.id)
-                    @debug "Found non-new citation $(entry.id)"
+            if haskey(bib.entries, key)
+                entry = bib.entries[key]
+                @assert entry.id == key
+                if haskey(bib.citations, key)
+                    @debug "Found non-new citation $key"
                 else
-                    citations[entry.id] = length(citations) + 1
-                    @debug "Found new citation $(citations[entry.id]): $(entry.id)"
+                    bib.citations[key] = length(bib.citations) + 1
+                    @debug "Found new citation $(bib.citations[key]): $key"
                 end
-                if !haskey(page_citations, src)
-                    page_citations[src] = Set{String}()
+                if !haskey(bib.page_citations, src)
+                    bib.page_citations[src] = Set{String}()
                 end
-                push!(page_citations[src], entry.id)
+                push!(bib.page_citations[src], key)
             else
-                error("Citation not found in bibliography: $(key)")
+                error("Citation not found in bibliography: $key")
             end
         end
     end
@@ -161,7 +160,6 @@ function Selectors.runner(::Type{ExpandCitations}, doc::Documents.Document)
 end
 
 function expand_citations(doc::Documents.Document)
-    citations = doc.plugins[CitationBibliography].citations
     for (src, page) in doc.blueprint.pages
         @info "Expanding citations in $src"
         empty!(page.globals.meta)
@@ -231,20 +229,19 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
     end
     key = cit.keys[1]
     @debug "Expanding citation: $key."
-    plugin = doc.plugins[CitationBibliography]
-    bib = plugin.bib
-    style = plugin.style
+    bib = doc.plugins[CitationBibliography]
     citations = doc.plugins[CitationBibliography].citations
-    if haskey(bib, key)
-        entry = bib[key]
+    if haskey(bib.entries, key)
+        entry = bib.entries[key]
+        @assert entry.id == key
         headers = doc.internal.headers
-        if Anchors.exists(headers, entry.id)
-            if Anchors.isunique(headers, entry.id)
+        if Anchors.exists(headers, key)
+            if Anchors.isunique(headers, key)
                 # Replace the `@cite` url with a path to the referenced header.
-                anchor = Anchors.anchor(headers, entry.id)
+                anchor = Anchors.anchor(headers, key)
                 path   = relpath(anchor.file, dirname(page.build))
                 if isnothing(cit.link_text)
-                    link.text = format_citation(style, entry, citations; note=cit.note)
+                    link.text = format_citation(bib.style, entry, citations; note=cit.note)
                 else
                     # keep original link.text
                 end
@@ -252,14 +249,14 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
                 return true
             else
                 push!(doc.internal.errors, :citations)
-                @warn "'$(entry.id)' is not unique in $(Utilities.locrepr(page.source))."
+                @warn "'$key' is not unique in $(Utilities.locrepr(page.source))."
             end
         else
             push!(doc.internal.errors, :citations)
-            @warn "reference for '$(entry.id)' could not be found in $(Utilities.locrepr(page.source))."
+            @warn "reference for '$key' could not be found in $(Utilities.locrepr(page.source))."
         end
     else
-        error("Citation not found in bibliography: $(key)")
+        error("Citation not found in bibliography: $key")
     end
     return false
 end
