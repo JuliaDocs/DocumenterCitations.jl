@@ -225,7 +225,7 @@ end
 """Format an entry in a `@bibliography` block.
 
 ```julia
-format_bibliography_entry(entry)
+format_bibliography_entry(style, entry)
 ```
 
 produces an HTML string from a
@@ -236,8 +236,15 @@ and [APS journals](https://journals.aps.org). That is, the full list of authors
 with initials for the first names, the italicized tile, and the journal
 reference (linking to the DOI, if available), ending with the publication year
 in parenthesis.
+
+The `style` must be `:numeric`.
 """
-function format_bibliography_entry(entry)
+function format_bibliography_entry(style::Symbol, entry)
+    return format_bibliography_entry(Val(style), entry)
+end
+
+
+function format_bibliography_entry(::Val{:numeric}, entry)
     authors = format_names(entry; names=:last) |> tex2unicode
     link = xlink(entry)
     title = xtitle(entry) |> tex2unicode
@@ -248,21 +255,27 @@ end
 """Format the key for an entry in a `@bibliography` block.
 
 ```julia
-format_bibliography_key(entry, doc)
+format_bibliography_key(style, entry, citations)
 ```
 
 produces a string for the rendered key in the bibliography for the given
-[`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry)
+[`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry).
+The `citations` argument is a dict that maps citation keys (`entry.id`) to the
+order in which citations appear in the documentation, i.e., a numeric citation
+key.
 
-It determines a numerical citation key by looking up
-[`entry.id`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry)
-in [`doc.plugins[CitationBibliography].citations`](@ref CitationBibliography).
-This numerical key is returned in square brackets.
-
-If overridden, this method should generally match [`format_citation`](@ref).
+The `style` must be `:numeric`. This returns the numeric citation key in square
+brackets, cf. [`format_citation`](@ref).
 """
-function format_bibliography_key(entry, doc)
-    citations = doc.plugins[CitationBibliography].citations
+function format_bibliography_key(style::Symbol, args...)
+    return format_bibliography_key(Val(style), args...)
+end
+
+function format_bibliography_key(
+    ::Val{:numeric},
+    entry,
+    citations::OrderedDict{String,Int64}
+)
     key = entry.id
     i = get(citations, key, 0)
     if i == 0
@@ -317,6 +330,7 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     bib_plugin = doc.plugins[CitationBibliography]
     bib = bib_plugin.bib
     citations = bib_plugin.citations
+    style = bib_plugin.style
     page_citations = bib_plugin.page_citations
 
     fields, lines = parse_bibliography_block(block, doc, page)
@@ -361,9 +375,8 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         html = """<div class="citation canonical"><dl>"""
     end
     headers = doc.internal.headers
-    entries = OrderedDict{String,Bibliography.Entry}(
-        key => bib[key] for key in keys_to_show
-    )
+    entries =
+        OrderedDict{String,Bibliography.Entry}(key => bib[key] for key in keys_to_show)
     sorting = get(fields, :Sorting, :citation)
     # The "Sorting" field is undocumented, because the sorting is really tied
     # to the citation style. If someone wants to mess with that, they can, but
@@ -392,9 +405,9 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
             # bibliographies may contain entries for the same keys.
         end
         @debug "Expanding bibliography entry: $key."
-        html *= """<dt>$(format_bibliography_key(entry, doc))</dt>
+        html *= """<dt>$(format_bibliography_key(style, entry, citations))</dt>
         <dd>
-          <div id="$key">$(format_bibliography_entry(entry))</div>
+          <div id="$key">$(format_bibliography_entry(style, entry))</div>
         </dd>"""
     end
     html *= "\n</dl></div>"

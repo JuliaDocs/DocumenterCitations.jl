@@ -10,7 +10,7 @@ using Test
 
     bib = CitationBibliography(
         joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),
-        sorting=:nyt
+        style=:numeric
     )
     mktempdir() do tmpdir
         root = joinpath(@__DIR__, "..", "docs")

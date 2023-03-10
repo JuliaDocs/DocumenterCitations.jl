@@ -8,7 +8,7 @@ NAME = PROJECT_TOML["name"]
 AUTHORS = join(PROJECT_TOML["authors"], ", ") * " and contributors"
 GITHUB = "https://github.com/JuliaQuantumControl/QuantumCitations.jl"
 
-bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"), sorting=:nyt)
+bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
 
 println("Starting makedocs")
 

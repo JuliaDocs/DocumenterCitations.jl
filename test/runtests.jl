@@ -11,14 +11,20 @@ using SafeTestsets
     end
 
     print("\n* parse_bibliography_block (test_parse_bibliography_block.jl):")
-    @time @safetestset "* parse_bibliography_block" begin
+    @time @safetestset "parse_bibliography_block" begin
         include("test_parse_bibliography_block.jl")
+    end
+
+    print("\n* parse_citation_link (test_parse_citation_link.jl):")
+    @time @safetestset "parse_citation_link" begin
+        include("test_parse_citation_link.jl")
     end
 
     print("\n* integration test (test_makedocs.jl):")
     @time @safetestset "makedocs" begin
         include("test_makedocs.jl")
     end
+
 
     print("\n")
 

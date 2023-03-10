@@ -25,7 +25,7 @@ You may be interested in using the [`getbibtex` script](https://github.com/goerz
 renders a bibliography for all references that are cited throughout the entire documentation, see [Cited References](@ref). The bibliography will not include entries that may be present in the `.bib` file, but that are not cited.
 
 
-### Full `@bibliography`
+### [Full `@bibliography`](@id full_bibliography)
 
 ~~~markdown
 ```@bibliography
@@ -123,20 +123,24 @@ Note that the numbers [BrifNJP2010](@cite), [GoerzDiploma2010](@cite), and [Goer
 
 References in a `@bibliography` are rendered (and numbered) in the order in which they are cited. When there are multiple pages in the documentation, the order in which the pages appear in the navigation bar is relevant.
 
-For a `@bibliography` block that includes non-cited references (the `*` in a [Full `@bibliography`](@ref)), the [`Bibliography.sorting_rules`](https://humans-of-julia.github.io/Bibliography.jl/stable/#Bibliography.sorting_rules) become relevant. When instantiating the plugin, a `sorting` argument can be passed to `CitationBibliography()`,
+Non-cited references ([`*` in a full bibliography](@ref full_bibliography)) will appear in the order they are listed in the underlying `.bib` file. That order may be changed by [sorting it explicitly](https://humans-of-julia.github.io/Bibliography.jl/stable/#Bibliography.sort_bibliography!):
+
 
 ```julia
 bib = CitationBibliography("refs.bib", sorting = :nyt)
-```
 
-which sorts otherwise non-cited references by author name, year, and title.
+using Bibliography
+sort_bibliography!(bib.bib, :nyt)  # name-year-title
+```
 
 
 ## Syntax for Citations
 
 The following syntax is available to create citations in any markdown text:
 
-* `[key](@cite)` is the default syntax, e.g., `Refs [GoerzQ2022](@cite) and [Tannor2007](@cite)` which is rendered as "Refs [GoerzQ2022](@cite) and [Tannor2007](@cite)".
+* `[key](@cite)` is the default syntax, e.g., `Refs. [GoerzQ2022](@cite) and [Tannor2007](@cite)` which is rendered as "Refs. [GoerzQ2022](@cite) and [Tannor2007](@cite)".
+
+* `[key; note](@cite)` allows to include a note in the citation, e.g., `See Ref. [GoerzQ2022; Eq. (1)](@cite)` which is rendered as "See Ref. [GoerzQ2022; Eq. (1)](@cite)".
 
 * `[text](@cite key)` can be used to link to a reference from arbitrary text, e.g., `[the Semi-AD paper](@cite GoerzQ2022)` renders as "[the Semi-AD paper](@cite GoerzQ2022)".
 
