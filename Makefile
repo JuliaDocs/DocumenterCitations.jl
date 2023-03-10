@@ -41,6 +41,7 @@ servedocs: test/Manifest.toml  ## Build (auto-rebuild) and serve documentation a
 
 clean: ## Clean up build/doc/testing artifacts
 	$(JULIA) -e 'include("test/clean.jl"); clean()'
+	make -C docs/latex clean
 
 codestyle: test/Manifest.toml ../.JuliaFormatter.toml  ## Apply the codestyle to the entire project
 	$(JULIA) --project=test -e 'using JuliaFormatter; format(".", verbose=true)'

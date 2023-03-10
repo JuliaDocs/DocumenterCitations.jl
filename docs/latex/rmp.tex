@@ -1,0 +1,55 @@
+\documentclass[aps,rmp,onecolumn,noshowpacs,superscriptaddress,preprintnumbers,%
+kamsmath,amssymb,notitlepage,letterpaper]{revtex4-2}
+
+\def\Author{Michael Goerz}
+\def\Title{Demo of the  RevTeX Rev. Mod. Phys. (author-year) citation style}
+
+\usepackage[utf8]{inputenc}
+\usepackage{caption}
+\captionsetup{justification=raggedright, singlelinecheck=true}
+\usepackage[
+  pdftitle={\Title},
+  pdfauthor={\Author},
+  colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black,
+  bookmarksopen=false, breaklinks=true, plainpages=false, pdfpagelabels
+]{hyperref}
+
+\begin{document}
+
+\title{\Title}
+\author{\Author}
+\date{\today}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+  \item \verb|\cite{GoerzQ2022}| renders as ``\cite{GoerzQ2022}''.
+  \item \verb|\citet{GoerzQ2022}| renders as ``\citet{GoerzQ2022}''.
+  \item \verb|\citep{GoerzQ2022}| renders as ``\citep{GoerzQ2022}''.
+  \item \verb|\citenum{GoerzQ2022}| renders as ``\citenum{GoerzQ2022}''.
+  \item \verb|\citealt{GoerzQ2022}| renders as ``\citealt{GoerzQ2022}''.
+  \item \verb|\citealp{GoerzQ2022}| renders as ``\citealp{GoerzQ2022}''.
+  \item \verb|\cite[Eq.~(1)]{GoerzQ2022}| renders as ``\cite[Eq.~(1)]{GoerzQ2022}''.
+  \item \verb|\citet[Eq.~(1)]{GoerzQ2022}| renders as ``\citet[Eq.~(1)]{GoerzQ2022}''.
+  \item \verb|\citep[Eq.~(1)]{GoerzQ2022}| renders as ``\citep[Eq.~(1)]{GoerzQ2022}''.
+  \item \verb|\citet*{GoerzQ2022}| renders as ``\citet*{GoerzQ2022}''.
+  \item \verb|\citep*{GoerzQ2022}| renders as ``\citep*{GoerzQ2022}''.
+  \item \verb|\citealt*{GoerzQ2022}| renders as ``\citealt*{GoerzQ2022}''.
+  \item \verb|\citealp*{GoerzQ2022}| renders as ``\citealp*{GoerzQ2022}''.
+  \item \verb|\citet*[Eq.~(1)]{GoerzQ2022}| renders as ``\citet*[Eq.~(1)]{GoerzQ2022}''.
+  \item \verb|\citep*[Eq.~(1)]{GoerzQ2022}| renders as ``\citep*[Eq.~(1)]{GoerzQ2022}''.
+  \item \verb|\citealt*[Eq.~(1)]{GoerzQ2022}| renders as ``\citealt*[Eq.~(1)]{GoerzQ2022}''.
+  \item \verb|\citealp*[Eq.~(1)]{GoerzQ2022}| renders as ``\citealp*[Eq.~(1)]{GoerzQ2022}''.
+  \item \verb|\citet{WinckelIP2008}| renders as ``\citet{WinckelIP2008}''.
+  \item \verb|\Citet{WinckelIP2008}| renders as ``\Citet{WinckelIP2008}''.
+  \item \verb|\Citealt{WinckelIP2008}| renders as ``\Citealt{WinckelIP2008}''.
+  \item \verb|\Citealp{WinckelIP2008}| renders as ``\Citealp{WinckelIP2008}''.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliography{../src/refs}
+
+\end{document}
