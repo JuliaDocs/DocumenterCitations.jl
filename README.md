@@ -13,6 +13,8 @@ By default, [QuantumCitations.jl](https://github.com/JuliaQuantumControl/Quantum
 
 <img id="screenshot" src="docs/src/assets/references.png" alt="Rendered bibliography of two references, [1] and [2]" width="830px">
 
+Alternatively, author-year and alphabetic citations styles are available, see the [Citation Style Gallery](https://juliaquantumcontrol.github.io/QuantumCitations.jl/dev/gallery/). In addition, it is possible to define custom styles.
+
 ## Installation
 
 The `QuantumCitations` package can be installed with [Pkg](https://pkgdocs.julialang.org/v1/) as
