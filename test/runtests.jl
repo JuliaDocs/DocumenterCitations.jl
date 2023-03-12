@@ -5,9 +5,9 @@ using SafeTestsets
 # Note: comment outer @testset to stop after first @safetestset failure
 @time @testset verbose = true "QuantumCitations" begin
 
-    print("\n* tex2unicode (test_tex2unicode.jl):")
-    @time @safetestset "tex2unicode" begin
-        include("test_tex2unicode.jl")
+    print("\n* formatting (test_formatting.jl):")
+    @time @safetestset "formatting" begin
+        include("test_formatting.jl")
     end
 
     print("\n* parse_bibliography_block (test_parse_bibliography_block.jl):")

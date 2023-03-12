@@ -62,7 +62,45 @@ function _initial(name)
     return initial
 end
 
-function format_names(entry, editors=false; names=:full, and=true)
+
+# extract two-digit year from an entry.date.year
+function two_digit_year(year)
+    if (m = match(r"\d{4}", year)) ≢ nothing
+        return m.match[3:4]
+    else
+        @warn "Invalid year: $year"
+        return year
+    end
+end
+
+
+# The citation label for the :alpha style
+function alpha_label(entry)
+    year = two_digit_year(entry.date.year)
+    if length(entry.authors) == 1
+        name = Unicode.normalize(entry.authors[1].last; stripmark=true)
+        return uppercasefirst(first(name, 3)) * year
+    else
+        letters = join(
+            [
+                uppercase(Unicode.normalize(name.last; stripmark=true)[1]) for
+                name in first(entry.authors, 3)
+            ],
+            "",
+        )
+        return letters * year
+    end
+end
+
+
+function format_names(
+    entry,
+    editors=false;
+    names=:full,
+    and=true,
+    et_al=0,
+    et_al_text="et al."
+)
     # forces the names to be editors' name if the entry are Proceedings
     if !editors && entry.type ∈ ["proceedings"]
         return format_names(entry, true)
@@ -78,23 +116,65 @@ function format_names(entry, editors=false; names=:full, and=true)
         )
     elseif names == :lastonly
         parts = map(s -> [s.particle, s.last, s.junior], entry_names)
+    elseif names == :lastfirst
+        parts = String[]
+        # See below
     else
         error("Invalid names=$(repr(names)) not in :full, :last, :lastonly")
     end
 
-    entry_names = map(parts) do s
-        return join(filter(!isempty, s), " ")
-    end
-    if and
-        str = join(entry_names, ", ", " and ")
+    if names == :lastfirst
+        formatted_names = String[]
+        for name in entry_names
+            last_parts = [name.particle, name.last, name.junior]
+            last = join(filter(!isempty, last_parts), " ")
+            first_parts = [_initial(name.first), _initial(name.middle)]
+            first = join(filter(!isempty, first_parts), " ")
+            push!(formatted_names, "$last, $first")
+        end
     else
-        str = join(entry_names, ", ")
+        formatted_names = map(parts) do s
+            return join(filter(!isempty, s), " ")
+        end
+    end
+
+    needs_et_al = false
+    if et_al > 0
+        if length(formatted_names) > (et_al + 1)
+            formatted_names = formatted_names[1:et_al]
+            and = false
+            needs_et_al = true
+        end
+    end
+
+    namesep = ", "
+    if names == :lastfirst
+        namesep = "; "
+    end
+
+    if and
+        str = join(formatted_names, namesep, " and ")
+    else
+        str = join(formatted_names, namesep)
+    end
+    if needs_et_al
+        str *= " $et_al_text"
     end
     return replace(str, r"[\n\r ]+" => " ")
 end
 
 
-function format_published_in(entry)
+function italicize_md_et_al(text; et_al_in="*et al.*", et_al_out="et al.")
+    if occursin(et_al_in, text)
+        parts = split(text, et_al_in; limit=2)
+        return [parts[1], Markdown.Italic(Any[et_al_out]), parts[2]]
+    else
+        return text
+    end
+end
+
+
+function format_published_in(entry; include_date=true)
     str = ""
     if entry.type == "article"
         str *= entry.in.journal
@@ -104,16 +184,15 @@ function format_published_in(entry)
         if !isempty(entry.in.pages)
             str *= ", $(entry.in.pages)"
         end
-        str *= " ($(entry.date.year))"
     elseif entry.type == "book"
         parts = [entry.in.publisher, entry.in.address]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
-        return str
-    elseif entry.type == "booklet"
-        parts = [entry.access.howpublished,]
+    elseif entry.type ∈ ["booklet", "misc"]
+        parts = [
+            entry.access.howpublished
+            get(entry.fields, "note", "")
+        ]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
     elseif entry.type == "eprint"
         if isempty(entry.eprint.archive_prefix)
             str *= entry.eprint.eprint
@@ -128,7 +207,6 @@ function format_published_in(entry)
             entry.in.address,
         ]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
     elseif entry.type == "incollection"
         parts = [
             "In $(entry.booktitle)",
@@ -138,7 +216,6 @@ function format_published_in(entry)
             entry.in.address,
         ]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
     elseif entry.type == "inproceedings"
         parts = [
             " In " * entry.booktitle,
@@ -148,26 +225,20 @@ function format_published_in(entry)
             entry.in.publisher,
         ]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
     elseif entry.type == "manual"
         parts = [entry.in.organization, entry.in.address]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
-    elseif entry.type ∈ ["mastersthesis", "phdthesis"]
+    elseif entry.type == "mastersthesis"
         parts = [
-            (entry.type == "mastersthesis" ? "Master's" : "PhD") * " thesis",
+            get(entry.fields, "type", "Master's thesis"),
             entry.in.school,
             entry.in.address,
         ]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
-    elseif entry.type == "misc"
-        parts = [
-            entry.access.howpublished
-            get(entry.fields, "note", "")
-        ]
+    elseif entry.type == "phdthesis"
+        parts =
+            [get(entry.fields, "type", "Phd thesis"), entry.in.school, entry.in.address,]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
     elseif entry.type == "proceedings"
         parts = [
             (entry.in.volume != "" ? "Volume $(entry.in.volume) of " : "") *
@@ -176,7 +247,6 @@ function format_published_in(entry)
             entry.in.publisher,
         ]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
     elseif entry.type == "techreport"
         parts = [
             entry.in.number != "" ? "Technical Report $(entry.in.number)" : "",
@@ -184,10 +254,11 @@ function format_published_in(entry)
             entry.in.address,
         ]
         str *= join(filter!(!isempty, parts), ", ")
-        str *= " ($(entry.date.year))"
     elseif entry.type == "unpublished"
         parts = [get(entry.fields, "note", ""),]
         str *= join(filter!(!isempty, parts), ", ")
+    end
+    if include_date
         str *= " ($(entry.date.year))"
     end
     return str

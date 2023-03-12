@@ -25,11 +25,14 @@ ExpandBibliography
 ExpandCitations
 ```
 
-## Customization
+## [Customization](@id customization)
 
-Even though `QuantumCitations` targets the APS/REVTeX numeric citation style, it is technically possible to completely customize the rendering of citations and references by overwriting the [`format_bibliography_label`](@ref), [`format_bibliography_reference`](@ref), and [`format_citation`](@ref) methods detailed below for a user-defined `style`.
+A custom style can be created by defining methods for functions listed below that specialize for a user-defined `style` argument to [`CitationBibliography`](@ref). If the `style` is identified by a simple name, e.g. `:mystyle`, the method should specialize on `Val{:mystyle}`, see the [examples for custom styles](@ref custom_styles). Beyond that, e.g., if the `style` needs to implement options or needs to maintain internal state to manage unique citation labels, `style` can be an object of a custom type.
+
 
 ```@docs
+bib_html_list_style
+bib_sorting
 format_bibliography_label
 format_bibliography_reference
 format_citation

@@ -24,6 +24,8 @@ end
     @test cit.style ≡ nothing
     @test cit.keys == ["GoerzQ2022"]
     @test cit.note ≡ nothing
+    @test cit.capitalize ≡ false
+    @test cit.starred ≡ false
     @test cit.link_text ≡ nothing
 
     cit = _CitationLink("[GoerzQ2022](@citet)")
@@ -31,6 +33,18 @@ end
 
     cit = _CitationLink("[GoerzQ2022](@citep)")
     @test cit.cmd == :citep
+
+    cit = _CitationLink("[GoerzQ2022](@Citet)")
+    @test cit.cmd == :citet
+    @test cit.capitalize ≡ true
+
+    cit = _CitationLink("[GoerzQ2022](@cite*)")
+    @test cit.cmd == :cite
+    @test cit.starred ≡ true
+
+    cit = _CitationLink("[GoerzQ2022](@citet*)")
+    @test cit.cmd == :citet
+    @test cit.starred ≡ true
 
     cit = _CitationLink("[GoerzQ2022](@cite%authoryear%)")
     # This is an undocumented feature (on purpose)
@@ -75,12 +89,16 @@ end
             cit = _CitationLink("[see GoerzQ2022](@cite)")
             # can't have text before keys (we might allow this in the future)
         end
+        @test_throws ErrorException begin
+            cit = _CitationLink("[GoerzQ2022](@CITE)")
+            # wrong capitalization
+        end
     end
-    @show test_logger.messages
     msgs = [
         "Error: The @cite link.url does not match required regex: @citenocommand",
         "Error: The @cite link.url does not match required regex:  @cite ",
         "Error: Invalid bibtex key: see GoerzQ2022",
+        "Error: The @cite link.url does not match required regex: @CITE"
     ]
     for msg in msgs
         @test msg in test_logger

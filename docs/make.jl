@@ -8,9 +8,15 @@ NAME = PROJECT_TOML["name"]
 AUTHORS = join(PROJECT_TOML["authors"], ", ") * " and contributors"
 GITHUB = "https://github.com/JuliaQuantumControl/QuantumCitations.jl"
 
-bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
+bib = CitationBibliography(
+    joinpath(@__DIR__, "src", "refs.bib"),
+    # style=:numeric  # default
+)
 
 println("Starting makedocs")
+
+include(joinpath("custom_styles", "enumauthoryear.jl"))
+include(joinpath("custom_styles", "keylabels.jl"))
 
 makedocs(
     bib,
@@ -23,11 +29,12 @@ makedocs(
         footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl)."
     ),
     pages=[
-        "Home"        => "index.md",
-        "Syntax"      => "syntax.md",
-        "CSS Styling" => "styling.md",
-        "Internals"   => "internals.md",
-        "References"  => "references.md",
+        "Home"                   => "index.md",
+        "Syntax"                 => "syntax.md",
+        "Citation Style Gallery" => "gallery.md",
+        "CSS Styling"            => "styling.md",
+        "Internals"              => "internals.md",
+        "References"             => "references.md",
     ]
 )
 

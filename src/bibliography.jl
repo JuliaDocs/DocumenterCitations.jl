@@ -2,10 +2,19 @@
 
 Runs after [`CollectCitations`](@ref) but before [`ExpandCitations`](@ref).
 
-Each bibliography is rendered into HTML as a [definition
-list](https://www.w3schools.com/tags/tag_dl.asp). The label for each list item
-is rendered via [`format_bibliography_label`](@ref) and the full bibliographic
-reference is rendered via [`format_bibliography_reference`](@ref).
+Each bibliography is rendered into HTML as a a [definition
+list](https://www.w3schools.com/tags/tag_dl.asp), a [bullet
+list](https://www.w3schools.com/tags/tag_ul.asp), or an
+[enumeration](https://www.w3schools.com/tags/tag_ol.asp) depending on
+[`bib_html_list_style`](@ref). For a definition list, the label for each list
+item is rendered via [`format_bibliography_label`](@ref) and the full
+bibliographic reference is rendered via
+[`format_bibliography_reference`](@ref). For bullet lists of enumerations,
+[`format_bibliography_label`](@ref) is not used and
+[`format_bibliography_reference`](@ref) fully determines the entry.
+
+The order of the entries in the bibliography is determined by the
+[`bib_sorting`](@ref) method for the chosen citation style.
 """
 abstract type ExpandBibliography <: Builder.DocumentPipeline end
 
@@ -34,16 +43,14 @@ abstract type BibliographyBlock <: Selectors.AbstractSelector end
 format_bibliography_reference(style, entry)
 ```
 
-produces an HTML string from a
-[`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry)
-that is formatted like in
+produces an HTML string for the full reference of a
+[`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry).
+For the default `style=:numeric`, the result is formatted like in
 [REVTeX](https://www.ctan.org/tex-archive/macros/latex/contrib/revtex/auguide)
 and [APS journals](https://journals.aps.org). That is, the full list of authors
 with initials for the first names, the italicized tile, and the journal
 reference (linking to the DOI, if available), ending with the publication year
 in parenthesis.
-
-The `style` must be `:numeric`.
 """
 function format_bibliography_reference(style::Symbol, entry)
     return format_bibliography_reference(Val(style), entry)
@@ -58,6 +65,20 @@ function format_bibliography_reference(::Val{:numeric}, entry)
     return "$authors. <i>$title</i>. $(linkify(published_in, link))."
 end
 
+function format_bibliography_reference(::Val{:authoryear}, entry)
+    authors = format_names(entry; names=:lastfirst) |> tex2unicode
+    year = entry.date.year |> tex2unicode
+    link = xlink(entry)
+    title = xtitle(entry) |> tex2unicode
+    published_in = format_published_in(entry; include_date=false) |> tex2unicode
+    return "$authors ($year). <i>$title</i>. $(linkify(published_in, link))."
+end
+
+function format_bibliography_reference(::Val{:alpha}, entry)
+    return format_bibliography_reference(:numeric, entry)
+end
+
+
 """Format the label for an entry in a `@bibliography` block.
 
 ```julia
@@ -70,8 +91,10 @@ The `citations` argument is a dict that maps citation keys (`entry.id`) to the
 order in which citations appear in the documentation, i.e., a numeric citation
 key.
 
-The `style` must be `:numeric`. This returns a label that is the numeric
-citation key in square brackets, cf. [`format_citation`](@ref).
+For the default `style=:numeric`, this returns a label that is the numeric
+citation key in square brackets, cf. [`format_citation`](@ref). In general,
+this function is used only if [`bib_html_list_style`](@ref) returns `:dl` for
+the given `style`.
 """
 function format_bibliography_label(style::Symbol, args...)
     return format_bibliography_label(Val(style), args...)
@@ -93,6 +116,51 @@ function format_bibliography_label(
 end
 
 
+function format_bibliography_label(
+    ::Val{:alpha},
+    entry,
+    citations::OrderedDict{String,Int64}
+)
+    return "[$(alpha_label(entry))]"
+end
+
+
+"""Identify the type of HTML list associated with a bibliographic style.
+
+```julia
+bib_html_list_style(style)
+```
+
+must return one of
+
+* `:dl` (definition list),
+* `:ul` (unordered / bullet list), or
+* `:ol` (ordered list / enumeration),
+
+for any `style` that [`CitationBibliography`](@ref) is instantiated with.
+"""
+bib_html_list_style(style::Symbol) = bib_html_list_style(Val(style))
+bib_html_list_style(::Val{:numeric}) = :dl
+bib_html_list_style(::Val{:authoryear}) = :ul
+bib_html_list_style(::Val{:alpha}) = :dl
+
+
+"""Identify the sorting associated with a bibliographic style.
+
+```
+bib_sorting(style)
+```
+
+must return `:citation` or any of the `sorting_rules` accepted by
+[`Bibliography.sort_bibliography!`](https://humans-of-julia.github.io/Bibliography.jl/dev/#Bibliography.sort_bibliography!),
+e.g. `:nyt`.
+"""
+bib_sorting(style::Symbol) = bib_sorting(Val(style))
+bib_sorting(::Val{:numeric}) = :citation
+bib_sorting(::Val{:authoryear}) = :nyt
+bib_sorting(::Val{:alpha}) = :nyt
+
+
 function parse_bibliography_block(block, doc, page)
     fields = Dict{Symbol,Any}()
     lines = String[]
@@ -109,7 +177,8 @@ function parse_bibliography_block(block, doc, page)
     if :Canonical ∉ keys(fields)
         fields[:Canonical] = true
     end
-    allowed_fields = Set{Symbol}((:Canonical, :Pages))
+    allowed_fields = Set{Symbol}((:Canonical, :Pages, :Sorting, :Style))
+    # Note: :Sorting and :Style are undocumented features
     for field in keys(fields)
         if field ∉ allowed_fields
             warn_loc = "N/A"
@@ -135,10 +204,20 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
 
     bib = doc.plugins[CitationBibliography]
     citations = bib.citations
-    style = bib.style
+    style::Any = bib.style
     page_citations = bib.page_citations
 
     fields, lines = parse_bibliography_block(block, doc, page)
+
+    style = bib.style
+    if :Style in keys(fields)
+        # The :Style field in @bibliography is an undocumented feature. Citations
+        # and bibliography should use the same style (set at the plugin level).
+        # Local styles are for the Gallery in the documentation only.
+        @assert fields[:Style] isa Symbol
+        style = fields[:Style]
+        @debug "Overriding local style with $repr($style)"
+    end
 
     keys_to_show = OrderedSet{String}()
 
@@ -175,15 +254,23 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         end
     end
 
-    html = """<div class="citation"><dl>"""
+    tag = bib_html_list_style(style)
+    allowed_tags = (:ol, :ul, :dl)
+    if tag ∉ allowed_tags
+        error(
+            "bib_html_list_tyle returned an invalid tag $(repr(tag)). " *
+            "Must be one of $(repr(allowed_tags))"
+        )
+    end
+    html = """<div class="citation noncanonical"><$tag>"""
     if fields[:Canonical]
-        html = """<div class="citation canonical"><dl>"""
+        html = """<div class="citation canonical"><$tag>"""
     end
     headers = doc.internal.headers
     entries = OrderedDict{String,Bibliography.Entry}(
         key => bib.entries[key] for key in keys_to_show
     )
-    sorting = get(fields, :Sorting, :citation)
+    sorting = get(fields, :Sorting, bib_sorting(style))
     # The "Sorting" field is undocumented, because the sorting is really tied
     # to the citation style. If someone wants to mess with that, they can, but
     # we probably shouldn't encourage it.
@@ -211,12 +298,20 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
             # bibliographies may contain entries for the same keys.
         end
         @debug "Expanding bibliography entry: $key."
-        html *= """<dt>$(format_bibliography_label(style, entry, citations))</dt>
-        <dd>
-          <div id="$key">$(format_bibliography_reference(style, entry))</div>
-        </dd>"""
+        if tag == :dl
+            html *= """
+            <dt>$(format_bibliography_label(style, entry, citations))</dt>
+            <dd>
+            <div id="$key">$(format_bibliography_reference(style, entry))</div>
+            </dd>"""
+        else
+            html *= """
+            <li>
+            <div id="$key">$(format_bibliography_reference(style, entry))</div>
+            </li>"""
+        end
     end
-    html *= "\n</dl></div>"
+    html *= "\n</$tag></div>"
 
     page.mapping[x] = Documents.RawNode(:html, html)
 

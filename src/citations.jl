@@ -24,10 +24,9 @@ end
 
 
 function collect_citations(doc::Documents.Document)
-    citations = doc.plugins[CitationBibliography].citations
-    page_citations = doc.plugins[CitationBibliography].page_citations
-    empty!(citations)
-    empty!(page_citations)
+    bib = doc.plugins[CitationBibliography]
+    empty!(bib.citations)
+    empty!(bib.page_citations)
     nav_sources = [node.page for node in doc.internal.navlist]
     other_sources = filter(src -> !(src in nav_sources), keys(doc.blueprint.pages))
     @info "Looking for citations in pages" nav_sources other_sources
@@ -41,11 +40,11 @@ function collect_citations(doc::Documents.Document)
             end
         end
     end
-    @debug "Collected citations" citations
+    @debug "Collected citations" bib.citations
 end
 
 
-__RX_CMD = raw"""@(?<cmd>cite(t|p)?)"""
+__RX_CMD = raw"""@(?<cmd>[cC]ite(t|p|alt|alp|num)?)(?<starred>\*)?"""
 __RX_KEY = raw"""[^\s"#'(),{}%]+"""
 __RX_KEYS = "(?<keys>$__RX_KEY(\\s*,\\s*$__RX_KEY)*)"
 __RX_NOTE = raw"""\s*;\s+(?<note>.*)"""
@@ -56,22 +55,33 @@ _RX_TEXT_KEYS = Regex("^$__RX_KEYS($__RX_NOTE)?\$")
 # Regex for [text][_RX_CITE_KEY_URL], e.g. [Semi-AD paper](@cite GoerzQ2022)
 _RX_CITE_KEY_URL = Regex("^@cite\\s+(?<key>$__RX_KEY)\$")
 
-struct CitationLink
+Base.@kwdef struct CitationLink
     link::Markdown.Link                    # the original markdown link
-    cmd::Symbol                            # :cite, :citet, :citep etc.
+    cmd::Symbol                            # :cite, :citet, :citep (lowercase)
     style::Union{Nothing,Symbol}           # :numeric by default
     keys::Vector{String}                   # bibtex cite keys
     note::Union{Nothing,String}            # e.g. "Eq. (1)"
+    capitalize::Bool                       # whether @Cite... command is used
+    starred::Bool                          # whether "*" command is used
     link_text::Union{Nothing,Vector{Any}}  # can be nested markdown
     # In the standard case where link.text is the cite key(s), link_text must
-    # be `nothing`. Whether or not link_text is `nothing` decided whether we
+    # be `nothing`. Whether or not link_text is `nothing` decides whether we
     # have a "standard citation" or a "custom text citation".
+end
+
+function Base.show(io::IO, c::CitationLink)
+    print(
+        io,
+        "CitationLink(link=$(c.link), cmd=$(c.cmd), style=$(c.style), keys=$(c.keys), note=$(c.note), capitalize=$(c.capitalize), starred=$(c.starred), link_text=$(c.link_text))"
+    )
 end
 
 function CitationLink(link::Markdown.Link)
     if (m_url = match(_RX_CITE_URL, link.url)) ≢ nothing
         # [GoerzQ2022](@cite)
-        cmd = Symbol(m_url[:cmd])
+        cmd = Symbol(lowercase(m_url[:cmd]))
+        capitalize = startswith(m_url[:cmd], "C")
+        starred = !isnothing(m_url[:starred])
         style = isnothing(m_url[:style]) ? nothing : Symbol(m_url[:style])
         if length(link.text) === 1 && isa(link.text[1], String)
             m_text = match(_RX_TEXT_KEYS, link.text[1])
@@ -94,12 +104,14 @@ function CitationLink(link::Markdown.Link)
         style = nothing
         keys = String[m_url[:key],]
         note = nothing
+        capitalize = false
+        starred = false
         link_text = link.text
     else
         @error "The @cite link.url does not match required regex: $(link.url)"
         error("Invalid citation: $(Markdown.plaininline(link))")
     end
-    CitationLink(link, cmd, style, keys, note, link_text)
+    CitationLink(link, cmd, style, keys, note, capitalize, starred, link_text)
 end
 
 
@@ -108,7 +120,7 @@ end
 # markdown file containing the `link` and `page` is a `Page` object.
 function collect_citation(link::Markdown.Link, meta, src, page, doc)
     bib = doc.plugins[CitationBibliography]
-    if occursin("@cite", link.url)
+    if startswith(lowercase(link.url), "@cite")
         cit = CitationLink(link)
         for key in cit.keys
             if haskey(bib.entries, key)
@@ -178,21 +190,42 @@ end
 """Format a `@cite` citation.
 
 ```julia
-text = format_citation(style, entry, citations; note=nothing, cite_cmd=:cite)
+text = format_citation(
+    style,
+    entry,
+    citations;
+    note=nothing,
+    cite_cmd=:cite,
+    capitalize=false,
+    starred=false
+)
 ```
 
-Returns a string that replaces the link text for a `[key](@cite)` citation in
-markdown text. The `entry` is a `Bibliography.Entry` and `citations` is a dict
-that maps citation keys (`entry.id`) to the order in which citations appear in
-the documentation, i.e., a numeric citation key.
+returns a string that replaces the link text for a markdown
+citation (`[key](@cite)` and its variations, see [Syntax for Citations](@ref)
+and the [Citation Style Gallery](@ref)).
 
-The `note`, if given, is a string like "Eq. (1)".
-The `cite_cmd` is the citation command, one of `:cite`, `:citep`, and `:citet`,
-see the [natbib
-documentation](https://mirrors.rit.edu/CTAN/macros/latex/contrib/natbib/natnotes.pdf)
+For the default `style=:numeric` and `[key](@cite)`, this returns a label that
+is the numeric citation key in square brackets, cf.
+[`format_bibliography_label`](@ref).
 
-The `style` must be `:numeric`. This returns the numeric citation key in square
-brackets.
+# Argument
+
+* `style`: The style  to render the citation in, as passed to
+  [`CitationBibliography`](@ref)
+* `entry`: The [`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry)
+  that is being cited
+* `citations`: A dict that maps citation keys (`entry.id`) to the order in
+  which citations appear in the documentation, i.e., a numeric citation index
+* `note`: A citation note, e.g. "Eq. (1)" in `[GoerzQ2022; Eq. (1)](@cite)`
+* `cite_cmd`: The citation command, one of `:cite`, `:citet`, `:citep`. Note
+  that, e.g., `[Goerz@2022](@Citet*)` results in `cite_cmd=:citet`
+* `capitalize`: Whether the citation should be formatted to appear at the start
+  of a sentence, as indicated by a capitalized `@Cite...` command, e.g.,
+  `[GoerzQ2022](@Citet*)`
+* `starred`: Whether the citation should be rendered in "extended" form, i.e.,
+  with the full list of authors, as indicated by a `*` in the citation, e.g.,
+  `[Goerz@2022](@Citet*)`
 """
 function format_citation(style::Symbol, args...; kwargs...)
     return format_citation(Val(style), args...; kwargs...)
@@ -201,24 +234,119 @@ end
 function format_citation(
     style::Val{:numeric},
     entry,
-    citations::OrderedDict{String,Int64};
+    citations; # OrderedDict{String,Int64}
     note::Union{Nothing,String}=nothing,
-    cite_cmd::Symbol=:cite
+    cite_cmd::Symbol=:cite,
+    capitalize::Bool=false,
+    starred::Bool=false
 )
-    if cite_cmd == :citet
-        @warn "@citet is currently not fully supported  for $style citations"
-        # See natbib documentation: should include author name.
-    end
     if isnothing(note)
-        return "[$(citations[entry.id])]"
+        link_text = "[$(citations[entry.id])]"
     else
-        return "[$(citations[entry.id]), $note]"
+        link_text = "[$(citations[entry.id]), $note]"
     end
+    if cite_cmd ∈ [:citealt, :citealp, :citenum]
+        @warn "$cite_cmd citations are not supported in the default styles."
+        (cite_cmd == :citealt) && (cite_cmd = :citet)
+    end
+    if cite_cmd == :citet
+        et_al = 1
+        if starred
+            et_al = 0
+        end
+        names =
+            format_names(entry; names=:lastonly, and=true, et_al, et_al_text="*et al.*") |>
+            tex2unicode
+        if capitalize
+            names = uppercasefirst(names)
+        end
+        link_text = italicize_md_et_al("$names $link_text")
+    end
+    return link_text
+end
+
+
+function format_citation(
+    style::Val{:authoryear},
+    entry,
+    citations; # OrderedDict{String,Int64}
+    note::Union{Nothing,String}=nothing,
+    cite_cmd::Symbol=:cite,
+    capitalize::Bool=false,
+    starred::Bool=false
+)
+    et_al = starred ? 0 : 1
+    names =
+        format_names(entry; names=:lastonly, and=true, et_al, et_al_text="*et al.*") |>
+        tex2unicode
+
+    if cite_cmd == :citep
+        cite_cmd = :cite
+    end
+
+    year = entry.date.year |> tex2unicode
+    if !isnothing(note)
+        year *= ", $note"
+    end
+
+    if cite_cmd ∈ [:citealt, :citealp, :citenum]
+        @warn "$cite_cmd citations are not supported in the default styles."
+        (cite_cmd == :citealt) && (cite_cmd = :citet)
+    end
+    if cite_cmd == :citet
+        link_text = "$names ($year)"
+    else
+        link_text = "($names, $year)"
+    end
+
+    if capitalize
+        link_text = uppercasefirst(link_text)
+    end
+
+    link_text = italicize_md_et_al(link_text)
+
+    return link_text
+
+end
+
+
+function format_citation(
+    style::Val{:alpha},
+    entry,
+    citations; # OrderedDict{String,Int64}
+    note::Union{Nothing,String}=nothing,
+    cite_cmd::Symbol=:cite,
+    capitalize::Bool=false,
+    starred::Bool=false
+)
+    if isnothing(note)
+        link_text = "[$(alpha_label(entry))]"
+    else
+        link_text = "[$(alpha_label(entry)), $note]"
+    end
+    if cite_cmd ∈ [:citealt, :citealp, :citenum]
+        @warn "$cite_cmd citations are not supported in the default styles."
+        (cite_cmd == :citealt) && (cite_cmd = :citet)
+    end
+    if cite_cmd == :citet
+        et_al = 1
+        if starred
+            et_al = 0
+        end
+        names =
+            format_names(entry; names=:lastonly, and=true, et_al, et_al_text="*et al.*") |>
+            tex2unicode
+        if capitalize
+            names = uppercasefirst(names)
+        end
+        link_text = italicize_md_et_al("$names $link_text")
+    end
+    return link_text
 end
 
 
 function expand_citation(link::Markdown.Link, meta, page, doc)
-    occursin("@cite", link.url) || return false
+    startswith(lowercase(link.url), "@cite") || return false
     cit = CitationLink(link)
     if length(cit.keys) > 1
         error("Multi-citations are not currently supported")
@@ -228,9 +356,8 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
         # tree of new markdown, with multiple links.
     end
     key = cit.keys[1]
-    @debug "Expanding citation: $key."
+    @debug "Expanding citation: $key." cit
     bib = doc.plugins[CitationBibliography]
-    citations = doc.plugins[CitationBibliography].citations
     if haskey(bib.entries, key)
         entry = bib.entries[key]
         @assert entry.id == key
@@ -241,7 +368,19 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
                 anchor = Anchors.anchor(headers, key)
                 path   = relpath(anchor.file, dirname(page.build))
                 if isnothing(cit.link_text)
-                    link.text = format_citation(bib.style, entry, citations; note=cit.note)
+                    style = isnothing(cit.style) ? bib.style : cit.style
+                    # Using the cit.style is an undocumented feature. We only
+                    # use it to render citation in a non-default style in the
+                    # Gallery in the documentation.
+                    link.text = format_citation(
+                        style,
+                        entry,
+                        bib.citations;
+                        note=cit.note,
+                        cite_cmd=cit.cmd,
+                        capitalize=cit.capitalize,
+                        starred=cit.starred
+                    )
                 else
                     # keep original link.text
                 end
