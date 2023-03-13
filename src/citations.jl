@@ -33,8 +33,6 @@ function collect_citations(doc::Documents.Document)
         )
         return false
     end
-    empty!(bib.citations)
-    empty!(bib.page_citations)
     nav_sources = [node.page for node in doc.internal.navlist]
     other_sources = filter(src -> !(src in nav_sources), keys(doc.blueprint.pages))
     @info "Looking for citations in pages" nav_sources other_sources

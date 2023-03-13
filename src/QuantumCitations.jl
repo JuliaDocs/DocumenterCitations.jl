@@ -17,6 +17,17 @@ using Unicode
 
 export CitationBibliography
 
+
+const _CACHED_CITATIONS = OrderedDict{String,Int64}()
+const _CACHED_PAGE_CITATIONS = OrderedDict{String,Set{String}}()
+# The caching is used to get around a Bug in Documenter 0.27, see
+# https://discourse.julialang.org/t/running-makedocs-overwrites-repl-docstrings
+# Even though it doesn't *really* solve the problem, caching `bib.citations`
+# and `bib.page_citation` in practice gets around the plugin not being able to
+# detect citations in docstring on a second call to `makedocs`. The caching
+# feature should be removed when Documenter 0.28 is released.
+
+
 """Plugin for enabling bibliographic citations in Documenter.jl.
 
 ```julia
@@ -59,7 +70,10 @@ struct CitationBibliography <: Documenter.Plugin
     page_citations::Dict{String,Set{String}}
 end
 
-function CitationBibliography(bibfile::AbstractString=""; style=:numeric)
+function CitationBibliography(bibfile::AbstractString=""; style=:numeric, cached=true)
+    # note: cached is undocumented (on purpose), see comment at
+    # _CACHED_PAGE_CITATIONS. Should be removed when Documenter 0.28 is
+    # released
     entries = import_bibtex(bibfile)
     if length(bibfile) > 0
         if !isfile(bibfile)
@@ -71,6 +85,11 @@ function CitationBibliography(bibfile::AbstractString=""; style=:numeric)
     end
     citations = Dict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
+    if cached
+        citations = _CACHED_CITATIONS
+        page_citations = _CACHED_PAGE_CITATIONS
+    end
+
     return CitationBibliography(bibfile, style, entries, citations, page_citations)
 end
 
