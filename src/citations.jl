@@ -24,7 +24,15 @@ end
 
 
 function collect_citations(doc::Documents.Document)
-    bib = doc.plugins[CitationBibliography]
+    local bib
+    try
+        bib = doc.plugins[CitationBibliography]
+    catch
+        @error(
+            "You are `using CitationBibligraphy`, but did not pass the plugin to `makedocs`"
+        )
+        return false
+    end
     empty!(bib.citations)
     empty!(bib.page_citations)
     nav_sources = [node.page for node in doc.internal.navlist]
@@ -34,10 +42,14 @@ function collect_citations(doc::Documents.Document)
         page = doc.blueprint.pages[src]
         @debug "Collecting citations in $src"
         empty!(page.globals.meta)
-        for elem in page.elements
-            Documents.walk(page.globals.meta, page.mapping[elem]) do component
-                collect_citation(component, page.globals.meta, src, page, doc)
+        try
+            for elem in page.elements
+                Documents.walk(page.globals.meta, page.mapping[elem]) do component
+                    collect_citation(component, page.globals.meta, src, page, doc)
+                end
             end
+        catch
+            push!(doc.internal.errors, :citations)
         end
     end
     @debug "Collected citations" bib.citations
@@ -137,7 +149,7 @@ function collect_citation(link::Markdown.Link, meta, src, page, doc)
                 end
                 push!(bib.page_citations[src], key)
             else
-                error("Citation not found in bibliography: $key")
+                @error("Citation not found in bibliography: $key")
             end
         end
     end
@@ -357,7 +369,16 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
     end
     key = cit.keys[1]
     @debug "Expanding citation: $key." cit
-    bib = doc.plugins[CitationBibliography]
+    local bib
+    try
+        bib = doc.plugins[CitationBibliography]
+    catch
+        push!(doc.internal.errors, :citations)
+        @error(
+            "You are `using CitationBibligraphy`, but did not pass the plugin to `makedocs`"
+        )
+        return false
+    end
     if haskey(bib.entries, key)
         entry = bib.entries[key]
         @assert entry.id == key
@@ -395,7 +416,8 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
             @warn "reference for '$key' could not be found in $(Utilities.locrepr(page.source))."
         end
     else
-        error("Citation not found in bibliography: $key")
+        push!(doc.internal.errors, :citations)
+        @error("Citation not found in bibliography: $key")
     end
     return false
 end

@@ -234,7 +234,11 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         end
     else
         # all cited keys
-        push!(keys_to_show, keys(citations)...)
+        if length(citations) > 0
+            push!(keys_to_show, keys(citations)...)
+        else
+            @warn "There were no citations"
+        end
         @debug "Add all cited keys to keys_to_show" citations keys_to_show
     end
 

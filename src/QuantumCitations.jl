@@ -61,6 +61,14 @@ end
 
 function CitationBibliography(bibfile::AbstractString=""; style=:numeric)
     entries = import_bibtex(bibfile)
+    if length(bibfile) > 0
+        if !isfile(bibfile)
+            error("bibfile $bibfile does not exist")
+        end
+        if length(entries) == 0
+            @warn "No entries loaded from $bibfile"
+        end
+    end
     citations = Dict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
     return CitationBibliography(bibfile, style, entries, citations, page_citations)
