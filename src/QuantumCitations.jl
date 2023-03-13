@@ -88,6 +88,9 @@ function CitationBibliography(bibfile::AbstractString=""; style=:numeric, cached
     if cached
         citations = _CACHED_CITATIONS
         page_citations = _CACHED_PAGE_CITATIONS
+        if (length(citations) > 0) || (length(page_citations) > 0)
+            @warn "Using cached citations"
+        end
     end
 
     return CitationBibliography(bibfile, style, entries, citations, page_citations)
