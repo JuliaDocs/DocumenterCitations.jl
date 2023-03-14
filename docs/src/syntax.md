@@ -174,7 +174,7 @@ Non-cited references ([`*` in a full bibliography](@ref full_bibliography)) will
 bib = CitationBibliography("refs.bib")
 
 using Bibliography
-sort_bibliography!(bib.bib, :nyt)  # name-year-title
+sort_bibliography!(bib.entries, :nyt)  # name-year-title
 ```
 
 In general, the citation style determines the order of the references, see the [Citation Style Gallery](@ref).
