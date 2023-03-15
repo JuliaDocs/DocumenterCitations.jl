@@ -1,5 +1,6 @@
 # QuantumCitations.jl
 
+[![Version](https://juliahub.com/docs/QuantumCitations/version.svg)](https://juliahub.com/ui/Packages/QuantumCitations/73HPB)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliaquantumcontrol.github.io/QuantumCitations.jl/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliaquantumcontrol.github.io/QuantumCitations.jl/dev)
 [![Build Status](https://github.com/JuliaQuantumControl/QuantumCitations.jl/workflows/CI/badge.svg)](https://github.com/JuliaQuantumControl/QuantumCitations.jl/actions)
