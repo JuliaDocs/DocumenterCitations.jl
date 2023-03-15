@@ -20,6 +20,7 @@ include(joinpath("custom_styles", "keylabels.jl"))
 
 makedocs(
     bib,
+    authors=AUTHORS,
     sitename="QuantumCitations.jl",
     strict=true,
     format=Documenter.HTML(

@@ -60,17 +60,68 @@ makedocs(bib, ...)
 Somewhere in your documentation, like a [References](@ref) page, include a markdown block
 
 ~~~markdown
+# References
+
 ```@bibliography
 ```
 ~~~
 
-to insert the bibliography for all cited references in the project. See [Syntax for the Bibliography Block](@ref) for more options. You will also want to add custom [CSS Styling](@ref) to your documentation to improve the rendering of your bibliography.
+to insert the bibliography for all cited references in the project. See [Syntax for the Bibliography Block](@ref) for more options.
+
+You will also want to add custom [CSS Styling](@ref) to your documentation to improve the rendering of your bibliography.
+
+Thus, a [full `docs/make.jl` file](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/master/docs/make.jl) might look something like this:
+
+```julia
+using QuantumCitations
+using Documenter
+using Pkg
+
+PROJECT_TOML = Pkg.TOML.parsefile(joinpath(@__DIR__, "..", "Project.toml"))
+VERSION = PROJECT_TOML["version"]
+NAME = PROJECT_TOML["name"]
+AUTHORS = join(PROJECT_TOML["authors"], ", ") * " and contributors"
+GITHUB = "https://github.com/JuliaQuantumControl/QuantumCitations.jl"
+
+bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
+
+makedocs(
+    bib,
+    authors=AUTHORS,
+    sitename="QuantumCitations.jl",
+    strict=true,
+    format=Documenter.HTML(
+        prettyurls=true,
+        canonical="https://juliaquantumcontrol.github.io/QuantumCitations.jl",
+        assets=String["assets/citations.css"],
+        footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl)."
+    ),
+    pages=[
+        "Home"                   => "index.md",
+        "Syntax"                 => "syntax.md",
+        "Citation Style Gallery" => "gallery.md",
+        "CSS Styling"            => "styling.md",
+        "Internals"              => "internals.md",
+        "References"             => "references.md",
+    ]
+)
+deploydocs(; repo="github.com/JuliaQuantumControl/QuantumCitations.jl.git")
+```
+
 
 ## How to cite references in your documentation
 
 You can put citations anywhere in your docs, both in the markdown pages and in the docstrings of any functions that are shown as part of the API documentation: The basic syntax is, e.g., `[GoerzQ2022](@cite)`, for a BibTeX key [GoerzQ2022](@cite GoerzQ2022) in [`refs.bib`](./refs.bib),  which will be rendered in the default numeric style as "[GoerzQ2022](@cite)".  See [Syntax for Citations](@ref) for more details.
 
 Clicking on the citations takes you to the bibliography ("[References](@ref)").
+
+## Examples
+
+The following is a list of some projects that use `QuantumCitations`:
+
+* [QuantumPropagators](https://juliaquantumcontrol.github.io/QuantumPropagators.jl)
+* [QuantumControl](https://juliaquantumcontrol.github.io/QuantumControl.jl/)
+* [TwoQubitWeylChamber](https://juliaquantumcontrol.github.io/TwoQubitWeylChamber.jl)
 
 ## Home References
 
