@@ -16,6 +16,7 @@ By default, [QuantumCitations.jl](https://github.com/JuliaQuantumControl/Quantum
 
 Alternatively, author-year and alphabetic citations styles are available, see the [Citation Style Gallery](https://juliaquantumcontrol.github.io/QuantumCitations.jl/dev/gallery/). In addition, it is possible to define custom styles.
 
+
 ## Installation
 
 The `QuantumCitations` package can be installed with [Pkg](https://pkgdocs.julialang.org/v1/) as
@@ -23,6 +24,15 @@ The `QuantumCitations` package can be installed with [Pkg](https://pkgdocs.julia
 ~~~
 pkg> add QuantumCitations
 ~~~
+
+In most cases, you will just want to have `QuantumCitations` in the project that builds your documentation (e.g. [`test/Project.toml`](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/master/test/Project.toml)). Thus, you can also simply add
+
+```
+QuantumCitations = "259add83-af3e-4603-9706-50e341d5574e"
+```
+
+to the `[deps]` section of the relevant `Project.toml` file.
+
 
 ## Usage
 
@@ -35,6 +45,8 @@ pkg> add QuantumCitations
     makedocs(bib, ...)
     ```
 
+*   Optional, but recommended: [add CSS to properly format the bibliography](https://juliaquantumcontrol.github.io/QuantumCitations.jl/stable/styling/)
+
 *   Somewhere in your documentation include a markdown block
 
     ~~~markdown
@@ -46,7 +58,7 @@ pkg> add QuantumCitations
 
 *   Anywhere in the documentation or in docstrings, insert citations as, e.g., `[GoerzQ2022](@cite)`, which will be rendered as "[[2]](#screenshot)" and link to the full reference in the bibliography.
 
-See the documentation for additional features.
+See the [documentation](https://juliaquantumcontrol.github.io/QuantumCitations.jl) for additional information.
 
 ## Documentation
 

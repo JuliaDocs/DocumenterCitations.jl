@@ -35,13 +35,20 @@ In addition to the default [numeric style](@ref numeric_style), built-in [author
 
 ## Installation instructions
 
-You can install the latest version of [QuantumCitations.jl](https://github.com/JuliaQuantumControl/QuantumCitations.jl) using the built-in package manager (accessed by pressing `]` in the
-Julia command prompt) to add the package and instantiate/build all dependencies
+You can install the latest version of [QuantumCitations.jl](https://github.com/JuliaQuantumControl/QuantumCitations.jl) using the [built-in package manager](https://docs.julialang.org/en/v1/stdlib/Pkg/)
 
 ```julia
-julia>]
 pkg> add QuantumCitations
 ```
+
+In most cases, you will just want to have `QuantumCitations` in the project that builds your documentation (e.g. [`test/Project.toml`](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/master/test/Project.toml)). Thus, you can also simply add
+
+```
+QuantumCitations = "259add83-af3e-4603-9706-50e341d5574e"
+```
+
+to the `[deps]` section of the relevant `Project.toml` file.
+
 
 ## Telling Documenter.jl about your bibliography
 
