@@ -21,7 +21,7 @@ jobs:
         arch:
           - x64
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
@@ -37,7 +37,7 @@ jobs:
       - run: |
           # Summarize coverage
           julia --project=test -e 'using QuantumControlTestUtils; show_coverage();'
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           files: lcov.info
   docs:
@@ -48,7 +48,7 @@ jobs:
       statuses: write
       pages: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v1
         with:
           version: '1'
@@ -68,7 +68,7 @@ jobs:
           JULIA_DEBUG: Documenter,QuantumCitations
       - name: Zip the HTML documentation
         run: zip-folder --debug --auto-root --outfile "docs.zip" docs/build
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Upload documentation artifacts
         with:
           name: QuantumCitations
@@ -81,7 +81,7 @@ jobs:
     name: Codestyle
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v1
         with:
           version: '1'
