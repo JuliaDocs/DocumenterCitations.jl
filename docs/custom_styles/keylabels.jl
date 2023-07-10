@@ -1,16 +1,16 @@
-import QuantumCitations
+import DocumenterCitations
 
 # we use some (undocumented) internal helper functions for formatting...
-using QuantumCitations: format_names, tex2unicode, italicize_md_et_al
+using DocumenterCitations: format_names, tex2unicode, italicize_md_et_al
 
-QuantumCitations.format_bibliography_reference(::Val{:keylabels}, entry) =
-    QuantumCitations.format_bibliography_reference(:numeric, entry)
+DocumenterCitations.format_bibliography_reference(::Val{:keylabels}, entry) =
+    DocumenterCitations.format_bibliography_reference(:numeric, entry)
 
-function QuantumCitations.format_bibliography_label(::Val{:keylabels}, entry, citations)
+function DocumenterCitations.format_bibliography_label(::Val{:keylabels}, entry, citations)
     return "[$(entry.id)]"
 end
 
-function QuantumCitations.format_citation(
+function DocumenterCitations.format_citation(
     style::Val{:keylabels},
     entry,
     citations;
@@ -31,6 +31,6 @@ function QuantumCitations.format_citation(
     return link_text
 end
 
-QuantumCitations.bib_sorting(::Val{:keylabels}) = :nyt  # name, year, title
+DocumenterCitations.bib_sorting(::Val{:keylabels}) = :nyt  # name, year, title
 
-QuantumCitations.bib_html_list_style(::Val{:keylabels}) = :dl
+DocumenterCitations.bib_html_list_style(::Val{:keylabels}) = :dl

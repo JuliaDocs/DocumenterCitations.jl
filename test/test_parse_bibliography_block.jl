@@ -1,5 +1,5 @@
 using Test
-using QuantumCitations: parse_bibliography_block
+using DocumenterCitations: parse_bibliography_block
 
 @testset "parse_bibliography_block" begin
 

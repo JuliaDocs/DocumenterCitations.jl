@@ -1,4 +1,4 @@
-name = "QuantumCitations"
+name = "DocumenterCitations"
 uuid = "259add83-af3e-4603-9706-50e341d5574e"
 authors = ["Michael Goerz <mail@michaelgoerz.net>"]
 version = "0.2.1"

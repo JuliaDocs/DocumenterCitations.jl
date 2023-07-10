@@ -1,4 +1,4 @@
-module QuantumCitations
+module DocumenterCitations
 
 using Documenter
 using Documenter.Anchors

@@ -40,10 +40,10 @@ The recommended approach is to use a `# References` section in the docstring wit
 in the documentation of the following `Example`:
 
 ```@docs
-QuantumCitations.Example
+DocumenterCitations.Example
 ```
 
-(cf. the [source of the `Example` type](https://github.com/JuliaQuantumControl/QuantumCitations.jl/blob/38693339ba8da08aebacdd664acb2c7e23cf1628/src/QuantumCitations.jl#L67-L76)).
+(cf. the [source of the `Example` type](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/38693339ba8da08aebacdd664acb2c7e23cf1628/src/DocumenterCitations.jl#L67-L76)).
 
 If there was no explicit numerical citation in the main text of the docstring,
 
@@ -121,7 +121,7 @@ Canonical = false
 ```
 ~~~
 
-renders a bibliography only for the citations on the [Home](@ref QuantumCitations.jl) page:
+renders a bibliography only for the citations on the [Home](@ref DocumenterCitations.jl) page:
 
 ```@bibliography
 Pages = ["index.md"]
@@ -186,7 +186,7 @@ The [`refs.bib`](./refs.bib) file is in the standard [BibTeX format](https://www
 
 The use of `@string` macros for abbreviated journal names is encouraged, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
 
-Also, even though `QuantumCitations` has limited support for [escaped symbols](http://www.bibtex.org/SpecialSymbols/), the full use of unicode is both supported and strongly encouraged.
+Also, even though `DocumenterCitations` has limited support for [escaped symbols](http://www.bibtex.org/SpecialSymbols/), the full use of unicode is both supported and strongly encouraged.
 
 All entries should have a `Doi` field, or a `Url` field if no DOI is available.
 

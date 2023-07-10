@@ -1,5 +1,5 @@
 using Test
-using QuantumCitations: CitationLink
+using DocumenterCitations: CitationLink
 using Markdown
 using Logging
 using QuantumControlTestUtils: QuantumTestLogger

@@ -1,8 +1,8 @@
 using Test
 using Logging
-using QuantumCitations
+using DocumenterCitations
 using QuantumControlTestUtils: QuantumTestLogger
-import QuantumCitations: tex2unicode, two_digit_year, alpha_label
+import DocumenterCitations: tex2unicode, two_digit_year, alpha_label
 
 @testset "text2unicode" begin
     @test tex2unicode("-- ---") == "– —"

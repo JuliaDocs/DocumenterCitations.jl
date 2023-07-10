@@ -1,4 +1,4 @@
-using QuantumCitations
+using DocumenterCitations
 using Documenter
 using Pkg
 
@@ -6,7 +6,7 @@ PROJECT_TOML = Pkg.TOML.parsefile(joinpath(@__DIR__, "..", "Project.toml"))
 VERSION = PROJECT_TOML["version"]
 NAME = PROJECT_TOML["name"]
 AUTHORS = join(PROJECT_TOML["authors"], ", ") * " and contributors"
-GITHUB = "https://github.com/JuliaQuantumControl/QuantumCitations.jl"
+GITHUB = "https://github.com/JuliaDocs/DocumenterCitations.jl"
 
 bib = CitationBibliography(
     joinpath(@__DIR__, "src", "refs.bib"),
@@ -21,11 +21,11 @@ include(joinpath("custom_styles", "keylabels.jl"))
 makedocs(
     bib,
     authors=AUTHORS,
-    sitename="QuantumCitations.jl",
+    sitename="DocumenterCitations.jl",
     strict=true,
     format=Documenter.HTML(
         prettyurls=true,
-        canonical="https://juliaquantumcontrol.github.io/QuantumCitations.jl",
+        canonical="https://juliadocs.github.io/DocumenterCitations.jl",
         assets=String["assets/citations.css"],
         footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl)."
     ),
@@ -41,4 +41,4 @@ makedocs(
 
 println("Finished makedocs")
 
-deploydocs(; repo="github.com/JuliaQuantumControl/QuantumCitations.jl.git")
+deploydocs(; repo="github.com/JuliaDocs/DocumenterCitations.jl.git")

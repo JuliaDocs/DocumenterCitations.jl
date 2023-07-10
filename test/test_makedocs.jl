@@ -1,4 +1,4 @@
-using QuantumCitations
+using DocumenterCitations
 using QuantumControlTestUtils: QuantumTestLogger
 using Documenter
 using Logging
@@ -9,10 +9,10 @@ CUSTOM2 = joinpath(@__DIR__, "..", "docs", "custom_styles", "keylabels.jl")
 
 @testset "Integration Test" begin
 
-    # we build the complete documentation of QuantumCitations in a test
+    # we build the complete documentation of DocumenterCitations in a test
     # environment
 
-    eval(:(using QuantumCitations))
+    eval(:(using DocumenterCitations))
     eval(:(include(CUSTOM1)))
     eval(:(include(CUSTOM2)))
 
@@ -30,7 +30,7 @@ CUSTOM2 = joinpath(@__DIR__, "..", "docs", "custom_styles", "keylabels.jl")
             plugins;
             format,
             strict=false,
-            sitename="QuantumCitations.jl",
+            sitename="DocumenterCitations.jl",
             root,
             build=tmpdir
         )

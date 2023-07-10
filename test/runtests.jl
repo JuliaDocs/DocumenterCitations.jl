@@ -3,7 +3,7 @@ using SafeTestsets
 
 
 # Note: comment outer @testset to stop after first @safetestset failure
-@time @testset verbose = true "QuantumCitations" begin
+@time @testset verbose = true "DocumenterCitations" begin
 
     print("\n* formatting (test_formatting.jl):")
     @time @safetestset "formatting" begin
