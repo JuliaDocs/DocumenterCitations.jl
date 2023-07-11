@@ -33,10 +33,10 @@ jobs:
       - name: "Instantiate test environment"
         run: julia --project=test devrepl.jl
       - name: "Run tests"
-        run: julia --project=test -L devrepl.jl {0} -e 'test()'
+        run: julia --project=test -L devrepl.jl -e 'test()'
       - uses: julia-actions/julia-processcoverage@v1
       - name: "Summarize coverage"
-        run: julia --project=test -L devrepl.jl {0} -e 'show_coverage()'
+        run: julia --project=test -L devrepl.jl -e 'show_coverage()'
       - uses: codecov/codecov-action@v3
         with:
           files: lcov.info
