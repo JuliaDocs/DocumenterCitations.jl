@@ -33,17 +33,10 @@ jobs:
       - name: "Instantiate test environment"
         run: julia --project=test devrepl.jl
       - name: "Run tests"
-        shell: julia --project=test {0}
-        run: |
-          @info "Trying to include devrepl.jl" pwd() readdir(pwd())
-          include("devrepl.jl")
-          test()
+        run: julia --project=test -L devrepl.jl {0} -e 'test()'
       - uses: julia-actions/julia-processcoverage@v1
       - name: "Summarize coverage"
-        shell: julia --project=test {0}
-        run: |
-          include("devrepl.jl")
-          show_coverage()
+        run: julia --project=test -L devrepl.jl {0} -e 'show_coverage()'
       - uses: codecov/codecov-action@v3
         with:
           files: lcov.info
