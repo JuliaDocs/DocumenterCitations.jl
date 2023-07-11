@@ -36,7 +36,7 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
       - run: |
           # Summarize coverage
-          julia --project=test -e 'using QuantumControlTestUtils; show_coverage();'
+          julia --project=test --banner=no --startup-file=yes -e 'include("devrepl.jl"); show_coverage()'
       - uses: codecov/codecov-action@v3
         with:
           files: lcov.info
@@ -53,10 +53,6 @@ jobs:
         with:
           version: '1'
       - run: |
-          # Install Python dependencies
-          set -x
-          /usr/bin/python3 -m pip install zip-files
-      - run: |
           # Instantiate Pkg
           julia --project=test --banner=no --startup-file=yes -e 'include("devrepl.jl")'
       - run: |
@@ -65,18 +61,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-          JULIA_DEBUG: Documenter,QuantumCitations
-      - name: Zip the HTML documentation
-        run: zip-folder --debug --auto-root --outfile "docs.zip" docs/build
-      - uses: actions/upload-artifact@v3
-        name: Upload documentation artifacts
-        with:
-          name: QuantumCitations
-          # We need at least two files in the artifact to avoid a weird
-          # double-zip file. Hence README.md
-          path: |
-            README.md
-            ./docs.zip
+          JULIA_DEBUG: Documenter,DocumenterCitations
   codestyle:
     name: Codestyle
     runs-on: ubuntu-latest
@@ -85,8 +70,6 @@ jobs:
       - uses: julia-actions/setup-julia@v1
         with:
           version: '1'
-      - name: Get codestyle settings
-        run: wget https://raw.githubusercontent.com/JuliaQuantumControl/JuliaQuantumControl/master/.JuliaFormatter.toml
       - name: Install JuliaFormatter and format
         # This will use the latest version by default but you can set the version like so:
         #

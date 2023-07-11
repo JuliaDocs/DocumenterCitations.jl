@@ -33,7 +33,6 @@ function clean(; distclean=false, _exit=true)
         _push!(DISTCLEAN, joinpath(joinpath(ROOT, folder), "Manifest.toml"))
     end
     _push!(DISTCLEAN, joinpath(ROOT, "docs", "Project.toml"))
-    _push!(DISTCLEAN, joinpath(ROOT, ".JuliaFormatter.toml"))
     ###########################################################################
 
     for name in CLEAN

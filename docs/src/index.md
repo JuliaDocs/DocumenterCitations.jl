@@ -4,7 +4,7 @@
 using Markdown
 using Pkg
 
-VERSION = Pkg.dependencies()[Base.UUID("259add83-af3e-4603-9706-50e341d5574e")].version
+VERSION = Pkg.dependencies()[Base.UUID("daee34ce-89f3-4625-b898-19384cb65244")].version
 
 github_badge = "[![Github](https://img.shields.io/badge/JuliaDocs-DocumenterCitations.jl-blue.svg?logo=github)](https://github.com/JuliaQuantumControl/DocumenterCitations.jl)"
 

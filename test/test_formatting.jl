@@ -1,7 +1,6 @@
 using Test
 using Logging
 using DocumenterCitations
-using QuantumControlTestUtils: QuantumTestLogger
 import DocumenterCitations: tex2unicode, two_digit_year, alpha_label
 
 @testset "text2unicode" begin
@@ -17,7 +16,8 @@ import DocumenterCitations: tex2unicode, two_digit_year, alpha_label
 end
 
 @testset "two_digit_year" begin
-    test_logger = QuantumTestLogger()
+    include("test_logger.jl")
+    test_logger = _TestLogger()
     with_logger(test_logger) do
         @test two_digit_year("2001--") == "01"
         @test two_digit_year("2000") == "00"

@@ -2,7 +2,6 @@ using Test
 using DocumenterCitations: CitationLink
 using Markdown
 using Logging
-using QuantumControlTestUtils: QuantumTestLogger
 
 
 function _link(text::String)
@@ -75,7 +74,8 @@ end
 end
 
 @testset "invalid_standard_citation_link" begin
-    test_logger = QuantumTestLogger()
+    include("test_logger.jl")
+    test_logger = _TestLogger()
     with_logger(test_logger) do
         @test_throws ErrorException begin
             cit = _CitationLink("[GoerzQ2022](@citenocommand)")
@@ -126,7 +126,8 @@ end
 end
 
 @testset "invalid_custom_text_citation_link" begin
-    test_logger = QuantumTestLogger()
+    include("test_logger.jl")
+    test_logger = _TestLogger()
     with_logger(test_logger) do
         @test_throws ErrorException begin
             _CitationLink("[Semi-AD paper](@citet GoerzQ2022)")

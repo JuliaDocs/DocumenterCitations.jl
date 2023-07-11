@@ -1,5 +1,4 @@
 using DocumenterCitations
-using QuantumControlTestUtils: QuantumTestLogger
 using Documenter
 using Logging
 using Test
@@ -8,6 +7,8 @@ CUSTOM1 = joinpath(@__DIR__, "..", "docs", "custom_styles", "enumauthoryear.jl")
 CUSTOM2 = joinpath(@__DIR__, "..", "docs", "custom_styles", "keylabels.jl")
 
 @testset "Integration Test" begin
+
+    include("test_logger.jl")
 
     # we build the complete documentation of DocumenterCitations in a test
     # environment
@@ -35,7 +36,7 @@ CUSTOM2 = joinpath(@__DIR__, "..", "docs", "custom_styles", "keylabels.jl")
             build=tmpdir
         )
         cd(document.user.root) do
-            test_logger = QuantumTestLogger()
+            test_logger = _TestLogger()
             with_logger(test_logger) do
                 Documenter.Selectors.dispatch(Documenter.Builder.DocumentPipeline, document)
             end

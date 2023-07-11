@@ -19,15 +19,6 @@ Pkg.activate("test")
 
 function _instantiate()
     Pkg.develop(path=".")
-    if isdir(joinpath("..", "QuantumControlTestUtils.jl"))
-        Pkg.develop(path=joinpath("..", "QuantumControlTestUtils.jl"))
-    end
-    if !isfile(joinpath("..", ".JuliaFormatter.toml"))
-        download(
-            "https://raw.githubusercontent.com/JuliaQuantumControl/JuliaQuantumControl/master/.JuliaFormatter.toml",
-            ".JuliaFormatter.toml"
-        )
-    end
 end
 
 if !isfile(joinpath("test", "Manifest.toml"))

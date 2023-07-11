@@ -1,12 +1,17 @@
 [deps]
 Bibliography = "f1be7e48-bf82-45af-a471-ae754a193061"
+Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
 JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
+LocalCoverage = "5f6e1e16-694c-5876-87ef-16b5274f298e"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
-QuantumCitations = "259add83-af3e-4603-9706-50e341d5574e"
-QuantumControlTestUtils = "d3fd27c9-1dfb-4e67-b0c0-90d0d87a1e48"
+PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-TwoQubitWeylChamber = "cad078a0-0012-46f4-b55e-a945d44e115b"
+
+[compat]
+Coverage = "^1.4"
+LocalCoverage = "0.4"
