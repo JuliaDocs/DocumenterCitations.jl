@@ -1,0 +1,241 @@
+====== IN =======
+AS AST:
+mdast = @ast MarkdownAST.Document() do
+  MarkdownAST.Heading(1) do
+    MarkdownAST.Text("Markdown document")
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("Let's just have a couple of pagragraphs with inline elements like ")
+    MarkdownAST.Emph() do
+      MarkdownAST.Text("italic")
+    end
+    MarkdownAST.Text(" or ")
+    MarkdownAST.Strong() do
+      MarkdownAST.Text("bold")
+    end
+    MarkdownAST.Text(".")
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("We'll also have inline math like ")
+    MarkdownAST.InlineMath("x^2")
+    MarkdownAST.Text(" (using the double-backtick syntax preferred by ")
+    MarkdownAST.Link("https://docs.julialang.org/en/v1/stdlib/Markdown/#\\\\LaTeX", "") do
+      MarkdownAST.Text("Julia")
+    end
+    MarkdownAST.Text(", in lieu of ")
+    MarkdownAST.Code("\$")
+    MarkdownAST.Text(")")
+  end
+  MarkdownAST.Heading(2) do
+    MarkdownAST.Text("Citation")
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("Some citation links ")
+    MarkdownAST.Link("@cite", "") do
+      MarkdownAST.Text("rabiner")
+      MarkdownAST.Emph() do
+        MarkdownAST.Text("tutorial")
+      end
+      MarkdownAST.Text("1989; with ")
+      MarkdownAST.Emph() do
+        MarkdownAST.Text("emphasis")
+      end
+    end
+    MarkdownAST.Text(" (with inline formatting) and ")
+    MarkdownAST.Link("@cite", "") do
+      MarkdownAST.Text("GoerzQ2022")
+    end
+    MarkdownAST.Text(" (without inline formatting).")
+  end
+  MarkdownAST.Heading(2) do
+    MarkdownAST.Text("Lists")
+  end
+  MarkdownAST.List(:bullet, false) do
+    MarkdownAST.Item() do
+      MarkdownAST.Paragraph() do
+        MarkdownAST.Text("First item with just plain text")
+      end
+    end
+    MarkdownAST.Item() do
+      MarkdownAST.Paragraph() do
+        MarkdownAST.Text("Second item with ")
+        MarkdownAST.Emph() do
+          MarkdownAST.Text("emphasis")
+        end
+      end
+    end
+    MarkdownAST.Item() do
+      MarkdownAST.Paragraph() do
+        MarkdownAST.Text("Third item with ")
+        MarkdownAST.Code("code")
+      end
+    end
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("This concludes the file.")
+  end
+end
+
+AS TEXT:
+# Markdown document
+
+Let's just have a couple of pagragraphs with inline elements like *italic* or **bold**.
+
+We'll also have inline math like $x^2$ (using the double-backtick syntax preferred by [Julia](https://docs.julialang.org/en/v1/stdlib/Markdown/#\\LaTeX), in lieu of `$`)
+
+## Citation
+
+Some citation links [rabiner*tutorial*1989; with *emphasis*](@cite) (with inline formatting) and [GoerzQ2022](@cite) (without inline formatting).
+
+## Lists
+
+  * First item with just plain text
+  * Second item with *emphasis*
+  * Third item with `code`
+
+This concludes the file.
+=== TRANSFORM ===
+1: node.element= MarkdownAST.Text("Markdown document") [0 children]
+2: node.element= MarkdownAST.Heading(1) [1 children]
+3: node.element= MarkdownAST.Text("Let's just have a couple of pagragraphs with inline elements like ") [0 children]
+4: node.element= MarkdownAST.Text("italic") [0 children]
+5: node.element= MarkdownAST.Emph() [1 children]
+6: node.element= MarkdownAST.Text(" or ") [0 children]
+7: node.element= MarkdownAST.Text("bold") [0 children]
+8: node.element= MarkdownAST.Strong() [1 children]
+9: node.element= MarkdownAST.Text(".") [0 children]
+10: node.element= MarkdownAST.Paragraph() [5 children]
+11: node.element= MarkdownAST.Text("We'll also have inline math like ") [0 children]
+12: node.element= MarkdownAST.InlineMath("x^2") [0 children]
+13: node.element= MarkdownAST.Text(" (using the double-backtick syntax preferred by ") [0 children]
+14: node.element= MarkdownAST.Text("Julia") [0 children]
+15: node.element= MarkdownAST.Link("https://docs.julialang.org/en/v1/stdlib/Markdown/#\\\\LaTeX", "") [1 children]
+16: node.element= MarkdownAST.Text(", in lieu of ") [0 children]
+17: node.element= MarkdownAST.Code("\$") [0 children]
+18: node.element= MarkdownAST.Text(")") [0 children]
+19: node.element= MarkdownAST.Paragraph() [7 children]
+20: node.element= MarkdownAST.Text("Citation") [0 children]
+21: node.element= MarkdownAST.Heading(2) [1 children]
+22: node.element= MarkdownAST.Text("Some citation links ") [0 children]
+23: node.element= MarkdownAST.Text("rabiner") [0 children]
+24: node.element= MarkdownAST.Text("tutorial") [0 children]
+25: node.element= MarkdownAST.Emph() [1 children]
+26: node.element= MarkdownAST.Text("1989; with ") [0 children]
+27: node.element= MarkdownAST.Text("emphasis") [0 children]
+28: node.element= MarkdownAST.Emph() [1 children]
+29: node.element= MarkdownAST.Link("@cite", "") [4 children]
+-> Doing transform to new text=[citation for `rabiner*tutorial*1989; with *emphasis*`]
+30: node.element= MarkdownAST.Text(" (with inline formatting) and ") [0 children]
+31: node.element= MarkdownAST.Text("GoerzQ2022") [0 children]
+32: node.element= MarkdownAST.Link("@cite", "") [1 children]
+-> Doing transform to new text=[citation for `GoerzQ2022`]
+33: node.element= MarkdownAST.Text(" (without inline formatting).") [0 children]
+34: node.element= MarkdownAST.Paragraph() [9 children]
+35: node.element= MarkdownAST.Text("Lists") [0 children]
+36: node.element= MarkdownAST.Heading(2) [1 children]
+37: node.element= MarkdownAST.Text("First item with just plain text") [0 children]
+38: node.element= MarkdownAST.Paragraph() [1 children]
+39: node.element= MarkdownAST.Item() [1 children]
+40: node.element= MarkdownAST.Text("Second item with ") [0 children]
+41: node.element= MarkdownAST.Text("emphasis") [0 children]
+42: node.element= MarkdownAST.Emph() [1 children]
+43: node.element= MarkdownAST.Paragraph() [2 children]
+44: node.element= MarkdownAST.Item() [1 children]
+45: node.element= MarkdownAST.Text("Third item with ") [0 children]
+46: node.element= MarkdownAST.Code("code") [0 children]
+47: node.element= MarkdownAST.Paragraph() [2 children]
+48: node.element= MarkdownAST.Item() [1 children]
+49: node.element= MarkdownAST.List(:bullet, false) [3 children]
+50: node.element= MarkdownAST.Text("This concludes the file.") [0 children]
+51: node.element= MarkdownAST.Paragraph() [1 children]
+52: node.element= MarkdownAST.Document() [8 children]
+====== OUT =======
+AS AST:
+mdast = @ast MarkdownAST.Document() do
+  MarkdownAST.Heading(1) do
+    MarkdownAST.Text("Markdown document")
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("Let's just have a couple of pagragraphs with inline elements like ")
+    MarkdownAST.Emph() do
+      MarkdownAST.Text("italic")
+    end
+    MarkdownAST.Text(" or ")
+    MarkdownAST.Strong() do
+      MarkdownAST.Text("bold")
+    end
+    MarkdownAST.Text(".")
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("We'll also have inline math like ")
+    MarkdownAST.InlineMath("x^2")
+    MarkdownAST.Text(" (using the double-backtick syntax preferred by ")
+    MarkdownAST.Link("https://docs.julialang.org/en/v1/stdlib/Markdown/#\\\\LaTeX", "") do
+      MarkdownAST.Text("Julia")
+    end
+    MarkdownAST.Text(", in lieu of ")
+    MarkdownAST.Code("\$")
+    MarkdownAST.Text(")")
+  end
+  MarkdownAST.Heading(2) do
+    MarkdownAST.Text("Citation")
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("Some citation links ")
+    MarkdownAST.Text("[citation for ")
+    MarkdownAST.Code("rabiner*tutorial*1989; with *emphasis*")
+    MarkdownAST.Text("]")
+    MarkdownAST.Text(" (with inline formatting) and ")
+    MarkdownAST.Text("[citation for ")
+    MarkdownAST.Code("GoerzQ2022")
+    MarkdownAST.Text("]")
+    MarkdownAST.Text(" (without inline formatting).")
+  end
+  MarkdownAST.Heading(2) do
+    MarkdownAST.Text("Lists")
+  end
+  MarkdownAST.List(:bullet, false) do
+    MarkdownAST.Item() do
+      MarkdownAST.Paragraph() do
+        MarkdownAST.Text("First item with just plain text")
+      end
+    end
+    MarkdownAST.Item() do
+      MarkdownAST.Paragraph() do
+        MarkdownAST.Text("Second item with ")
+        MarkdownAST.Emph() do
+          MarkdownAST.Text("emphasis")
+        end
+      end
+    end
+    MarkdownAST.Item() do
+      MarkdownAST.Paragraph() do
+        MarkdownAST.Text("Third item with ")
+        MarkdownAST.Code("code")
+      end
+    end
+  end
+  MarkdownAST.Paragraph() do
+    MarkdownAST.Text("This concludes the file.")
+  end
+end
+
+AS TEXT:
+# Markdown document
+
+Let's just have a couple of pagragraphs with inline elements like *italic* or **bold**.
+
+We'll also have inline math like $x^2$ (using the double-backtick syntax preferred by [Julia](https://docs.julialang.org/en/v1/stdlib/Markdown/#\\LaTeX), in lieu of `$`)
+
+## Citation
+
+Some citation links [citation for `rabiner*tutorial*1989; with *emphasis*`] (with inline formatting) and [citation for `GoerzQ2022`] (without inline formatting).
+
+## Lists
+
+  * First item with just plain text
+  * Second item with *emphasis*
+  * Third item with `code`
+
+This concludes the file.
+====== END =======

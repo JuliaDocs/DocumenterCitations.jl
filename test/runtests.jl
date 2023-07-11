@@ -1,5 +1,6 @@
 using Test
 using SafeTestsets
+using DocumenterCitations
 
 
 # Note: comment outer @testset to stop after first @safetestset failure
@@ -25,11 +26,25 @@ using SafeTestsets
         include("test_alphastyle.jl")
     end
 
-    print("\n* integration test (test_makedocs.jl):")
-    @time @safetestset "makedocs" begin
-        include("test_makedocs.jl")
+    print("\n* content_bock (test_content_block.jl):")
+    @time @safetestset "content_block" begin
+        include("test_content_block.jl")
     end
 
+    print("\n* md_ast (test_md_ast.jl):")
+    @time @safetestset "md_ast" begin
+        include("test_md_ast.jl")
+    end
+
+    print("\n* keys_with_underscores (test_keys_with_underscores.jl):")
+    @time @safetestset "keys_with_underscores" begin
+        include("test_keys_with_underscores.jl")
+    end
+
+    print("\n* integration test (test_integration.jl):")
+    @time @safetestset "integration" begin
+        include("test_integration.jl")
+    end
 
     print("\n")
 

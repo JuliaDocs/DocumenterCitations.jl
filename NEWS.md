@@ -3,7 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Version v1.1.0][1.1.0] - 2023-09-15
+
+## [Version 1.2.0][1.2.0] - 2023-09-16
+
+### Version changes
+
+* Update to [Documenter 1.0](https://github.com/JuliaDocs/Documenter.jl/releases/tag/v1.0.0). The most notable user-facing breaking change in Documenter 1.0 affecting DocumenterCitations is that the `CitationBibliography` plugin object now has to be passed to `makedocs` as an element of the `plugins` keyword argument, instead of as a positional argument.
+
+### Fixed
+
+* The plugin no longer conflicts with the `linkcheck` option of `makedocs` [[#19][]]
+
+
+## [Version 1.1.0][1.1.0] - 2023-09-15
 
 ### Fixed
 
@@ -28,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added an internal function `init_bibliography!` that is called at the beginning of the `ExpandBibliography` pipeline step. This function is intended to initialize internal state either of the `style` object or the `CitationBibliography` plugin object before rendering any `@bibliography` blocks. This is used to generate unique citation labels for the new `AlphaStyle()`. For the other builtin styles, it is a no-op. Generally, `init_bibliography!` can help with implementing custom "stateful" styles.
 
 
-## [Version v1.0.0][1.0.0] - 2023-07-12
+## [Version 1.0.0][1.0.0] - 2023-07-12
 
 ### Version changes
 
@@ -54,10 +66,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
 [#36]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/36
 [#35]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/35
 [#32]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/32
 [#31]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/31
 [#20]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/20
+[#19]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/19

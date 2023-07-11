@@ -36,14 +36,16 @@ to the `[deps]` section of the relevant `Project.toml` file.
 
 ## Usage
 
-*   Place a BibTeX [`refs.bib`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/src/refs.bib) file in the `docs/src` folder of your project.  Then, in [`docs/make.jl`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/make.jl), instantiate the `CitationBibliography` plugin and pass it to [`makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs):
+*   Place a BibTeX [`refs.bib`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/src/refs.bib) file in the `docs/src` folder of your project.  Then, in [`docs/make.jl`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/make.jl), instantiate the `CitationBibliography` plugin with the path to the `.bib` file. Assuming `Documenter >= 1.0`, pass the plugin object to [`makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs) as element of the `plugins` keyword argument:
 
     ```julia
     using DocumenterCitations
 
     bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
-    makedocs(bib, ...)
+    makedocs(; plugins=[bib], ...)
     ```
+
+    In older versions of [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl), `bib` had to be passed as a positional argument to `makedocs`.
 
 *   Optional, but recommended: [add CSS to properly format the bibliography](https://juliadocs.github.io/DocumenterCitations.jl/dev/styling/)
 

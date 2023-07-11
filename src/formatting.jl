@@ -199,16 +199,6 @@ function format_names(
 end
 
 
-function italicize_md_et_al(text; et_al_in="*et al.*", et_al_out="et al.")
-    if occursin(et_al_in, text)
-        parts = split(text, et_al_in; limit=2)
-        return [parts[1], Markdown.Italic(Any[et_al_out]), parts[2]]
-    else
-        return text
-    end
-end
-
-
 function format_published_in(entry; include_date=true)
     str = ""
     if entry.type == "article"

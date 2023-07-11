@@ -35,7 +35,7 @@ to the `[deps]` section of the relevant `Project.toml` file.
 
 ## Telling Documenter.jl about your bibliography
 
-First, place a BibTeX [`refs.bib`](./refs.bib) file in the `docs/src` folder of your project.  Then, in [`docs/make.jl`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/make.jl), instantiate the [`CitationBibliography`](@ref) plugin and pass it to [`makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs):
+First, place a BibTeX [`refs.bib`](./refs.bib) file in the `docs/src` folder of your project.  Then, in [`docs/make.jl`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/make.jl), instantiate the [`CitationBibliography`](@ref) plugin with the path to the `.bib` file. Assuming `Documenter >= 1.0`, pass the plugin object to [`makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs) as an element of the `plugins` keyword argument:
 
 ```julia
 using DocumenterCitations
@@ -44,10 +44,12 @@ bib = CitationBibliography(
     joinpath(@__DIR__, "src", "refs.bib");
     style=:numeric
 )
-makedocs(bib, ...)
+makedocs(; plugins=[bib], ...)
 ```
 
-To use the [author-year style](@ref author_year_style) that was the default prior to version 1.0, replace `style=:numeric` with `style=:authoryear`.
+In older versions of [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl), `bib` had to be passed as a positional argument to `makedocs`.
+
+To use the [author-year style](@ref author_year_style) that was the default prior to `DocumenterCitations` version 1.0, replace `style=:numeric` with `style=:authoryear`.
 
 Somewhere in your documentation, like a [References](@ref) page, include a markdown block
 
@@ -80,8 +82,7 @@ bib = CitationBibliography(
     style=:numeric  # default
 )
 
-makedocs(
-    bib,
+makedocs(;
     authors=AUTHORS,
     sitename="DocumenterCitations.jl",
     strict=true,
@@ -98,7 +99,8 @@ makedocs(
         "CSS Styling"            => "styling.md",
         "Internals"              => "internals.md",
         "References"             => "references.md",
-    ]
+    ],
+    plugins=[bib],
 )
 deploydocs(; repo="github.com/JuliaDocs/DocumenterCitations.jl.git")
 ```
@@ -115,9 +117,9 @@ Clicking on the citations takes you to the bibliography ("[References](@ref)").
 The following is a list of some projects that use `DocumenterCitations`:
 
 * [Oceananigans](https://clima.github.io/OceananigansDocumentation/stable/)
-* [QuantumPropagators](https://juliaquantumcontrol.github.io/QuantumPropagators.jl)
+* [QuantumPropagators](https://juliaquantumcontrol.github.io/QuantumPropagators.jl/)
 * [QuantumControl](https://juliaquantumcontrol.github.io/QuantumControl.jl/)
-* [TwoQubitWeylChamber](https://juliaquantumcontrol.github.io/TwoQubitWeylChamber.jl)
+* [TwoQubitWeylChamber](https://juliaquantumcontrol.github.io/TwoQubitWeylChamber.jl/)
 * [QuantumClifford](https://quantumsavory.github.io/QuantumClifford.jl/stable/references/) and the parent [QuantumSavory organization](https://github.com/QuantumSavory)
 
 ## Home References

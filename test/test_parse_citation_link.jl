@@ -1,13 +1,15 @@
 using Test
 using DocumenterCitations: CitationLink
 using Markdown
-using Logging
+import MarkdownAST
+using IOCapture: IOCapture
 
 
 function _link(text::String)
     md = Markdown.parse(text)
-    link = md.content[1].content[1]
-    @assert link isa Markdown.Link
+    ast = convert(MarkdownAST.Node, md)
+    link = first(first(ast.children).children)
+    @assert link.element isa MarkdownAST.Link
     return link
 end
 
@@ -74,9 +76,7 @@ end
 end
 
 @testset "invalid_standard_citation_link" begin
-    include("test_logger.jl")
-    test_logger = _TestLogger()
-    with_logger(test_logger) do
+    c = IOCapture.capture() do
         @test_throws ErrorException begin
             cit = _CitationLink("[GoerzQ2022](@citenocommand)")
             # not a citecommand
@@ -95,13 +95,13 @@ end
         end
     end
     msgs = [
-        "Error: The @cite link.url does not match required regex: @citenocommand",
-        "Error: The @cite link.url does not match required regex:  @cite ",
+        "Error: The @cite link destination does not match required regex: @citenocommand",
+        "Error: The @cite link destination does not match required regex:  @cite ",
         "Error: Invalid bibtex key: see GoerzQ2022",
-        "Error: The @cite link.url does not match required regex: @CITE"
+        "Error: The @cite link destination does not match required regex: @CITE"
     ]
     for msg in msgs
-        @test msg in test_logger
+        @test occursin(msg, c.output)
     end
 end
 
@@ -113,22 +113,26 @@ end
     @test cit.style ≡ nothing
     @test cit.keys == ["GoerzQ2022"]
     @test cit.note ≡ nothing
-    @test cit.link_text == Any["Semi-AD paper"]
+    @test cit.link_text == MarkdownAST.@ast MarkdownAST.Link("@cite GoerzQ2022", "") do
+        MarkdownAST.Text("Semi-AD paper")
+    end
 
     cit = _CitationLink("[*Semi*-AD paper](@cite GoerzQ2022)")
     @test cit.cmd == :cite
     @test cit.style ≡ nothing
     @test cit.keys == ["GoerzQ2022"]
     @test cit.note ≡ nothing
-    @test cit.link_text[1] isa Markdown.Italic
-    @test cit.link_text[2] == "-AD paper"
+    @test cit.link_text == MarkdownAST.@ast MarkdownAST.Link("@cite GoerzQ2022", "") do
+        MarkdownAST.Emph() do
+            MarkdownAST.Text("Semi")
+        end
+        MarkdownAST.Text("-AD paper")
+    end
 
 end
 
 @testset "invalid_custom_text_citation_link" begin
-    include("test_logger.jl")
-    test_logger = _TestLogger()
-    with_logger(test_logger) do
+    c = IOCapture.capture() do
         @test_throws ErrorException begin
             _CitationLink("[Semi-AD paper](@citet GoerzQ2022)")
             # only @cite is allowed
@@ -139,10 +143,10 @@ end
         end
     end
     msgs = [
-        "Error: The @cite link.url does not match required regex: @citet GoerzQ2022",
-        "Error: The @cite link.url does not match required regex: @cite BrifNJP2010, GoerzQ2022",
+        "Error: The @cite link destination does not match required regex: @citet GoerzQ2022",
+        "Error: The @cite link destination does not match required regex: @cite BrifNJP2010, GoerzQ2022",
     ]
     for msg in msgs
-        @test msg in test_logger
+        @test occursin(msg, c.output)
     end
 end

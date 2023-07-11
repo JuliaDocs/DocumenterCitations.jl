@@ -17,13 +17,13 @@ abstract type CollectCitations <: Builder.DocumentPipeline end
 
 Selectors.order(::Type{CollectCitations}) = 2.11  # After ExpandTemplates
 
-function Selectors.runner(::Type{CollectCitations}, doc::Documents.Document)
-    @info "CollectCitations: collecting `@cite` entries in document"
+function Selectors.runner(::Type{CollectCitations}, doc::Documenter.Document)
+    @info "CollectCitations"
     collect_citations(doc)
 end
 
-
-function collect_citations(doc::Documents.Document)
+# Collect all citations in document
+function collect_citations(doc::Documenter.Document)
     local bib
     try
         bib = doc.plugins[CitationBibliography]
@@ -40,9 +40,9 @@ function collect_citations(doc::Documents.Document)
         @debug "CollectCitations: collecting `@cite` entries in $src"
         empty!(page.globals.meta)
         try
-            for elem in page.elements
-                Documents.walk(page.globals.meta, page.mapping[elem]) do component
-                    collect_citation(component, page.globals.meta, src, page, doc)
+            for node in AbstractTrees.PreOrderDFS(page.mdast)
+                if node.element isa MarkdownAST.Link
+                    collect_citation(node, page.globals.meta, src, page, doc)
                 end
             end
         catch
@@ -65,14 +65,14 @@ _RX_TEXT_KEYS = Regex("^$__RX_KEYS($__RX_NOTE)?\$")
 _RX_CITE_KEY_URL = Regex("^@cite\\s+(?<key>$__RX_KEY)\$")
 
 Base.@kwdef struct CitationLink
-    link::Markdown.Link                    # the original markdown link
+    link::MarkdownAST.Node                 # the original markdown link
     cmd::Symbol                            # :cite, :citet, :citep (lowercase)
     style::Union{Nothing,Symbol}           # :numeric by default
     keys::Vector{String}                   # bibtex cite keys
     note::Union{Nothing,String}            # e.g. "Eq. (1)"
     capitalize::Bool                       # whether @Cite... command is used
     starred::Bool                          # whether "*" command is used
-    link_text::Union{Nothing,Vector{Any}}  # can be nested markdown
+    link_text::Union{Nothing,MarkdownAST.Node}  # can be nested markdown
     # In the standard case where link.text is the cite key(s), link_text must
     # be `nothing`. Whether or not link_text is `nothing` decides whether we
     # have a "standard citation" or a "custom text citation".
@@ -85,29 +85,38 @@ function Base.show(io::IO, c::CitationLink)
     )
 end
 
-function CitationLink(link::Markdown.Link)
-    if (m_url = match(_RX_CITE_URL, link.url)) ≢ nothing
+function CitationLink(node::MarkdownAST.Node)
+    @assert node.element isa MarkdownAST.Link
+    link_destination = node.element.destination
+    if (m_url = match(_RX_CITE_URL, link_destination)) ≢ nothing
         # [GoerzQ2022](@cite)
         cmd = Symbol(lowercase(m_url[:cmd]))
         capitalize = startswith(m_url[:cmd], "C")
         starred = !isnothing(m_url[:starred])
         style = isnothing(m_url[:style]) ? nothing : Symbol(m_url[:style])
-        if length(link.text) === 1 && isa(link.text[1], String)
-            m_text = match(_RX_TEXT_KEYS, link.text[1])
+        # In this branch, the link text must be a single markdown text object
+        no_nested_markdown =
+            length(node.children) === 1 &&
+            (first_node = first(node.children); first_node.element isa MarkdownAST.Text)
+        if no_nested_markdown
+            link_text = first_node.element.text
+            m_text = match(_RX_TEXT_KEYS, link_text)
             if isnothing(m_text)
-                @error "Invalid bibtex key: $(link.text[1])"
-                error("Invalid citation: $(Markdown.plaininline(link))")
+                @error "Invalid bibtex key: $(link_text)"
+                error("Invalid citation: [$(link_text)]($(link_destination))")
             end
-            @debug "Recognized link as standard citation" link m_url m_text
+            @debug "Recognized link as standard citation" link_text link_destination m_url m_text
             keys = String[strip(key) for key in split(m_text[:keys], ",")]
             note = m_text[:note]
             link_text = nothing
         else
-            @error "Invalid bibtex key (nested markdown)"
-            error("Invalid citation: $(Markdown.plaininline(link))")
+            @error "Invalid bibtex key (likely nested markdown)" node
+            # TODO: Would be nice to print something closer to the original Markdown here,
+            #       see https://github.com/JuliaDocs/MarkdownAST.jl/issues/4.
+            error("Invalid citation: $(node)")
         end
-    elseif (m_url = match(_RX_CITE_KEY_URL, link.url)) ≢ nothing
-        @debug "Recognized link as custom text citation" link m_url
+    elseif (m_url = match(_RX_CITE_KEY_URL, link_destination)) ≢ nothing
+        @debug "Recognized link as custom text citation" link_destination m_url
         # [Semi-AD Paper](@cite GoerzQ2022)
         cmd = :cite
         style = nothing
@@ -115,23 +124,27 @@ function CitationLink(link::Markdown.Link)
         note = nothing
         capitalize = false
         starred = false
-        link_text = link.text
+        link_text = node
     else
-        @error "The @cite link.url does not match required regex: $(link.url)"
-        error("Invalid citation: $(Markdown.plaininline(link))")
+        @error "The @cite link destination does not match required regex: $(link_destination)" node
+        # TODO: Would be nice to print something closer to the original Markdown here,
+        #       see https://github.com/JuliaDocs/MarkdownAST.jl/issues/4.
+        error("Invalid citation: $(node)")
     end
-    CitationLink(link, cmd, style, keys, note, capitalize, starred, link_text)
+    CitationLink(node, cmd, style, keys, note, capitalize, starred, link_text)
 end
 
 
 # Add citation from `link` to the `citations` and `page_citations` of the
 # `doc.plugins[CitationBibliography]` object. The `src` is the name of the
 # markdown file containing the `link` and `page` is a `Page` object.
-function collect_citation(link::Markdown.Link, meta, src, page, doc)
+function collect_citation(node::MarkdownAST.Node, meta, src, page, doc)
+    @assert node.element isa MarkdownAST.Link
     bib = doc.plugins[CitationBibliography]
-    if startswith(lowercase(link.url), "@cite")
-        cit = CitationLink(link)
+    if startswith(lowercase(node.element.destination), "@cite")
+        cit = CitationLink(node)
         for key in cit.keys
+            @debug "Looking for key" key
             if haskey(bib.entries, key)
                 entry = bib.entries[key]
                 @assert entry.id == key
@@ -153,11 +166,6 @@ function collect_citation(link::Markdown.Link, meta, src, page, doc)
     return false
 end
 
-function collect_citation(elem, meta, src, page, doc)  # for non-links
-    return true   # walk into the childrem of elem
-end
-
-
 
 # Expand Citations
 #
@@ -175,24 +183,32 @@ abstract type ExpandCitations <: Builder.DocumentPipeline end
 
 Selectors.order(::Type{ExpandCitations}) = 2.13  # After ExpandBibliography
 
-function Selectors.runner(::Type{ExpandCitations}, doc::Documents.Document)
-    @info "ExpandCitations: resolving links and replacement text for @cite entries in document"
+function Selectors.runner(::Type{ExpandCitations}, doc::Documenter.Document)
+    @info "ExpandCitations"
     expand_citations(doc)
 end
 
-function expand_citations(doc::Documents.Document)
+# Expand all citations in document
+function expand_citations(doc::Documenter.Document)
     for (src, page) in doc.blueprint.pages
         @debug "ExpandCitations: resolving links and replacement text for @cite entries in $(src)"
         empty!(page.globals.meta)
-        for expanded in values(page.mapping)
-            expand_citations(expanded, page, doc)
-        end
+        expand_citations(doc, page, page.mdast)
     end
 end
 
-function expand_citations(elem, page, doc)
-    Documents.walk(page.globals.meta, elem) do link
-        expand_citation(link, page.globals.meta, page, doc)
+# Expand all citations in one page
+function expand_citations(doc::Documenter.Document, page, mdast::MarkdownAST.Node)
+    for node in AbstractTrees.PreOrderDFS(mdast)
+        if node.element isa Documenter.DocsNode
+            # The docstring AST trees are not part of the tree of the page, so
+            # we need to expand them explicitly
+            for (docstr, meta) in zip(node.element.mdasts, node.element.metas)
+                expand_citations(doc, page, docstr)
+            end
+        elseif node.element isa MarkdownAST.Link
+            expand_citation(node, page.globals.meta, page, doc)
+        end
     end
 end
 
@@ -236,12 +252,12 @@ is the numeric citation key in square brackets, cf.
   with the full list of authors, as indicated by a `*` in the citation, e.g.,
   `[Goerz@2022](@Citet*)`
 """
-function format_citation(style::Symbol, args...; kwargs...)
+function format_citation(style::Symbol, args...; kwargs...)::String
     return format_citation(Val(style), args...; kwargs...)
 end
 
 function format_citation(
-    style::Val{:numeric},
+    ::Val{:numeric},
     entry,
     citations; # OrderedDict{String,Int64}
     note::Union{Nothing,String}=nothing,
@@ -269,14 +285,14 @@ function format_citation(
         if capitalize
             names = uppercasefirst(names)
         end
-        link_text = italicize_md_et_al("$names $link_text")
+        link_text = "$names $link_text"
     end
-    return link_text
+    return link_text::String
 end
 
 
 function format_citation(
-    style::Val{:authoryear},
+    ::Val{:authoryear},
     entry,
     citations; # OrderedDict{String,Int64}
     note::Union{Nothing,String}=nothing,
@@ -318,9 +334,7 @@ function format_citation(
         link_text = uppercasefirst(link_text)
     end
 
-    link_text = italicize_md_et_al(link_text)
-
-    return link_text
+    return link_text::String
 
 end
 
@@ -361,15 +375,17 @@ function format_citation(
         if capitalize
             names = uppercasefirst(names)
         end
-        link_text = italicize_md_et_al("$names $link_text")
+        link_text = "$names $link_text"
     end
-    return link_text
+    return link_text::String
 end
 
 
-function expand_citation(link::Markdown.Link, meta, page, doc)
-    startswith(lowercase(link.url), "@cite") || return false
-    cit = CitationLink(link)
+# Expand single citation markdown element
+function expand_citation(node::MarkdownAST.Node, meta, page, doc)
+    @assert node.element isa MarkdownAST.Link
+    startswith(lowercase(node.element.destination), "@cite") || return false
+    cit = CitationLink(node)
     if length(cit.keys) > 1
         error("Multi-citations are not currently supported")
         # For a single key, all we have to do it modify the existing
@@ -393,17 +409,19 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
         entry = bib.entries[key]
         @assert entry.id == key
         headers = doc.internal.headers
-        if Anchors.exists(headers, key)
-            if Anchors.isunique(headers, key)
+        if Documenter.anchor_exists(headers, key)
+            if Documenter.anchor_isunique(headers, key)
                 # Replace the `@cite` url with a path to the referenced header.
-                anchor = Anchors.anchor(headers, key)
+                anchor = Documenter.anchor(headers, key)
                 path   = relpath(anchor.file, dirname(page.build))
                 if isnothing(cit.link_text)
+                    @assert length(node.children) == 1 &&
+                            first(node.children).element isa MarkdownAST.Text
                     style = isnothing(cit.style) ? bib.style : cit.style
                     # Using the cit.style is an undocumented feature. We only
                     # use it to render citation in a non-default style in the
                     # Gallery in the documentation.
-                    link.text = format_citation(
+                    link_text = format_citation(
                         style,
                         entry,
                         bib.citations;
@@ -412,26 +430,34 @@ function expand_citation(link::Markdown.Link, meta, page, doc)
                         capitalize=cit.capitalize,
                         starred=cit.starred
                     )
+                    link_text_ast = MarkdownAST.@ast MarkdownAST.Paragraph() do
+                        MarkdownAST.Text(link_text)
+                    end
+                    # Remove the original text node...
+                    MarkdownAST.unlink!(first(node.children))
+                    # ... and replace it with the new content. format_citation
+                    # return a MarkdownAST.Paragraph whose children should be
+                    # added
+                    append!(node.children, link_text_ast.children)
                 else
-                    # keep original link.text
+                    @assert cit.link_text isa MarkdownAST.Node
+                    # keep original link text
                 end
-                link.url = string(path, Anchors.fragment(anchor))
+                # Replace the link destination
+                node.element.destination = string(path, Documenter.anchor_fragment(anchor))
+                @debug "-> transformed node" node
                 return true
             else
                 push!(doc.internal.errors, :citations)
-                @warn "'$key' is not unique in $(Utilities.locrepr(page.source))."
+                @warn "Bibliography anchor for key '$key' is not unique."
             end
         else
             push!(doc.internal.errors, :citations)
-            @warn "reference for '$key' could not be found in $(Utilities.locrepr(page.source))."
+            @warn "Bibliography anchor for key '$key' not found."
         end
     else
         push!(doc.internal.errors, :citations)
-        @error("Citation not found in bibliography: $key")
+        @error("No entry for BibTeX key '$key'")
     end
     return false
-end
-
-function expand_citation(other, meta, page, doc)
-    return true  # Continue to `walk` through element `other`.
 end

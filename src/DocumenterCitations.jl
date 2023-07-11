@@ -1,13 +1,13 @@
 module DocumenterCitations
 
 using Documenter
-using Documenter.Anchors
 using Documenter.Builder
-using Documenter.Documents
 using Documenter.Selectors
-using Documenter.Utilities
 using Documenter.Expanders
 using Documenter.Writers.HTMLWriter
+
+import MarkdownAST
+import AbstractTrees
 
 using Markdown
 using Bibliography: Bibliography, xyear, xlink, xtitle
@@ -15,17 +15,6 @@ using OrderedCollections: OrderedDict, OrderedSet
 using Unicode
 
 export CitationBibliography
-
-
-const _CACHED_CITATIONS = OrderedDict{String,Int64}()
-const _CACHED_PAGE_CITATIONS = OrderedDict{String,Set{String}}()
-# The caching is used to get around a Bug in Documenter 0.27, see
-# https://discourse.julialang.org/t/running-makedocs-overwrites-repl-docstrings
-# Even though it doesn't *really* solve the problem, caching `bib.citations`
-# and `bib.page_citation` in practice gets around the plugin not being able to
-# detect citations in docstring on a second call to `makedocs`. The caching
-# feature should be removed when Documenter 0.28 is released.
-
 
 """Plugin for enabling bibliographic citations in Documenter.jl.
 
@@ -69,14 +58,8 @@ struct CitationBibliography <: Documenter.Plugin
     page_citations::Dict{String,Set{String}}
 end
 
-function CitationBibliography(bibfile::AbstractString=""; style=nothing, cached=true)
-    # note: cached is undocumented (on purpose), see comment at
-    # _CACHED_PAGE_CITATIONS. Should be removed when Documenter 0.28 is
-    # released
+function CitationBibliography(bibfile::AbstractString=""; style=nothing)
     if isnothing(style)
-        @info "The 1.0 release of DocumenterCitations changed the default citation style from author-year to numeric. To restore the pre-1.0 default style, use `CitationBibliography(bibfile; style=:authoryear)`."
-        # The message is only to transition users through the breaking change
-        # in 1.0. It can be removed in any future 1.1 release.
         style = :numeric
         @debug "Using default style=$(repr(style))"
     elseif style == :alpha
@@ -92,16 +75,8 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing, cached=
             @warn "No entries loaded from $bibfile"
         end
     end
-    citations = Dict{String,Int64}()
+    citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
-    if cached
-        citations = _CACHED_CITATIONS
-        page_citations = _CACHED_PAGE_CITATIONS
-        if (length(citations) > 0) || (length(page_citations) > 0)
-            @warn "Using cached citations"
-        end
-    end
-
     return CitationBibliography(bibfile, style, entries, citations, page_citations)
 end
 
@@ -169,5 +144,15 @@ end
 include("citations.jl")
 include("bibliography.jl")
 include("formatting.jl")
+
+
+function __init__()
+    for errname in (:bibliography_block, :citations)
+        if !(errname in Documenter.ERROR_NAMES)
+            push!(Documenter.ERROR_NAMES, errname)
+        end
+    end
+end
+
 
 end

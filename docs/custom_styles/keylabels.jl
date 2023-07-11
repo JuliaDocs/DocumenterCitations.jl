@@ -1,7 +1,7 @@
-import DocumenterCitations
+import DocumenterCitations, MarkdownAST
 
 # we use some (undocumented) internal helper functions for formatting...
-using DocumenterCitations: format_names, tex2unicode, italicize_md_et_al
+using DocumenterCitations: format_names, tex2unicode
 
 DocumenterCitations.format_bibliography_reference(::Val{:keylabels}, entry) =
     DocumenterCitations.format_bibliography_reference(:numeric, entry)
@@ -26,9 +26,9 @@ function DocumenterCitations.format_citation(
             format_names(entry; names=:lastonly, and=true, et_al, et_al_text="*et al.*") |>
             tex2unicode
         capitalize && (names = uppercase(names[1]) * names[2:end])
-        link_text = italicize_md_et_al("$names $link_text")
+        link_text = "$names $link_text"
     end
-    return link_text
+    return link_text::String
 end
 
 DocumenterCitations.bib_sorting(::Val{:keylabels}) = :nyt  # name, year, title

@@ -25,20 +25,30 @@ abstract type ExpandBibliography <: Builder.DocumentPipeline end
 
 Selectors.order(::Type{ExpandBibliography}) = 2.12  # after CollectCitations
 
-function Selectors.runner(::Type{ExpandBibliography}, doc::Documents.Document)
-    Documenter.Builder.is_doctest_only(doc, "ExpandBibliography") && return
+function Selectors.runner(::Type{ExpandBibliography}, doc::Documenter.Document)
+    Documenter.is_doctest_only(doc, "ExpandBibliography") && return
     @info "ExpandBibliography: expanding `@bibliography` blocks."
+    expand_bibliography(doc)
+end
+
+# Expand all @bibliography blocks in the document
+function expand_bibliography(doc::Documenter.Document)
     bib = doc.plugins[CitationBibliography]
     style = bib.style  # so that we can dispatch on different styles
     init_bibliography!(style, bib)
-    for src in keys(doc.blueprint.pages)
-        page = doc.blueprint.pages[src]
+    for (src, page) in doc.blueprint.pages
         empty!(page.globals.meta)
-        for element in page.elements
-            if Expanders.iscode(element, r"^@bibliography")
-                Selectors.dispatch(BibliographyBlock, element, page, doc)
-            end
-        end
+        expand_bibliography(doc, page, page.mdast)
+    end
+end
+
+# Expand all @bibliography blocks in one page
+function expand_bibliography(doc::Documenter.Document, page, mdast::MarkdownAST.Node)
+    for node in AbstractTrees.PreOrderDFS(mdast)
+        is_bib_block =
+            node.element isa MarkdownAST.CodeBlock &&
+            occursin(r"^@bibliography", node.element.info)
+        is_bib_block && expand_bibliography(node, page.globals.meta, page, doc)
     end
 end
 
@@ -127,8 +137,6 @@ function _alpha_suffix(i)
     end
 end
 
-
-abstract type BibliographyBlock <: Selectors.AbstractSelector end
 
 
 """Format the full reference for an entry in a `@bibliography` block.
@@ -319,8 +327,8 @@ bib_sorting(::AlphaStyle) = :nyt
 function parse_bibliography_block(block, doc, page)
     fields = Dict{Symbol,Any}()
     lines = String[]
-    for (ex, str) in Documenter.Utilities.parseblock(block, doc, page)
-        if Utilities.isassign(ex)
+    for (ex, str) in Documenter.parseblock(block, doc, page)
+        if Documenter.isassign(ex)
             fields[ex.args[1]] = Core.eval(Main, ex.args[2])
         else
             line = String(strip(str))
@@ -338,9 +346,9 @@ function parse_bibliography_block(block, doc, page)
         if field ∉ allowed_fields
             warn_loc = "N/A"
             if (doc ≢ nothing) && (page ≢ nothing)
-                warn_loc = Documenter.Utilities.locrepr(
+                warn_loc = Documenter.locrepr(
                     page.source,
-                    Documenter.Utilities.find_block_in_file(block, page.source)
+                    Documenter.find_block_in_file(block, page.source)
                 )
             end
             @warn("Invalid field $field ∉ $allowed_fields in $warn_loc")
@@ -350,11 +358,13 @@ function parse_bibliography_block(block, doc, page)
     return fields, lines
 end
 
+# Expand a single @bibliography block
+function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
+    @assert node.element isa MarkdownAST.CodeBlock
+    @assert occursin(r"^@bibliography", node.element.info)
 
-function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
-
-    block = x.code
-    @debug "ExpandBibliography: expanding `@bibliography` block in $(page.source)" block
+    block = node.element.code
+    @debug "Evaluating @bibliography block" page.source block
 
     bib = doc.plugins[CitationBibliography]
     citations = bib.citations
@@ -444,7 +454,7 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         @assert entry.id == key
         if fields[:Canonical]
             # Add anchor that citations can link to from anywhere in the docs.
-            if Anchors.exists(headers, key)
+            if Documenter.anchor_exists(headers, key)
                 # Skip entries that already have a canonical bib entry
                 # elsewhere. This is expected behavior, not an error/warning,
                 # allowing to split the canonical bibliography in multiple
@@ -453,7 +463,7 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
                 continue
             else
                 @debug "Defining anchor for key=$(key)"
-                Anchors.add!(headers, entry, key, page.build)
+                Documenter.anchor_add!(headers, entry, key, page.build)
             end
         else
             # For non-canonical bibliographies, no anchors are generated, and
@@ -476,6 +486,6 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
     end
     html *= "\n</$tag></div>"
 
-    page.mapping[x] = Documents.RawNode(:html, html)
+    node.element = Documenter.RawNode(:html, html)
 
 end

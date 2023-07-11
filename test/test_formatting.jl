@@ -1,15 +1,10 @@
 using Test
 using TestingUtilities: @Test  # much better at comparing long strings
-using Logging
 using OrderedCollections: OrderedDict
 using DocumenterCitations
 import DocumenterCitations:
-    tex2unicode,
-    two_digit_year,
-    alpha_label,
-    format_citation,
-    format_bibliography_reference,
-    italicize_md_et_al
+    tex2unicode, two_digit_year, alpha_label, format_citation, format_bibliography_reference
+using IOCapture: IOCapture
 
 @testset "text2unicode" begin
     @Test tex2unicode("-- ---") == "– —"
@@ -24,9 +19,7 @@ import DocumenterCitations:
 end
 
 @testset "two_digit_year" begin
-    include("test_logger.jl")
-    test_logger = _TestLogger()
-    with_logger(test_logger) do
+    c = IOCapture.capture() do
         @test two_digit_year("2001--") == "01"
         @test two_digit_year("2000") == "00"
         @test two_digit_year("2000-2020") == "00"
@@ -35,6 +28,7 @@ end
         @test two_digit_year("11") == "11"
         @test two_digit_year("invalid") == "invalid"
     end
+    @test occursin("Invalid year: invalid", c.output)
 end
 
 
@@ -59,7 +53,7 @@ end
     _c = OrderedDict{String,Int64}()
     ctext(key; kwargs...) =
         format_citation(Val(:authoryear), bib.entries[key], _c; kwargs...)
-    # Pathological cases only
+    @Test ctext("Wilhelm2003.10132") == "(Wilhelm *et al.*, 2020)"
     @Test ctext("QCRoadmap") == "(Anonymous, 2004)"
     @Test ctext("TedRyd") == "(Corcovilos and Weiss, undated)"
 end

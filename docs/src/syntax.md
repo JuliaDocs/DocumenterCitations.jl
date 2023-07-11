@@ -191,7 +191,7 @@ While we try to be reasonably compatible, "Any `.bib` file will render the bibli
 
 Some tips to keep in mind when editing a `.bib` file to be used with `DocumenterCitations`:
 
-* Use unicode instead of [escaped symbols](http://www.bibtex.org/SpecialSymbols/).
+* Use unicode instead of [escaped symbols](https://www.bibtex.org/SpecialSymbols/).
 * You do not need to use [braces to protect capitalization](https://texfaq.org/FAQ-capbibtex). `DocumenterCitations` is not always able to remove such braces. But, unlike `bibtex`, `DocumenterCitation` will preserve the capitalization of titles.
 * Use a consistent scheme for citation keys. Shorter keys are better.
 * All entries should have a `Doi` field, or a `Url` field if no DOI is available.
