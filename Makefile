@@ -44,7 +44,7 @@ clean: ## Clean up build/doc/testing artifacts
 	make -C docs/latex clean
 
 codestyle: test/Manifest.toml ## Apply the codestyle to the entire project
-	$(JULIA) --project=test -e 'using JuliaFormatter; format(".", verbose=true)'
+	$(JULIA) --project=test -e 'using JuliaFormatter; format(["src", "docs", "test", "devrepl.jl"], verbose=true)'
 	@echo "Done. Consider using 'make devrepl'"
 
 distclean: clean ## Restore to a clean checkout state
