@@ -6,7 +6,7 @@ using Pkg
 
 VERSION = Pkg.dependencies()[Base.UUID("daee34ce-89f3-4625-b898-19384cb65244")].version
 
-github_badge = "[![Github](https://img.shields.io/badge/JuliaDocs-DocumenterCitations.jl-blue.svg?logo=github)](https://github.com/JuliaQuantumControl/DocumenterCitations.jl)"
+github_badge = "[![Github](https://img.shields.io/badge/JuliaDocs-DocumenterCitations.jl-blue.svg?logo=github)](https://github.com/JuliaDocs/DocumenterCitations.jl)"
 
 version_badge = "![v$VERSION](https://img.shields.io/badge/version-v$(replace("$VERSION", "-" => "--"))-green.svg)"
 
