@@ -22,7 +22,7 @@ Lastly, capitalizing the `c` in `@citet` or `@citet*` ensures that the first let
 
 The [natbib](https://mirrors.rit.edu/CTAN/macros/latex/contrib/natbib/natnotes.pdf) commands `@citealt`, `@citealp`, and `@citenum` commands are also recognized. They are not supported by any of the built-in style, but  may be handled by [custom styles](@ref customization).
 
-See the [Citation Style Gallery](@ref) for examples for all the possible combinations.
+See the [Citation Style Gallery](@ref gallery) for examples of all the possible combinations.
 
 
 ### Citations in docstrings
@@ -43,7 +43,7 @@ in the documentation of the following `Example`:
 DocumenterCitations.Example
 ```
 
-(cf. the [source of the `Example` type](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/38693339ba8da08aebacdd664acb2c7e23cf1628/src/DocumenterCitations.jl#L67-L76)).
+(cf. the [source of the `Example` type](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/3b208240f29f9fe7104d27c90f0c324517d18ba6/src/DocumenterCitations.jl#L100-L110)).
 
 If there was no explicit numerical citation in the main text of the docstring,
 
@@ -67,7 +67,7 @@ would also have been an appropriate syntax.
 ```
 ~~~
 
-renders a bibliography for all references that are cited throughout the entire documentation, see [Cited References](@ref). The bibliography will not include entries that may be present in the `.bib` file, but that are not cited.
+renders a bibliography for all references that are cited throughout the entire documentation, see [Cited References](@ref). As of version 0.3.0, the bibliography will not include entries that may be present in the `.bib` file, but that are not cited.
 
 
 ### [Full `@bibliography`](@id full_bibliography)
@@ -78,7 +78,7 @@ renders a bibliography for all references that are cited throughout the entire d
 ```
 ~~~
 
-Renders a bibliography for *all* references included in the `.bib` file, not just those cited in the documentation. This corresponds to the behavior of the  [DocumenterCitations.jl](https://github.com/ali-ramadhan/DocumenterCitations.jl) package.
+Renders a bibliography for *all* references included in the `.bib` file, not just those cited in the documentation. This corresponds to the default behavior prior to version 0.3.0.
 
 
 ### [Multiple `@bibliography` blocks](@id canonical)
@@ -177,7 +177,7 @@ using Bibliography
 sort_bibliography!(bib.entries, :nyt)  # name-year-title
 ```
 
-In general, the citation style determines the order of the references, see the [Citation Style Gallery](@ref).
+In general, the citation style determines the order of the references, see the [Citation Style Gallery](@ref gallery).
 
 
 ## Syntax for the .bib file
