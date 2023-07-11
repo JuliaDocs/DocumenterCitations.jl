@@ -1,23 +1,31 @@
-using DocumenterCitations
-using Documenter
 using Test
+using SafeTestsets
 
 
-@testset "tex2unicode" begin
-    @test DocumenterCitations.tex2unicode("-- ---") == "– —"
-    @test DocumenterCitations.tex2unicode(
-        raw"\`{o}\'{o}\^{o}\~{o}\={o}\u{o}\.{o}\\\"{o}\r{a}\H{o}\v{s}\d{u}\c{c}\k{a}\b{b}\~{a}") == "òóôõōŏȯöåőšụçąḇã"
-    @test DocumenterCitations.tex2unicode(
-        raw"\i{}\o{}\O{}\l{}\L{}\i\o\O\l\L") == "ıøØłŁıøØłŁ"
-    @test DocumenterCitations.tex2unicode(
-        raw"\t{oo}{testText}\t{az}") == "o͡otestTexta͡z"
-    @test DocumenterCitations.tex2unicode(
-        raw"{\o}verline") == "øverline"
-    @test DocumenterCitations.tex2unicode(
-        raw"\overline") == "\\overline"
-end
+# Note: comment outer @testset to stop after first @safetestset failure
+@time @testset verbose = true "DocumenterCitations" begin
 
-@testset "doctest fix" begin
-    # verify https://github.com/ali-ramadhan/DocumenterCitations.jl/issues/55 is fixed
-    doctest(DocumenterCitations; fix=true)
-end
+    print("\n* formatting (test_formatting.jl):")
+    @time @safetestset "formatting" begin
+        include("test_formatting.jl")
+    end
+
+    print("\n* parse_bibliography_block (test_parse_bibliography_block.jl):")
+    @time @safetestset "parse_bibliography_block" begin
+        include("test_parse_bibliography_block.jl")
+    end
+
+    print("\n* parse_citation_link (test_parse_citation_link.jl):")
+    @time @safetestset "parse_citation_link" begin
+        include("test_parse_citation_link.jl")
+    end
+
+    print("\n* integration test (test_makedocs.jl):")
+    @time @safetestset "makedocs" begin
+        include("test_makedocs.jl")
+    end
+
+
+    print("\n")
+
+end;
