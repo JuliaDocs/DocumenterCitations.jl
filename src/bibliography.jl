@@ -9,7 +9,7 @@ list](https://www.w3schools.com/tags/tag_ul.asp), or an
 [`bib_html_list_style`](@ref). For a definition list, the label for each list
 item is rendered via [`format_bibliography_label`](@ref) and the full
 bibliographic reference is rendered via
-[`format_bibliography_reference`](@ref). For bullet lists of enumerations,
+[`format_bibliography_reference`](@ref). For bullet lists or enumerations,
 [`format_bibliography_label`](@ref) is not used and
 [`format_bibliography_reference`](@ref) fully determines the entry.
 
