@@ -1,7 +1,7 @@
 name = "DocumenterCitations"
 uuid = "daee34ce-89f3-4625-b898-19384cb65244"
 authors = ["Michael Goerz <mail@michaelgoerz.net>"]
-version = "1.0.0-dev"
+version = "1.0.0"
 
 [deps]
 Bibliography = "f1be7e48-bf82-45af-a471-ae754a193061"
