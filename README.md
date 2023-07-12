@@ -14,7 +14,7 @@ By default, [DocumenterCitations.jl](https://github.com/JuliaDocs/DocumenterCita
 
 <img id="screenshot" src="docs/src/assets/references.png" alt="Rendered bibliography of two references, [1] and [2]" width="830px">
 
-Alternatively, author-year and alphabetic citations styles are available, see the [Citation Style Gallery](https://juliadocs.github.io/DocumenterCitations.jl/dev/gallery/). Prior to version 0.3, the author-year style was the default, see [NEWS.md](NEWS.md). It is possible to define custom styles.
+Alternatively, author-year and alphabetic citations styles are available, see the [Citation Style Gallery](https://juliadocs.github.io/DocumenterCitations.jl/dev/gallery/). Prior to version 1.0, the author-year style was the default, see [NEWS.md](NEWS.md). It is possible to define custom styles.
 
 
 ## Installation
