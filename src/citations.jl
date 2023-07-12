@@ -213,7 +213,7 @@ text = format_citation(
 
 returns a string that replaces the link text for a markdown
 citation (`[key](@cite)` and its variations, see [Syntax for Citations](@ref)
-and the [Citation Style Gallery](@ref)).
+and the [Citation Style Gallery](@ref gallery)).
 
 For the default `style=:numeric` and `[key](@cite)`, this returns a label that
 is the numeric citation key in square brackets, cf.

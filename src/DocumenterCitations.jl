@@ -44,7 +44,7 @@ argument to
   file from which to read the data.
 * `style`: the style to use for the bibliography and all citations. The
   available built-in styles are `:numeric` (default), `:authoryear`, and
-  `:alpha`. With user-defined styles, this may be an arbitrary name of object.
+  `:alpha`. With user-defined styles, this may be an arbitrary name or object.
 
 # Internal fields
 
