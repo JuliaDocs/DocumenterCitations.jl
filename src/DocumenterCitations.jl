@@ -12,7 +12,7 @@ using Documenter.Writers.HTMLWriter
 using Markdown
 using Bibliography
 using Bibliography: xyear, xlink, xtitle
-using DataStructures: OrderedDict, OrderedSet
+using OrderedCollections: OrderedDict, OrderedSet
 using Unicode
 
 export CitationBibliography
