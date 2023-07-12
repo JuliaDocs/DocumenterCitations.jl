@@ -119,6 +119,7 @@ The following is a list of some projects that use `DocumenterCitations`:
 * [QuantumPropagators](https://juliaquantumcontrol.github.io/QuantumPropagators.jl)
 * [QuantumControl](https://juliaquantumcontrol.github.io/QuantumControl.jl/)
 * [TwoQubitWeylChamber](https://juliaquantumcontrol.github.io/TwoQubitWeylChamber.jl)
+* [QuantumClifford](https://quantumsavory.github.io/QuantumClifford.jl/stable/references/) and the parent [QuantumSavory organization](https://github.com/QuantumSavory)
 
 ## Home References
 
