@@ -49,7 +49,7 @@ bib = CitationBibliography(
 makedocs(bib, ...)
 ```
 
-To use the [author-year style](@ref author_year_style) that was the default prior to version 0.3.0, replace `style=:numeric` with `style=:authoryear`.
+To use the [author-year style](@ref author_year_style) that was the default prior to version 1.0, replace `style=:numeric` with `style=:authoryear`.
 
 Somewhere in your documentation, like a [References](@ref) page, include a markdown block
 

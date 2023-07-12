@@ -67,7 +67,7 @@ would also have been an appropriate syntax.
 ```
 ~~~
 
-renders a bibliography for all references that are cited throughout the entire documentation, see [Cited References](@ref). As of version 0.3.0, the bibliography will not include entries that may be present in the `.bib` file, but that are not cited.
+renders a bibliography for all references that are cited throughout the entire documentation, see [Cited References](@ref). As of version 1.0, the bibliography will not include entries that may be present in the `.bib` file, but that are not cited.
 
 
 ### [Full `@bibliography`](@id full_bibliography)
@@ -78,7 +78,7 @@ renders a bibliography for all references that are cited throughout the entire d
 ```
 ~~~
 
-Renders a bibliography for *all* references included in the `.bib` file, not just those cited in the documentation. This corresponds to the default behavior prior to version 0.3.0.
+Renders a bibliography for *all* references included in the `.bib` file, not just those cited in the documentation. This corresponds to the pre-1.0 default behavior.
 
 
 ### [Multiple `@bibliography` blocks](@id canonical)

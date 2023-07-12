@@ -1,4 +1,4 @@
-# v0.3.0
+# v1.0.0
 
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted in the [JuliaDocs](https://github.com/JuliaDocs) organization
 * The minimum supported Julia version is now 1.6
