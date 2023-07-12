@@ -75,8 +75,8 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing, cached=
     # _CACHED_PAGE_CITATIONS. Should be removed when Documenter 0.28 is
     # released
     if isnothing(style)
-        @warn "The 1.0 release of DocumenterCitations changed the default citation style from author-year to numeric. To restore the pre-1.0 default style, use `CitationBibliography(bibfile; style=:authoryear)`."
-        # The warning is only to transition users through the breaking change
+        @info "The 1.0 release of DocumenterCitations changed the default citation style from author-year to numeric. To restore the pre-1.0 default style, use `CitationBibliography(bibfile; style=:authoryear)`."
+        # The message is only to transition users through the breaking change
         # in 1.0. It can be removed in any future 1.1 release.
         style = :numeric
     end
