@@ -9,8 +9,8 @@ AUTHORS = join(PROJECT_TOML["authors"], ", ") * " and contributors"
 GITHUB = "https://github.com/JuliaDocs/DocumenterCitations.jl"
 
 bib = CitationBibliography(
-    joinpath(@__DIR__, "src", "refs.bib"),
-    # style=:numeric  # default
+    joinpath(@__DIR__, "src", "refs.bib");
+    style=:numeric  # default
 )
 
 println("Starting makedocs")
