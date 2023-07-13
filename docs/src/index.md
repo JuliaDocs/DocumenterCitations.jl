@@ -17,7 +17,6 @@ Markdown.parse("$github_badge $version_badge")
 
 By default, [DocumenterCitations.jl](https://github.com/JuliaDocs/DocumenterCitations.jl#readme) uses a numeric citation style common in the natural sciences, see e.g. the [journals of the American Physical Society](https://journals.aps.org), and the [REVTeX author's guide](https://www.ctan.org/tex-archive/macros/latex/contrib/revtex/auguide). Citations are shown in-line, as a number enclosed in square brackets, e.g., "Optimal control is a cornerstone in the development of quantum technologies [BrifNJP2010](@cite)". [Alternative styles](@ref gallery) are supported, including an [author-year style](@ref author_year_style).
 
-
 ## Installation instructions
 
 You can install the latest version of [DocumenterCitations.jl](https://github.com/JuliaDocs/DocumenterCitations.jl) using the [built-in package manager](https://docs.julialang.org/en/v1/stdlib/Pkg/)
@@ -33,7 +32,6 @@ DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
 ```
 
 to the `[deps]` section of the relevant `Project.toml` file.
-
 
 ## Telling Documenter.jl about your bibliography
 
