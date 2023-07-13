@@ -8,7 +8,6 @@ The built-in styles are:
 * `style=:authoryear`: [author-year style](@ref author_year_style)
 * `style=:alpha`: [alphabetic style](@ref alphabetic_style)
 
-
 ## [Numeric style](@id numeric_style)
 
 This is the default style (`style=:numeric`) used throughout the other pages of this documentation, cf. the [Syntax](@ref) examples.
@@ -33,7 +32,6 @@ Style = :numeric
 Canonical = false
 ```
 
-
 ## [Author-year style](@id author_year_style)
 
 The author-year style (`style=:authoryear`) formats citations with the author name and publication year. This is the citation style used, e.g., in [Rev. Mod. Phys.](https://journals.aps.org/rmp/) (`rmp` option in [REVTeX](https://www.ctan.org/tex-archive/macros/latex/contrib/revtex/auguide)). The bibliography is sorted alphabetically by author name. The default `@cite` command is parenthetical (`@cite` and `@citep` are equivalent) which is different from the `authoryear` style in [natbib](https://mirrors.rit.edu/CTAN/macros/latex/contrib/natbib/natnotes.pdf).
@@ -51,7 +49,6 @@ The author-year style (`style=:authoryear`) formats citations with the author na
 * `[WinckelIP2008](@citet)` renders as "[WinckelIP2008](@citet%authoryear%)"
 * `[WinckelIP2008](@Citet)` renders as "[WinckelIP2008](@Citet%authoryear%)"
 * `[arbitrary text](@cite GoerzQ2022)` renders as "[arbitrary text](@cite GoerzQ2022)"
-
 
 **References:**
 
@@ -112,7 +109,6 @@ The important part of the definition is in the last line, indicating that the Re
 * `[GoerzQ2022](@cite)` renders as "[GoerzQ2022](@cite%enumauthoryear%)"
 * `[FuerstNJP2014](@cite)` renders as "[FuerstNJP2014](@cite%enumauthoryear%)"
 * `[WinckelIP2008](@Citet)` renders as "[WinckelIP2008](@Citet%enumauthoryear%)"
-
 
 **References:**
 

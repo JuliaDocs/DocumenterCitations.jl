@@ -1,6 +1,5 @@
 # Syntax
 
-
 ## Syntax for Citations
 
 The following syntax is available to create citations in any markdown text:
@@ -60,7 +59,7 @@ would also have been an appropriate syntax.
 
 ## Syntax for the Bibliography Block
 
-### Default `@bibliograph` block
+### Default `@bibliography` block
 
 ~~~markdown
 ```@bibliography
