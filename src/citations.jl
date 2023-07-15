@@ -18,7 +18,7 @@ abstract type CollectCitations <: Builder.DocumentPipeline end
 Selectors.order(::Type{CollectCitations}) = 2.11  # After ExpandTemplates
 
 function Selectors.runner(::Type{CollectCitations}, doc::Documents.Document)
-    @info "CollectCitations"
+    @info "CollectCitations: collecting `@cite` entries in document"
     collect_citations(doc)
 end
 
@@ -35,10 +35,9 @@ function collect_citations(doc::Documents.Document)
     end
     nav_sources = [node.page for node in doc.internal.navlist]
     other_sources = filter(src -> !(src in nav_sources), keys(doc.blueprint.pages))
-    @info "Looking for citations in pages" nav_sources other_sources
     for src in Iterators.flatten([nav_sources, other_sources])
         page = doc.blueprint.pages[src]
-        @debug "Collecting citations in $src"
+        @debug "CollectCitations: collecting `@cite` entries in $src"
         empty!(page.globals.meta)
         try
             for elem in page.elements
@@ -177,13 +176,13 @@ abstract type ExpandCitations <: Builder.DocumentPipeline end
 Selectors.order(::Type{ExpandCitations}) = 2.13  # After ExpandBibliography
 
 function Selectors.runner(::Type{ExpandCitations}, doc::Documents.Document)
-    @info "ExpandCitations"
+    @info "ExpandCitations: resolving links and replacement text for @cite entries in document"
     expand_citations(doc)
 end
 
 function expand_citations(doc::Documents.Document)
     for (src, page) in doc.blueprint.pages
-        @info "Expanding citations in $src"
+        @debug "ExpandCitations: resolving links and replacement text for @cite entries in $(src)"
         empty!(page.globals.meta)
         for expanded in values(page.mapping)
             expand_citations(expanded, page, doc)
