@@ -198,9 +198,8 @@ end
 
 function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
 
-    @info "Expanding bibliography in $(page.source)."
     block = x.code
-    @debug "Evaluating @bibliography block" block
+    @debug "ExpandBibliography: expanding `@bibliography` block in $(page.source)" block
 
     bib = doc.plugins[CitationBibliography]
     citations = bib.citations
