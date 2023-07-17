@@ -114,6 +114,7 @@ Clicking on the citations takes you to the bibliography ("[References](@ref)").
 
 The following is a list of some projects that use `DocumenterCitations`:
 
+* [Oceananigans](https://clima.github.io/OceananigansDocumentation/stable/)
 * [QuantumPropagators](https://juliaquantumcontrol.github.io/QuantumPropagators.jl)
 * [QuantumControl](https://juliaquantumcontrol.github.io/QuantumControl.jl/)
 * [TwoQubitWeylChamber](https://juliaquantumcontrol.github.io/TwoQubitWeylChamber.jl)
