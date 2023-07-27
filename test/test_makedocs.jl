@@ -1,5 +1,5 @@
 using DocumenterCitations
-using Documenter
+using DocumenterCitations.Documenter
 using Logging
 using Test
 

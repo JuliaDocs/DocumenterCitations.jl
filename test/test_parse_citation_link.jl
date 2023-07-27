@@ -1,6 +1,6 @@
 using Test
 using DocumenterCitations: CitationLink
-using Markdown
+using DocumenterCitations.Markdown
 using Logging
 
 
