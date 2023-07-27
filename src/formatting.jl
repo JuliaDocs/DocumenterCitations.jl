@@ -88,6 +88,9 @@ function alpha_label(entry)
             ],
             "",
         )
+        if length(entry.authors) > 3
+            letters *= "+"
+        end
         return letters * year
     end
 end

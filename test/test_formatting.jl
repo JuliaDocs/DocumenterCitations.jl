@@ -33,8 +33,8 @@ end
 @testset "alpha_label" begin
     bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
     @test alpha_label(bib.entries["Tannor2007"]) == "Tan07"
-    @test alpha_label(bib.entries["FuerstNJP2014"]) == "FGP14"
+    @test alpha_label(bib.entries["FuerstNJP2014"]) == "FGP+14"
     @test alpha_label(bib.entries["ImamogluPRE2015"]) == "IW15"
-    @test alpha_label(bib.entries["SciPy"]) == "JOP01"
+    @test alpha_label(bib.entries["SciPy"]) == "JOP+01"
     @test alpha_label(bib.entries["MATLAB:2014"]) == "MAT14"
 end
