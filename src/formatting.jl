@@ -261,7 +261,7 @@ function format_published_in(entry; include_date=true)
         parts = [get(entry.fields, "note", ""),]
         str *= join(filter!(!isempty, parts), ", ")
     end
-    if include_date
+    if include_date && !isempty(entry.date.year)
         str *= " ($(entry.date.year))"
     end
     return str
