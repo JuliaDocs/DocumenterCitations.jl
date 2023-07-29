@@ -81,18 +81,37 @@ function alpha_label(entry)
         name = Unicode.normalize(entry.authors[1].last; stripmark=true)
         return uppercasefirst(first(name, 3)) * year
     else
-        letters = join(
-            [
-                uppercase(Unicode.normalize(name.last; stripmark=true)[1]) for
-                name in first(entry.authors, 3)
-            ],
-            "",
-        )
-        if length(entry.authors) > 3
-            letters *= "+"
+        letters = [_alpha_initial(name) for name in first(entry.authors, 4)]
+        if length(entry.authors) > 4
+            letters = [first(letters, 3)..., "+"]
         end
-        return letters * year
+        return join(letters, "") * year
     end
+end
+
+
+function _is_others(name)
+    # Support "and others", or "and contributors" directly in the BibTeX file
+    # (often used for citing software projects)
+    return (
+        (name.last in ["others", "contributors"]) &&
+        (name.first == name.middle == name.particle == name.junior == "")
+    )
+end
+
+
+function _alpha_initial(name)
+    # Initial of the last name, but including the "particle" (e.g., "von")
+    # Used for `alpha_label`
+    if _is_others(name)
+        letter = "+"
+    else
+        letter = uppercase(Unicode.normalize(name.last; stripmark=true)[1])
+        if length(name.particle) > 0
+            letter = Unicode.normalize(name.particle; stripmark=true)[1] * letter
+        end
+    end
+    return letter
 end
 
 

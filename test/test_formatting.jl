@@ -35,6 +35,9 @@ end
     @test alpha_label(bib.entries["Tannor2007"]) == "Tan07"
     @test alpha_label(bib.entries["FuerstNJP2014"]) == "FGP+14"
     @test alpha_label(bib.entries["ImamogluPRE2015"]) == "IW15"
-    @test alpha_label(bib.entries["SciPy"]) == "JOP+01"
+    @test alpha_label(bib.entries["SciPy"]) == "JOP+01"  # _is_others
     @test alpha_label(bib.entries["MATLAB:2014"]) == "MAT14"
+    @test alpha_label(bib.entries["LapertPRA09"]) == "LTTS09"
+    @test alpha_label(bib.entries["GrondPRA2009b"]) == "GvWSH09"
+    @test alpha_label(bib.entries["WinckelIP2008"]) == "vWB08"
 end

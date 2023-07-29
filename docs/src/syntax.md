@@ -19,7 +19,7 @@ In `[…](@cite)`, the following variations can be used instead of `@cite`:
 
 Lastly, capitalizing the `c` in `@citet` or `@citet*` ensures that the first letter of the citation is capitalized so that it can be used at the beginning of a sentence, e.g., [WinckelIP2008](@Citet) (`[WinckelIP2008](@Citet)`) versus [WinckelIP2008](@citet) (`[WinckelIP2008](@citet)`).
 
-The [natbib](https://mirrors.rit.edu/CTAN/macros/latex/contrib/natbib/natnotes.pdf) commands `@citealt`, `@citealp`, and `@citenum` commands are also recognized. They are not supported by any of the built-in style, but  may be handled by [custom styles](@ref customization).
+The [natbib](https://mirrors.rit.edu/CTAN/macros/latex/contrib/natbib/natnotes.pdf) commands `@citealt`, `@citealp`, and `@citenum` commands are also recognized. They are not supported by any of the built-in styles, but  may be handled by [custom styles](@ref customization).
 
 See the [Citation Style Gallery](@ref gallery) for examples of all the possible combinations.
 
@@ -82,7 +82,7 @@ Renders a bibliography for *all* references included in the `.bib` file, not jus
 
 ### [Multiple `@bibliography` blocks](@id canonical)
 
-It is possible to have multiple `@bibliography` blocks. However, there can only be one "canonical" bibliography target for any citation (the location where a citation links to). Any `@bibliography` block will automatically skip entries that have already been rendered in an earlier `@bibliography` block. Thus, for two consecutive
+It is possible to have multiple `@bibliography` blocks. However, there can only be one "canonical" bibliography target for any citation (the location where a citation links to). Any `@bibliography` block will automatically skip entries that have already been rendered in an earlier canonical `@bibliography` block. Thus, for two consecutive
 
 ~~~markdown
 ```@bibliography

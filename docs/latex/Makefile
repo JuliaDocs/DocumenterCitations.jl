@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-ALL = numeric.pdf authoryear.pdf rmp.pdf prb.pdf
+ALL = numeric.pdf authoryear.pdf rmp.pdf prb.pdf alpha.pdf
 
 all: $(ALL)
 
@@ -23,6 +23,12 @@ rmp.pdf: rmp.tex
 	pdflatex $<
 
 prb.pdf: prb.tex
+	pdflatex $<
+	bibtex $(basename $<)
+	pdflatex $<
+	pdflatex $<
+
+alpha.pdf: alpha.tex
 	pdflatex $<
 	bibtex $(basename $<)
 	pdflatex $<

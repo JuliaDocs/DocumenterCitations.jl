@@ -20,6 +20,11 @@ using SafeTestsets
         include("test_parse_citation_link.jl")
     end
 
+    print("\n* smart alpha style (test_alphastyle.jl):")
+    @time @safetestset "smart alpha style" begin
+        include("test_alphastyle.jl")
+    end
+
     print("\n* integration test (test_makedocs.jl):")
     @time @safetestset "makedocs" begin
         include("test_makedocs.jl")

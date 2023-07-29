@@ -6,15 +6,20 @@ Each bibliography is rendered into HTML as a a [definition
 list](https://www.w3schools.com/tags/tag_dl.asp), a [bullet
 list](https://www.w3schools.com/tags/tag_ul.asp), or an
 [enumeration](https://www.w3schools.com/tags/tag_ol.asp) depending on
-[`bib_html_list_style`](@ref). For a definition list, the label for each list
-item is rendered via [`format_bibliography_label`](@ref) and the full
-bibliographic reference is rendered via
-[`format_bibliography_reference`](@ref). For bullet lists or enumerations,
-[`format_bibliography_label`](@ref) is not used and
-[`format_bibliography_reference`](@ref) fully determines the entry.
+[`bib_html_list_style`](@ref).
+
+For a definition list, the label for each list item is rendered via
+[`format_bibliography_label`](@ref) and the full bibliographic reference is
+rendered via [`format_bibliography_reference`](@ref).
+
+For bullet lists or enumerations, [`format_bibliography_label`](@ref) is not
+used and [`format_bibliography_reference`](@ref) fully determines the entry.
 
 The order of the entries in the bibliography is determined by the
 [`bib_sorting`](@ref) method for the chosen citation style.
+
+The `ExpandBibliography` step runs [`init_bibliography!`](@ref) before
+expanding the first `@bibliography` block.
 """
 abstract type ExpandBibliography <: Builder.DocumentPipeline end
 
@@ -23,6 +28,9 @@ Selectors.order(::Type{ExpandBibliography}) = 2.12  # after CollectCitations
 function Selectors.runner(::Type{ExpandBibliography}, doc::Documents.Document)
     Documenter.Builder.is_doctest_only(doc, "ExpandBibliography") && return
     @info "ExpandBibliography: expanding `@bibliography` blocks."
+    bib = doc.plugins[CitationBibliography]
+    style = bib.style  # so that we can dispatch on different styles
+    init_bibliography!(style, bib)
     for src in keys(doc.blueprint.pages)
         page = doc.blueprint.pages[src]
         empty!(page.globals.meta)
@@ -33,6 +41,92 @@ function Selectors.runner(::Type{ExpandBibliography}, doc::Documents.Document)
         end
     end
 end
+
+
+"""Initialize any internal state for rendering the bibliography.
+
+```julia
+init_bibliography!(style, bib)
+```
+
+is called at the beginning of the [`ExpandBibliography`](@ref) pipeline step.
+It may mutate internal fields of `style` or `bib` to prepare for the rendering
+of bibliography blocks.
+
+For the default style, this does nothing.
+
+For, e.g., [`AlphaStyle`](@ref), the call to `init_bibliography!` determines
+the citation labels, by generating unique suffixed labels for all the entries
+in the underlying `.bib` file (`bib.entries`), and storing the result in an
+internal attribute of the `style` object.
+
+Custom styles may implement a new method for `init_bibliography!` for similar
+purposes. It can be assumed that all the internal fields of the
+[`CitationBibliography`](@ref) `bib` object are up-to-date according to
+the citations seen by the earlier [`CollectCitations`](@ref) step.
+"""
+function init_bibliography!(style, bib) end  # no-op for default style(s)
+
+function init_bibliography!(style::Symbol, bib)
+    init_bibliography!(Val(style), bib)
+end
+
+
+function init_bibliography!(style::AlphaStyle, bib)
+
+    # We determine the keys from all the entries in the .bib file
+    # (`bib.entries`), not just the cited ones (`bib.citations`). This keeps
+    # the rendered labels more stable, e.g. if you have one `.bib` file across
+    # multiple related projects. Besides, `bib.citations` isn't guaranteed to
+    # be complete at the point where `init_bibliography!` is called, since
+    # bibliography blocks can also introduce new citations (e.g., if using `*`)
+    entries = OrderedDict{String,Bibliography.Entry}(
+        # best not to mutate bib.entries, so we'll create a copy before sorting
+        key => entry for (key, entry) in bib.entries
+    )
+    Bibliography.sort_bibliography!(entries, :nyt)
+
+    # pass 1 - collect dumb labels, identify duplicates
+    keys_for_label = Dict{String,Vector{String}}()
+    for (key, entry) in entries
+        label = alpha_label(entry)  # dumb label (no suffix)
+        if label in keys(keys_for_label)
+            push!(keys_for_label[label], key)
+        else
+            keys_for_label[label] = String[key,]
+        end
+    end
+
+    # pass 2 - disambiguate duplicates (append suffix to dumb labels)
+    label_for_key = style.label_for_key  # for in-place mutation
+    for (key, entry) in entries
+        label = alpha_label(entry)
+        if length(keys_for_label[label]) > 1
+            i = findfirst(isequal(key), keys_for_label[label])
+            label *= _alpha_suffix(i)
+        end
+        label_for_key[key] = label
+    end
+    @debug "init_bibliography!(style::AlphaStyle, bib)" keys_for_label label_for_key
+
+    # `style.label_for_key` is now up-to-date
+
+end
+
+
+function _alpha_suffix(i)
+    if i <= 25
+        return string(Char(96 + i))  # 1 -> "a", 2 -> "b", etc.
+    else
+        # 26 -> "za", 27 -> "zb", etc.
+        # I couldn't find any information on (and I was too lazy to test) how
+        # LaTeX handles disambiguation of more than 25 identical labels, but
+        # this seems sensible. But also: Seriously? I don't think we'll ever
+        # run into this in real life.
+        return "z" * _alpha_suffix(i - 25)
+    end
+end
+
 
 abstract type BibliographyBlock <: Selectors.AbstractSelector end
 
@@ -74,7 +168,13 @@ function format_bibliography_reference(::Val{:authoryear}, entry)
     return "$authors ($year). <i>$title</i>. $(linkify(published_in, link))."
 end
 
+
 function format_bibliography_reference(::Val{:alpha}, entry)
+    return format_bibliography_reference(:numeric, entry)
+end
+
+
+function format_bibliography_reference(::AlphaStyle, entry)
     return format_bibliography_reference(:numeric, entry)
 end
 
@@ -125,6 +225,20 @@ function format_bibliography_label(
 end
 
 
+function format_bibliography_label(
+    alpha::AlphaStyle,
+    entry,
+    citations::OrderedDict{String,Int64}
+)
+    try
+        return "[$(alpha.label_for_key[entry.id])]"
+    catch
+        @error "No AlphaStyle label for $(entry.id). Was `init_bibliography!` called?" alpha.label_for_key
+        rethrow()
+    end
+end
+
+
 """Identify the type of HTML list associated with a bibliographic style.
 
 ```julia
@@ -143,6 +257,7 @@ bib_html_list_style(style::Symbol) = bib_html_list_style(Val(style))
 bib_html_list_style(::Val{:numeric}) = :dl
 bib_html_list_style(::Val{:authoryear}) = :ul
 bib_html_list_style(::Val{:alpha}) = :dl
+bib_html_list_style(::AlphaStyle) = :dl
 
 
 """Identify the sorting associated with a bibliographic style.
@@ -159,6 +274,7 @@ bib_sorting(style::Symbol) = bib_sorting(Val(style))
 bib_sorting(::Val{:numeric}) = :citation
 bib_sorting(::Val{:authoryear}) = :nyt
 bib_sorting(::Val{:alpha}) = :nyt
+bib_sorting(::AlphaStyle) = :nyt
 
 
 function parse_bibliography_block(block, doc, page)
@@ -215,6 +331,11 @@ function Selectors.runner(::Type{BibliographyBlock}, x, page, doc)
         # Local styles are for the Gallery in the documentation only.
         @assert fields[:Style] isa Symbol
         style = fields[:Style]
+        if style == :alpha
+            # same automatic upgrade as in CitationsBibliography
+            style = AlphaStyle()
+            init_bibliography!(style, bib)
+        end
         @debug "Overriding local style with $repr($style)"
     end
 

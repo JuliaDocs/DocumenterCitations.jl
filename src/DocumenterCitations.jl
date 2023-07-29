@@ -10,8 +10,7 @@ using Documenter.Expanders
 using Documenter.Writers.HTMLWriter
 
 using Markdown
-using Bibliography
-using Bibliography: xyear, xlink, xtitle
+using Bibliography: Bibliography, xyear, xlink, xtitle
 using OrderedCollections: OrderedDict, OrderedSet
 using Unicode
 
@@ -79,8 +78,12 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing, cached=
         # The message is only to transition users through the breaking change
         # in 1.0. It can be removed in any future 1.1 release.
         style = :numeric
+        @debug "Using default style=$(repr(style))"
+    elseif style == :alpha
+        @debug "Auto-upgrading :alpha to AlphaStyle()"
+        style = AlphaStyle()
     end
-    entries = import_bibtex(bibfile)
+    entries = Bibliography.import_bibtex(bibfile)
     if length(bibfile) > 0
         if !isfile(bibfile)
             error("bibfile $bibfile does not exist")
@@ -114,6 +117,36 @@ in its docstring.
 * [GoerzQ2022](@cite) Goerz et al. Quantum 6, 871 (2022)
 """
 struct Example end
+
+
+"""
+"Smart" alphabetic citation style (relative to the "dumb" `:alpha`).
+
+```julia
+style = AlphaStyle()
+```
+
+instantiates a style for [`CitationBibliography`](@ref) that avoids duplicate
+labels. Any of the entries that would result in the same label will be
+disambiguated by appending the suffix "a", "b", etc.
+
+Any bibliography that cites a subset of the given `entries` is guaranteed to
+have unique labels.
+"""
+struct AlphaStyle
+
+    # BibTeX key (entry.id) => rendered label, e.g. "GraceJMO2007" => "GBR+07b"
+    label_for_key::Dict{String,String}
+    # The internal field `label_for_key` is set by `init_bibliography!` at the
+    # beginning of the `ExpandBibliography` pipeline step.
+
+    AlphaStyle() = new(Dict{String,String}())
+
+end
+
+
+Base.show(io::IO, ::AlphaStyle) = print(io, "AlphaStyle()")
+
 
 include("citations.jl")
 include("bibliography.jl")

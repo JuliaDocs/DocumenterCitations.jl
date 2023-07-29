@@ -82,6 +82,24 @@ Style = :alpha
 Canonical = false
 ```
 
+Note that the `:alpha` style is able to automatically disambiguate labels:
+
+```@bibliography
+Pages = []
+Style = :alpha
+Canonical = false
+
+GraceJMO2007
+GraceJPB2007
+```
+
+This works because the `DocumenterCitations` automatically upgrades `style=:alpha` to the internal
+
+```@docs
+DocumenterCitations.AlphaStyle
+```
+
+
 ## [Custom styles](@id custom_styles)
 
 In the following, we show two examples for user-defined styles. See the [notes on customization](@ref customization) on how to generally define a custom style.
