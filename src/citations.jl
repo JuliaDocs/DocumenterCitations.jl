@@ -288,12 +288,18 @@ function format_citation(
     names =
         format_names(entry; names=:lastonly, and=true, et_al, et_al_text="*et al.*") |>
         tex2unicode
+    if isempty(names)
+        names = "Anonymous"
+    end
 
     if cite_cmd == :citep
         cite_cmd = :cite
     end
 
     year = entry.date.year |> tex2unicode
+    if isempty(year)
+        year = "undated"
+    end
     if !isnothing(note)
         year *= ", $note"
     end

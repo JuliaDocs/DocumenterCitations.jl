@@ -183,10 +183,22 @@ In general, the citation style determines the order of the references, see the [
 
 The [`refs.bib`](./refs.bib) file is in the standard [BibTeX format](https://www.bibtex.com/g/bibtex-format/). It must be parsable by [BibParser.jl](https://github.com/Humans-of-Julia/BibParser.jl).
 
-The use of `@string` macros for abbreviated journal names is encouraged, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
+You will find that you get the best results by maintaining a `.bib` files by hand, specifically for a given project using `DocumenterCitations`. A `.bib` file that works well with LaTeX may or may not work well with `DocumenterCitations`: remember that in LaTeX, the strings inside any BibTeX fields are rendered through the TeX engine. At least in principle, they may contain arbitrary macros.
 
-Also, even though `DocumenterCitations` has limited support for [escaped symbols](http://www.bibtex.org/SpecialSymbols/), the full use of unicode is both supported and strongly encouraged.
+In contrast, for `DocumenterCitations`, the BibTeX fields are minimally processed to convert some common LaTeX constructs to plain text, but beyond that, they are used "as-is". In future versions, the handling of LaTeX macros may improve, but it is best not to rely on it, and instead edit the `.bib` file so that it gives good results with `DocumenterCitations` (see the tips below).
 
-All entries should have a `Doi` field, or a `Url` field if no DOI is available.
+While we try to be reasonably compatible, "Any `.bib` file will render the bibliography you expect" is not a design goal, but "It is possible to write a `.bib` file so that you get exactly the bibliography you want" is.
 
-You may be interested in using the [`getbibtex` script](https://github.com/goerz/getbibtex) to generate consistent `.bib` files.
+Some tips to keep in mind when editing a `.bib` file to be used with `DocumenterCitations`:
+
+* Use unicode instead of [escaped symbols](http://www.bibtex.org/SpecialSymbols/).
+* You do not need to use [braces to protect capitalization](https://texfaq.org/FAQ-capbibtex). `DocumenterCitations` is not always able to remove such braces. But, unlike `bibtex`, `DocumenterCitation` will preserve the capitalization of titles.
+* Use a consistent scheme for citation keys. Shorter keys are better.
+* All entries should have a `Doi` field, or a `Url` field if no DOI is available.
+* If the published paper (`Doi` link) is not open-access, but a version of the paper is available on the [arXiv](https://arxiv.org), include the arXiv ID as `eprint` in the BibTeX entry. In the rendered bibliography, there will be a link to `https://arxiv.org/abs/<ID>`.
+* It is not necessary to define `Archiveprefix` in the `.bib` file. A missing `Archiveprefix` is assumed to be `arXiv`.
+* For documents that are available only as an arXiv eprint, the best result is obtained with a BibTeX entry using the `@article` class, with, e.g., `arXiv:2003.10132` in the `Journal` field, and, e.g., `10.48550/ARXIV.2003.10132` in the `Doi` field (but no `eprint` field).
+* Use `@string` macros for abbreviated journal names, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
+
+
+You may be interested in using (or forking) the [`getbibtex` script](https://github.com/goerz/getbibtex) to generate consistent `.bib` files.

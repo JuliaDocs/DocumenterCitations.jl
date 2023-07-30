@@ -151,21 +151,60 @@ function format_bibliography_reference(style::Symbol, entry)
 end
 
 
+function _doi_link(entry)
+    doi = entry.access.doi
+    return isempty(doi) ? "" : "https://doi.org/$doi"
+end
+
+
 function format_bibliography_reference(::Val{:numeric}, entry)
     authors = format_names(entry; names=:last) |> tex2unicode
-    link = xlink(entry)
-    title = xtitle(entry) |> tex2unicode
-    published_in = format_published_in(entry) |> tex2unicode
-    return "$authors. <i>$title</i>. $(linkify(published_in, link))."
+    title = xtitle(entry)
+    if !isempty(title)
+        title = "<i>" * tex2unicode(title) * "</i>"
+    end
+    linked_title = linkify(title, entry.access.url)
+    published_in = linkify(tex2unicode(format_published_in(entry)), _doi_link(entry))
+    eprint = format_eprint(entry)
+    note = format_note(entry)
+    parts = String[]
+    for part in (authors, linked_title, published_in, eprint, note)
+        if !isempty(part)
+            push!(parts, part)
+        end
+    end
+    html = _join_bib_parts(parts)
+    return html
 end
 
 function format_bibliography_reference(::Val{:authoryear}, entry)
     authors = format_names(entry; names=:lastfirst) |> tex2unicode
     year = entry.date.year |> tex2unicode
-    link = xlink(entry)
-    title = xtitle(entry) |> tex2unicode
-    published_in = format_published_in(entry; include_date=false) |> tex2unicode
-    return "$authors ($year). <i>$title</i>. $(linkify(published_in, link))."
+    if !isempty(year)
+        if isempty(authors)
+            authors = "—"
+        end
+        year = "($year)"
+    end
+    title = xtitle(entry)
+    if !isempty(title)
+        title = "<i>" * tex2unicode(title) * "</i>"
+    end
+    linked_title = linkify(title, entry.access.url)
+    published_in = linkify(
+        tex2unicode(format_published_in(entry; include_date=false)),
+        _doi_link(entry)
+    )
+    eprint = format_eprint(entry)
+    note = format_note(entry)
+    parts = String[]
+    for part in (authors, year, linked_title, published_in, eprint, note)
+        if !isempty(part)
+            push!(parts, part)
+        end
+    end
+    html = _join_bib_parts(parts)
+    return html
 end
 
 

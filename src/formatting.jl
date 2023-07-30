@@ -48,7 +48,16 @@ function tex2unicode(s)
     return Unicode.normalize(s)
 end
 
-linkify(text, link) = isempty(link) ? text : "<a href='$link'>$text</a>"
+function linkify(text, link)
+    if isempty(text)
+        text = link
+    end
+    if isempty(link)
+        return text
+    else
+        return "<a href='$link'>$text</a>"
+    end
+end
 
 function _initial(name)
     initial = ""
@@ -76,7 +85,7 @@ end
 
 # The citation label for the :alpha style
 function alpha_label(entry)
-    year = two_digit_year(entry.date.year)
+    year = isempty(entry.date.year) ? "??" : two_digit_year(entry.date.year)
     if length(entry.authors) == 1
         name = Unicode.normalize(entry.authors[1].last; stripmark=true)
         return uppercasefirst(first(name, 3)) * year
@@ -85,7 +94,11 @@ function alpha_label(entry)
         if length(entry.authors) > 4
             letters = [first(letters, 3)..., "+"]
         end
-        return join(letters, "") * year
+        if length(letters) == 0
+            return "Anon" * year
+        else
+            return join(letters, "") * year
+        end
     end
 end
 
@@ -210,17 +223,11 @@ function format_published_in(entry; include_date=true)
         parts = [entry.in.publisher, entry.in.address]
         str *= join(filter!(!isempty, parts), ", ")
     elseif entry.type ∈ ["booklet", "misc"]
-        parts = [
-            entry.access.howpublished
-            get(entry.fields, "note", "")
-        ]
+        parts = [entry.access.howpublished]
         str *= join(filter!(!isempty, parts), ", ")
     elseif entry.type == "eprint"
-        if isempty(entry.eprint.archive_prefix)
-            str *= entry.eprint.eprint
-        else
-            str *= "$(entry.eprint.archive_prefix):$(entry.eprint.eprint) [$(entry.eprint.primary_class)]"
-        end
+        error("Invalid bibtex type 'eprint'")
+        # https://github.com/Humans-of-Julia/BibInternal.jl/issues/22
     elseif entry.type == "inbook"
         parts = [
             entry.booktitle,
@@ -231,7 +238,7 @@ function format_published_in(entry; include_date=true)
         str *= join(filter!(!isempty, parts), ", ")
     elseif entry.type == "incollection"
         parts = [
-            "In $(entry.booktitle)",
+            "In: $(entry.booktitle)",
             "editors",
             format_names(entry, true),
             entry.in.pages * ". " * entry.in.publisher,
@@ -240,7 +247,7 @@ function format_published_in(entry; include_date=true)
         str *= join(filter!(!isempty, parts), ", ")
     elseif entry.type == "inproceedings"
         parts = [
-            " In " * entry.booktitle,
+            " In: " * entry.booktitle,
             entry.in.series,
             entry.in.pages,
             entry.in.address,
@@ -277,11 +284,73 @@ function format_published_in(entry; include_date=true)
         ]
         str *= join(filter!(!isempty, parts), ", ")
     elseif entry.type == "unpublished"
-        parts = [get(entry.fields, "note", ""),]
-        str *= join(filter!(!isempty, parts), ", ")
+        if isempty(get(entry.fields, "note", ""))
+            @warn "unpublished $(entry.id) does not have a 'note'"
+        end
     end
     if include_date && !isempty(entry.date.year)
         str *= " ($(entry.date.year))"
     end
     return str
+end
+
+
+function format_note(entry)
+    return strip(get(entry.fields, "note", "")) |> tex2unicode
+end
+
+
+function format_eprint(entry)
+    eprint = entry.eprint.eprint
+    if isempty(eprint)
+        return ""
+    end
+    archive_prefix = entry.eprint.archive_prefix
+    primary_class = entry.eprint.primary_class
+    if isempty(archive_prefix) || (lowercase(archive_prefix) == "arxiv")
+        archive_prefix = "arXiv"
+    end
+    text = "$(archive_prefix):$eprint"
+    if !isempty(primary_class)
+        text *= " [$(primary_class)]"
+    end
+    link = ""
+    if archive_prefix == "arXiv"
+        link = "https://arxiv.org/abs/$eprint"
+    end
+    return linkify(text, link)
+end
+
+
+# Not a safe tag stripper (you can't process HTML with regexes), but we
+# generated the input `html` being passed to this function, so we have some
+# control over not having pathological HTML here. Also, at worst we end up with
+# punctuation that isn't quite perfect.
+_strip_tags(html) = replace(html, r"<[^>]*>" => "")
+
+# Intelligently join the parts with appropriate punctuation
+function _join_bib_parts(parts)
+    html = ""
+    if length(parts) == 0
+        html = ""
+    elseif length(parts) == 1
+        html = strip(parts[1])
+        if !endswith(_strip_tags(html), r"[.!?]")
+            html *= "."
+        end
+    else
+        html = strip(parts[1])
+        rest = _join_bib_parts(parts[2:end])
+        rest_text = _strip_tags(rest)
+        if endswith(_strip_tags(html), r"[,;.!?]") || startswith(rest_text, "(")
+            html *= " " * rest
+        else
+            if uppercase(rest_text[1]) == rest_text[1]
+                html *= ". " * rest
+            else
+                html *= ", " * rest
+            end
+        end
+    end
+    return html
 end
