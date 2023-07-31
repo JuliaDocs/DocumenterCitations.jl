@@ -60,6 +60,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
           JULIA_DEBUG: Documenter,DocumenterCitations
+      - uses: actions/upload-artifact@v3
+        with:
+          name: documenter-citations-docs
+          path: docs/build/
   codestyle:
     name: Codestyle
     runs-on: ubuntu-latest
