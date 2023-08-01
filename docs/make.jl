@@ -41,4 +41,4 @@ makedocs(
 
 println("Finished makedocs")
 
-deploydocs(; repo="github.com/JuliaDocs/DocumenterCitations.jl.git")
+deploydocs(; repo="github.com/JuliaDocs/DocumenterCitations.jl.git", push_preview=true)
