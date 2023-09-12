@@ -27,7 +27,7 @@ ExpandCitations
 
 ## [Customization](@id customization)
 
-A custom style can be created by defining methods for functions listed below that specialize for a user-defined `style` argument to [`CitationBibliography`](@ref). If the `style` is identified by a simple name, e.g. `:mystyle`, the method should specialize on `Val{:mystyle}`, see the [examples for custom styles](@ref custom_styles). Beyond that, e.g., if the `style` needs to implement options or needs to maintain internal state to manage unique citation labels, `style` can be an object of a custom type.
+A custom style can be created by defining methods for the functions listed below that specialize for a user-defined `style` argument to [`CitationBibliography`](@ref). If the `style` is identified by a simple name, e.g. `:mystyle`, the methods should specialize on `Val{:mystyle}`, see the [examples for custom styles](@ref custom_styles). Beyond that, e.g., if the `style` needs to implement options or needs to maintain internal state to manage unique citation labels, `style` can be an object of a custom type. The builtin [`DocumenterCitations.AlphaStyle`](@ref) is an example for such a "stateful"  style, initialized via a custom [`init_bibliography!`](@ref) method.
 
 
 ```@docs
@@ -36,6 +36,7 @@ bib_sorting
 format_bibliography_label
 format_bibliography_reference
 format_citation
+init_bibliography!
 ```
 
 ## Debugging

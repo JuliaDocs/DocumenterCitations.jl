@@ -320,7 +320,7 @@ end
 
 
 function format_citation(
-    style::Val{:alpha},
+    style::Union{Val{:alpha},AlphaStyle},
     entry,
     citations; # OrderedDict{String,Int64}
     note::Union{Nothing,String}=nothing,
@@ -328,10 +328,17 @@ function format_citation(
     capitalize::Bool=false,
     starred::Bool=false
 )
-    if isnothing(note)
-        link_text = "[$(alpha_label(entry))]"
+    if style == Val(:alpha)
+        # dumb style
+        label = alpha_label(entry)
     else
-        link_text = "[$(alpha_label(entry)), $note]"
+        # smart style
+        label = style.label_for_key[entry.id]
+    end
+    if isnothing(note)
+        link_text = "[$label]"
+    else
+        link_text = "[$label, $note]"
     end
     if cite_cmd ∈ [:citealt, :citealp, :citenum]
         @warn "$cite_cmd citations are not supported in the default styles."
