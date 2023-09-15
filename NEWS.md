@@ -15,8 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * New `style=AlphaStyle()` that generates unique citation labels. This can mostly be considered internal, as `style=:alpha` is automatically upgraded to `style=AlphaStyle()`.
-* Support for `eprint` field. It is recommended to add the arXiv ID in the `eprint` field for any article whose DOI is behind a paywall.
-* Support for `note` field.
+* Support for `eprint` field. It is recommended to add the arXiv ID in the `eprint` field for any article whose DOI is behind a paywall [[#32][]]
+* Support for non-arXiv preprint servers BiorXiv and HAL [[#35][], [#36][]]
+* Support for `note` field. [[#20][]]
 
 ### Changed
 
@@ -55,3 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#36]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/36
+[#35]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/35
+[#32]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/32
+[#20]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/20

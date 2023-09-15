@@ -301,24 +301,42 @@ end
 
 
 function format_eprint(entry)
+
     eprint = entry.eprint.eprint
     if isempty(eprint)
         return ""
     end
     archive_prefix = entry.eprint.archive_prefix
     primary_class = entry.eprint.primary_class
+
+    # standardize prefix for supported preprint repositories
     if isempty(archive_prefix) || (lowercase(archive_prefix) == "arxiv")
         archive_prefix = "arXiv"
     end
+    if lowercase(archive_prefix) == "hal"
+        archive_prefix = "HAL"
+    end
+    if lowercase(archive_prefix) == "biorxiv"
+        archive_prefix = "biorXiv"
+    end
+
     text = "$(archive_prefix):$eprint"
     if !isempty(primary_class)
         text *= " [$(primary_class)]"
     end
+
+    # link url for supported preprint repositories
     link = ""
     if archive_prefix == "arXiv"
         link = "https://arxiv.org/abs/$eprint"
+    elseif archive_prefix == "HAL"
+        link = "https://hal.science/$eprint"
+    elseif archive_prefix == "biorXiv"
+        link = "https://www.biorxiv.org/content/10.1101/$eprint"
     end
+
     return linkify(text, link)
+
 end
 
 

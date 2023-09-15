@@ -195,10 +195,24 @@ Some tips to keep in mind when editing a `.bib` file to be used with `Documenter
 * You do not need to use [braces to protect capitalization](https://texfaq.org/FAQ-capbibtex). `DocumenterCitations` is not always able to remove such braces. But, unlike `bibtex`, `DocumenterCitation` will preserve the capitalization of titles.
 * Use a consistent scheme for citation keys. Shorter keys are better.
 * All entries should have a `Doi` field, or a `Url` field if no DOI is available.
-* If the published paper (`Doi` link) is not open-access, but a version of the paper is available on the [arXiv](https://arxiv.org), include the arXiv ID as `eprint` in the BibTeX entry. In the rendered bibliography, there will be a link to `https://arxiv.org/abs/<ID>`.
-* It is not necessary to define `Archiveprefix` in the `.bib` file. A missing `Archiveprefix` is assumed to be `arXiv`.
-* For documents that are available only as an arXiv eprint, the best result is obtained with a BibTeX entry using the `@article` class, with, e.g., `arXiv:2003.10132` in the `Journal` field, and, e.g., `10.48550/ARXIV.2003.10132` in the `Doi` field (but no `eprint` field).
 * Use `@string` macros for abbreviated journal names, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
 
 
 You may be interested in using (or forking) the [`getbibtex` script](https://github.com/goerz/getbibtex) to generate consistent `.bib` files.
+
+
+### Preprint support
+
+If the published paper (`Doi` link) is not open-access, but a version of the paper is available on a preprint server like the [arXiv](https://arxiv.org), your are strongly encouraged to add the arXiv ID as `Eprint` in the BibTeX entry. In the rendered bibliography, the preprint information will be shown and automatically link to `https://arxiv.org/abs/<ID>`.
+If necessary, you may also add a `Primaryclass` field to indicate a category, see ["BibTeX and Eprints" in the arXiv documentation](https://info.arxiv.org/help/hypertex/bibstyles/index.html).
+
+Note that unlike in [default](https://tex.stackexchange.com/questions/386078/workaround-for-missing-archiveprefix-in-bib-entry) BibTeX, it is not necessary to define `Archiveprefix` in the `.bib` file. A missing `Archiveprefix` is assumed to be `arXiv`. The field name `Eprinttype` (which in BibTeX is an alias for `Archiveprefix`) is currently not yet supported, nor is `Eprintclass` as an alias for `Primaryclass`.
+
+For documents that are available *only* as an arXiv eprint, the best result is obtained with a BibTeX entry using the `@article` class, with, e.g., `arXiv:2003.10132` in the `Journal` field, and, e.g., `10.48550/ARXIV.2003.10132` in the `Doi` field (but no `Eprint` field) [Wilhelm2003.10132](@cite).
+
+Beyond arXiv, other preprint servers are supported. The `Archiveprefix` field for non-arXiv preprints is mandatory. For any defined `Archiveprefix`, `Eprint`, and `Primaryclass` fields, the rendered bibliography will include the preprint information in the format `ArchivePrefix:Eprint [Primaryclass]`. However, only certain preprint servers (known `ArchivePrefix`) will automatically be linked. Besides arXiv, the currently supported preprint servers are:
+
+* [BiorXiv](https://www.biorxiv.org). The `Archiveprefix` is `biorXiv`. The `Eprint` ID should be the final part of the DOI, e.g. `2022.09.09.507322` [KatrukhaNC2017](@cite).
+* [HAL](https://hal.science). The `Archiveprefix` is `HAL`. The `Eprint` ID should include the prefix (usually `hal-`, but sometimes `tel-`, etc.), e.g., Refs [SauvagePRXQ2020](@cite) and [BrionPhd2004](@cite).
+
+If you would like support for any additional preprint server, [please open an issue](https://github.com/JuliaDocs/DocumenterCitations.jl/issues/new/choose).
