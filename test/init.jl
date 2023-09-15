@@ -15,13 +15,16 @@ using LocalCoverage:
     FileCoverageSummary,
     CoverageTools
 
+function _coverage(metric::Union{PackageCoverage,FileCoverageSummary})
+    return 100.0 * (float(metric.lines_hit) / metric.lines_tracked)
+end
 
 function format_line(metric::Union{PackageCoverage,FileCoverageSummary})
     name = (metric isa PackageCoverage ? "TOTAL" : relpath(metric.filename))
     lines_hit = @sprintf("%3d", metric.lines_hit)
     lines_tracked = @sprintf("%3d", metric.lines_tracked)
     lines_missing = @sprintf("%3d", metric.lines_tracked - metric.lines_hit)
-    coverage = (isnan(metric.coverage) ? "-" : @sprintf("%3.0f%%", metric.coverage))
+    coverage = isnan(_coverage(metric)) ? "-" : @sprintf("%3.0f%%", _coverage(metric))
     return hcat(name, lines_tracked, lines_hit, lines_missing, coverage)
 end
 
@@ -59,7 +62,7 @@ function show_coverage(metrics::PackageCoverage; sort_by=nothing)
         :Total => (m -> m.lines_tracked),
         :Hit => (m -> m.lines_hit),
         :Missed => (m -> (m.lines_tracked - m.lines_hit)),
-        :Coverage => (m -> m.coverage),
+        :Coverage => (m -> _coverage(m)),
     )
     if !isnothing(sort_by)
         if sort_by ∈ keys(sorter)
@@ -71,7 +74,7 @@ function show_coverage(metrics::PackageCoverage; sort_by=nothing)
 
     table = reduce(vcat, map(format_line, [file_metrics..., metrics]))
 
-    row_coverage = [getfield.(file_metrics, :coverage)... metrics.coverage]
+    row_coverage = [[_coverage(m) for m in file_metrics]... _coverage(metrics)]
 
     highlighters = (
         Highlighter(

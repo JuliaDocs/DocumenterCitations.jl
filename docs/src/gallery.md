@@ -93,7 +93,7 @@ GraceJMO2007
 GraceJPB2007
 ```
 
-This works because the `DocumenterCitations` automatically upgrades `style=:alpha` to the internal
+This works because the `DocumenterCitations` plugin automatically upgrades `style=:alpha` to the internal
 
 ```@docs
 DocumenterCitations.AlphaStyle

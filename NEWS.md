@@ -7,17 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Do not try include a year when rendering a reference if the underlying BibTeX entry has no `year` field.
-* Avoid duplicate labels in `:alpha` style. This is implemented via the new stateful `AlphaStyle()`, but is handled automatically.
+* Avoid duplicate labels in `:alpha` style. This is implemented via the new stateful `AlphaStyle()`, but is handled automatically with (`style=:alpha`).
 * With the alphabetic style (`:alpha`/`AlphaStyle`), include up to 4 names in the label, not 3 (but 5 or more names results in 3 names and "+"). Also, include the first letter of a "particle" in the label, e.g. "vWB08" for a first author "von Winckel". Both of these are consistent with LaTeX's behavior.
+* Handle missing author/year, especially for `:authoryar` and `:alpha` styles. You end up with `:alpha` labels like `Anon04` (missing authors) or `CW??` (missing year), and `:authoryear` citations like "(Anonymous, 2004)" and "(Corcovilos and Weiss, undated)".
+* Consistent punctuation in the rendered bibliography, including for cases of missing fields.
 
 ### Added
 
 * New `style=AlphaStyle()` that generates unique citation labels. This can mostly be considered internal, as `style=:alpha` is automatically upgraded to `style=AlphaStyle()`.
+* Support for `eprint` field. It is recommended to add the arXiv ID in the `eprint` field for any article whose DOI is behind a paywall.
+* Support for `note` field.
+
+### Changed
+
+* In the rendered bibliography, the BibTeX "URL" field is now linked via the title, while the "DOI" is linked via the journal information. This allows to have a DOI and URL at the same time, or a URL for an `@unpublished`/`@misc` citation. If there is a URL but no title, the URL is used as the title.
 
 ### Internal Changes
 
-* Added an internal function `init_bibliography!` that is called at the beginning of the `ExpandBibliography` pipeline step. This function is intended to initialized internal state either of the `style` object or the `CitationBibliography` plugin object before rendering any `@bibliography` blocks. This is used to generate unique citation labels for the new `AlphaStyle()`. For the other builtin styles, it is a no-op. Generally, `init_bibliography!` can help with implementing custom "stateful" styles.
+* Added an internal function `init_bibliography!` that is called at the beginning of the `ExpandBibliography` pipeline step. This function is intended to initialize internal state either of the `style` object or the `CitationBibliography` plugin object before rendering any `@bibliography` blocks. This is used to generate unique citation labels for the new `AlphaStyle()`. For the other builtin styles, it is a no-op. Generally, `init_bibliography!` can help with implementing custom "stateful" styles.
 
 
 ## [Version v1.0.0][1.0.0] - 2023-07-12

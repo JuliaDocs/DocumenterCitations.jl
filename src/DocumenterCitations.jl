@@ -148,6 +148,24 @@ end
 Base.show(io::IO, ::AlphaStyle) = print(io, "AlphaStyle()")
 
 
+# Work around https://github.com/Humans-of-Julia/BibInternal.jl/issues/22
+# This is a monkey-patch of the original routine. We give it preference with
+# the type annotation `::String` for the id.
+function Bibliography.BibInternal.make_bibtex_entry(id::String, fields; check=:error)
+    # "eprint" ∈ keys(fields) && (fields["_type"] = "eprint")  # bug #22
+    fields = Dict(lowercase(k) => v for (k, v) in fields) # lowercase tag names
+    errors = Bibliography.BibInternal.check_entry(fields, check, id)
+    if length(errors) > 0 && check ∈ [:error, :warn]
+        message =
+            "Entry $id is missing the " *
+            foldl(((x, y) -> x * ", " * y), errors) *
+            " field(s)."
+        check == :error ? (@error message) : (@warn message)
+    end
+    return Bibliography.BibInternal.Entry(id, fields)
+end
+
+
 include("citations.jl")
 include("bibliography.jl")
 include("formatting.jl")
