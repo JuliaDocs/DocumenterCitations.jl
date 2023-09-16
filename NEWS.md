@@ -3,11 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Version v1.1.0][1.1.0] - 2023-09-15
 
 ### Fixed
 
-* Avoid duplicate labels in `:alpha` style. This is implemented via the new stateful `AlphaStyle()`, but is handled automatically with (`style=:alpha`).
+* Avoid duplicate labels in `:alpha` style. This is implemented via the new stateful `AlphaStyle()`, but is handled automatically with (`style=:alpha`) [[#31][]]
 * With the alphabetic style (`:alpha`/`AlphaStyle`), include up to 4 names in the label, not 3 (but 5 or more names results in 3 names and "+"). Also, include the first letter of a "particle" in the label, e.g. "vWB08" for a first author "von Winckel". Both of these are consistent with LaTeX's behavior.
 * Handle missing author/year, especially for `:authoryar` and `:alpha` styles. You end up with `:alpha` labels like `Anon04` (missing authors) or `CW??` (missing year), and `:authoryear` citations like "(Anonymous, 2004)" and "(Corcovilos and Weiss, undated)".
 * Consistent punctuation in the rendered bibliography, including for cases of missing fields.
@@ -59,4 +59,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#36]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/36
 [#35]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/35
 [#32]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/32
+[#31]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/31
 [#20]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/20
