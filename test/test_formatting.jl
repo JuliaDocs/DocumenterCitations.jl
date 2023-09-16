@@ -89,6 +89,24 @@ end
 end
 
 
+@testset "format_biliography_reference (preprints)" begin
+    bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
+    bib0 = CitationBibliography(joinpath(splitext(@__FILE__)[1], "preprints.bib"))
+    merge!(bib.entries, bib0.entries)
+    html(key) = format_bibliography_reference(Val(:numeric), bib.entries[key])
+    @Test html("LarrouyPRX2020") ==
+          "A. Larrouy, S. Patsch, R. Richaud, J.-M. Raimond, M. Brune, C. P. Koch and S. Gleyzes. <i>Fast Navigation in a Large Hilbert Space Using Quantum Optimal Control</i>. <a href='https://doi.org/10.1103/physrevx.10.021058'>Phys. Rev. X <b>10</b>, 021058 (2020)</a>. <a href='https://hal.science/hal-02887773'>HAL:hal-02887773</a>."
+    @Test html("TuriniciHAL00640217") ==
+          "G. Turinici. <a href='https://hal.science/hal-00640217'><i>Quantum control</i></a>. HAL:hal-00640217 (2012)."
+    @Test html("BrionPhd2004") ==
+          "E. Brion. <i>Contrôle Quantique et Protection de la Cohérence par effet Zénon, Applications à l'Informatique Quantique</i>. Phd thesis, Université Pierre et Marie Curie - Paris VI (2014). <a href='https://hal.science/tel-00007910v2'>HAL:tel-00007910v2</a>."
+    @Test html("KatrukhaNC2017") ==
+          "E. A. Katrukha, M. Mikhaylova, H. X. van Brakel, P. M. van Bergen en Henegouwen, A. Akhmanova, C. C. Hoogenraad and L. C. Kapitein. <i>Probing cytoskeletal modulation of passive and active intracellular dynamics using nanobody-functionalized quantum dots</i>. <a href='https://doi.org/10.1038/ncomms14772'>Nat. Commun. <b>8</b>, 14772 (2017)</a>, <a href='https://www.biorxiv.org/content/10.1101/089284'>biorXiv:089284</a>."
+    @Test html("NonStandardPreprint") ==
+          "M. Tomza, M. H. Goerz, M. Musiał, R. Moszynski and C. P. Koch. <i>Optimized production of ultracold ground-state molecules: Stabilization employing potentials with ion-pair character and strong spin-orbit coupling</i>. <a href='https://doi.org/10.1103/PhysRevA.86.043424'>Phys. Rev. A <b>86</b>, 043424 (2012)</a>, xxx-preprint:1208.4331."
+end
+
+
 @testset "format_bibliography_reference(:authoryear)" begin
     bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
     html(key) = format_bibliography_reference(Val(:authoryear), bib.entries[key])
