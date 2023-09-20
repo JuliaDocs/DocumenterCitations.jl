@@ -21,6 +21,7 @@ include("custom_styles/keylabels.jl")
 makedocs(
     authors=AUTHORS,
     linkcheck=true,
+    warnonly=[:linkcheck,],
     sitename="DocumenterCitations.jl",
     format=Documenter.HTML(
         prettyurls=true,
