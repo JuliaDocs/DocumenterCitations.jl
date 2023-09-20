@@ -22,13 +22,12 @@ include("run_makedocs.jl")
     ) do dir, result, success, backtrace, output
         #if !success
         #    println("")
-        #    @error "Failed makedocs:\n$output" dir  # XXX
+        #    @error "Failed makedocs:\n$output" dir
         #end
         #if result isa Exception
-        #    @error "Raised $(typeof(result))\n" result  # XXX
+        #    @error "Raised $(typeof(result))\n" result
         #end
-        @test result == ErrorException("type Entry has no field level")  # XXX
-        @test_broken success
+        @test success
     end
 
 end
