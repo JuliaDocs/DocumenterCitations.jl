@@ -40,16 +40,26 @@ function collect_citations(doc::Documenter.Document)
         @debug "CollectCitations: collecting `@cite` entries in $src"
         empty!(page.globals.meta)
         try
-            for node in AbstractTrees.PreOrderDFS(page.mdast)
-                if node.element isa MarkdownAST.Link
-                    collect_citation(node, page.globals.meta, src, page, doc)
-                end
-            end
+            _collect_citations(page.mdast, page.globals.meta, src, page, doc)
         catch
             push!(doc.internal.errors, :citations)
         end
     end
     @debug "Collected citations" bib.citations
+end
+
+function _collect_citations(mdast::MarkdownAST.Node, meta, src, page, doc)
+    for node in AbstractTrees.PreOrderDFS(mdast)
+        if node.element isa Documenter.DocsNode
+            # The docstring AST trees are not part of the tree of the page, so
+            # we need to expand them explicitly
+            for (docstr, docmeta) in zip(node.element.mdasts, node.element.metas)
+                _collect_citations(docstr, docmeta, src, page, doc)
+            end
+        elseif node.element isa MarkdownAST.Link
+            collect_citation(node, meta, src, page, doc)
+        end
+    end
 end
 
 

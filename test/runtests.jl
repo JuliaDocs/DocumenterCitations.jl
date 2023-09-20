@@ -26,6 +26,11 @@ using DocumenterCitations
         include("test_alphastyle.jl")
     end
 
+    print("\n* collect from docstrings (test_collect_from_docstrings.jl):")
+    @time @safetestset "collect_from_docstrings" begin
+        include("test_collect_from_docstrings.jl")
+    end
+
     print("\n* content_bock (test_content_block.jl):")
     @time @safetestset "content_block" begin
         include("test_content_block.jl")
@@ -44,6 +49,11 @@ using DocumenterCitations
     print("\n* integration test (test_integration.jl):")
     @time @safetestset "integration" begin
         include("test_integration.jl")
+    end
+
+    print("\n* test undefined citations (test_undefined_citations.jl):")
+    @time @safetestset "undefined_citations" begin
+        include("test_undefined_citations.jl")
     end
 
     print("\n")
