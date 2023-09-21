@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased][]
+
+### Fixed
+
+* Collect citations that only occur in docstrings [[#39][], [#40][]]
+
+
 ## [Version 1.2.0][1.2.0] - 2023-09-16
 
 ### Version changes
@@ -70,6 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#40]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/40
+[#39]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/39
 [#36]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/36
 [#35]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/35
 [#32]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/32
