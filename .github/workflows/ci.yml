@@ -89,3 +89,72 @@ jobs:
               write(stdout, out)
               exit(1)
           end'
+      - name: Version check
+        run: |
+          julia -e '
+          using Pkg
+          VERSION = VersionNumber(Pkg.TOML.parsefile("Project.toml")["version"])
+          BRANCH = ENV["GITHUB_REF_NAME"]
+          if startswith(BRANCH, "release-")
+              if (length(VERSION.prerelease) == length(VERSION.build))
+                  println("Version $VERSION on release branch OK")
+              else
+                  @error "Invalid version $VERSION on release branch"
+                  exit(1)
+              end
+          elseif BRANCH != "master"
+              if ("dev" in VERSION.prerelease) || ("dev" in VERSION.build)
+                  println("Version $VERSION OK with dev-suffix on $BRANCH")
+              else
+                  @error "Invalid version $VERSION on branch: must contain dev suffix"
+                  exit(1)
+              end
+          else
+              println("Version $VERSION OK on $BRANCH")
+          end
+          exit(0)'
+      - name: Changelog check
+        run: |
+          julia -e '
+          using Pkg
+          using Dates
+          VERSION = VersionNumber(Pkg.TOML.parsefile("Project.toml")["version"])
+          BRANCH = ENV["GITHUB_REF_NAME"]
+          CHANGELOG = read("NEWS.md", String)
+          TODAY = string(Dates.today())
+          if ("dev" in VERSION.prerelease) || ("dev" in VERSION.build)
+              if !contains(CHANGELOG, "## [Unreleased][]")
+                  @error "NEWS.md for dev-version must contain Unreleased heading"
+                  exit(1)
+              end
+          end
+          if startswith(BRANCH, "release-")
+              if contains(CHANGELOG, "## [Unreleased][]")
+                  @error "NEWS.md for releases must not contain Unreleased heading"
+                  exit(1)
+              end
+              release_header =  "## [Version $VERSION][$VERSION] - $TODAY"
+              if !contains(CHANGELOG, release_header)
+                  @error "NEWS.md must contain release header $(repr(release_header))"
+                  exit(1)
+              end
+              rx_release_link = Regex(replace("[$VERSION]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v(\\d.\\d.\\d)...v$VERSION", "."=>"\\.", "[" => "\\[", "]" => "\\]"))
+              release_link = match(rx_release_link, CHANGELOG)
+              if isnothing(release_link)
+                  @error "NEWS.md must contain a link for the release $VERSION with the pattern $(repr(rx_release_link.pattern)) comparing $VERSION with the previous release"
+                  exit(1)
+              else
+                  previous_version = VersionNumber(release_link.captures[1])
+                  if previous_version >= VERSION
+                      @error "The release link $(repr(release_link.match)) must compare the range from the previous version, not $(previous_version)"
+                      exit(1)
+                  end
+              end
+              unreleased_link = "[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v$VERSION...HEAD"
+              if !contains(CHANGELOG, unreleased_link)
+                  @error "NEWS.md must contain link for future unreleased changes $(repr(unreleased_link)) (but no Unreleased header)"
+                  exit(1)
+              end
+          end
+          println("NEWS.md OK")
+          exit(0)'
