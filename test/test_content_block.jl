@@ -18,17 +18,10 @@ include("run_makedocs.jl")
         joinpath(@__DIR__, "test_content_block");
         sitename="Test",
         plugins=[bib],
-        pages=["Home" => "index.md", "References" => "references.md",]
+        pages=["Home" => "index.md", "References" => "references.md",],
+        check_success=true
     ) do dir, result, success, backtrace, output
-        #if !success
-        #    println("")
-        #    @error "Failed makedocs:\n$output" dir  # XXX
-        #end
-        #if result isa Exception
-        #    @error "Raised $(typeof(result))\n" result  # XXX
-        #end
-        @test result == ErrorException("type Entry has no field level")  # XXX
-        @test_broken success
+        @test success
     end
 
 end

@@ -85,7 +85,6 @@ bib = CitationBibliography(
 makedocs(;
     authors=AUTHORS,
     sitename="DocumenterCitations.jl",
-    strict=true,
     format=Documenter.HTML(
         prettyurls=true,
         canonical="https://juliaquantumcontrol.github.io/DocumenterCitations.jl",

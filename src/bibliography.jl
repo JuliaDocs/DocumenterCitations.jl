@@ -439,7 +439,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     if fields[:Canonical]
         html = """<div class="citation canonical"><$tag>"""
     end
-    headers = doc.internal.headers
+    anchors = bib.anchor_map
     entries = OrderedDict{String,Bibliography.Entry}(
         key => bib.entries[key] for key in keys_to_show
     )
@@ -454,7 +454,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
         @assert entry.id == key
         if fields[:Canonical]
             # Add anchor that citations can link to from anywhere in the docs.
-            if Documenter.anchor_exists(headers, key)
+            if Documenter.anchor_exists(anchors, key)
                 # Skip entries that already have a canonical bib entry
                 # elsewhere. This is expected behavior, not an error/warning,
                 # allowing to split the canonical bibliography in multiple
@@ -463,7 +463,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
                 continue
             else
                 @debug "Defining anchor for key=$(key)"
-                Documenter.anchor_add!(headers, entry, key, page.build)
+                Documenter.anchor_add!(anchors, entry, key, page.build)
             end
         else
             # For non-canonical bibliographies, no anchors are generated, and

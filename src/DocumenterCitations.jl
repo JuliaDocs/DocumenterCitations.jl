@@ -22,9 +22,8 @@ export CitationBibliography
 bib = CitationBibliography(bibfile; style=:numeric)
 ```
 
-instantiates a plugin that must be passed as an (undocumented!) positional
-argument to
-[`Documenter.makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs).
+instantiates a plugin object that must be passed as an element of the `plugins`
+keyword argument to [`Documenter.makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs).
 
 # Arguments
 
@@ -43,6 +42,9 @@ should not be considered part of the stable API.
 * `citations`: ordered dict of citation key to citation number
 * `page_citations`: dict of page file name to set of citation keys cited on
   page.
+* `anchor_map`: an [`AnchorMap`](https://documenter.juliadocs.org/stable/lib/internals/anchors/#Documenter.AnchorMap)
+  object that keeps track of the link anchors for references in bibliography
+  blocks
 """
 struct CitationBibliography <: Documenter.Plugin
     # name of bib file
@@ -56,6 +58,9 @@ struct CitationBibliography <: Documenter.Plugin
     citations::OrderedDict{String,Int64}
     # page file name => set of citation keys (private)
     page_citations::Dict{String,Set{String}}
+    # AnchorMap object that stores the link anchors to all references in
+    # canonical bibliography blocks
+    anchor_map::Documenter.AnchorMap
 end
 
 function CitationBibliography(bibfile::AbstractString=""; style=nothing)
@@ -77,7 +82,15 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing)
     end
     citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
-    return CitationBibliography(bibfile, style, entries, citations, page_citations)
+    anchor_map = Documenter.AnchorMap()
+    return CitationBibliography(
+        bibfile,
+        style,
+        entries,
+        citations,
+        page_citations,
+        anchor_map
+    )
 end
 
 

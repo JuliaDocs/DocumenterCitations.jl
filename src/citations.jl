@@ -418,11 +418,11 @@ function expand_citation(node::MarkdownAST.Node, meta, page, doc)
     if haskey(bib.entries, key)
         entry = bib.entries[key]
         @assert entry.id == key
-        headers = doc.internal.headers
-        if Documenter.anchor_exists(headers, key)
-            if Documenter.anchor_isunique(headers, key)
+        anchors = bib.anchor_map
+        if Documenter.anchor_exists(anchors, key)
+            if Documenter.anchor_isunique(anchors, key)
                 # Replace the `@cite` url with a path to the referenced header.
-                anchor = Documenter.anchor(headers, key)
+                anchor = Documenter.anchor(anchors, key)
                 path   = relpath(anchor.file, dirname(page.build))
                 if isnothing(cit.link_text)
                     @assert length(node.children) == 1 &&

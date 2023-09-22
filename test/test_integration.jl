@@ -38,10 +38,9 @@ include(CUSTOM2)
             "CSS Styling"            => "styling.md",
             "Internals"              => "internals.md",
             "References"             => "references.md",
-        ]
+        ],
+        check_success=true
     ) do dir, result, success, backtrace, output
-
-        success || @error "Failed makedocs:\n$output" dir
 
         @test success
         @test occursin("Info: CollectCitations", output)
