@@ -17,7 +17,8 @@ include("run_makedocs.jl")
         sitename="Test",
         warnonly=true,
         plugins=[bib],
-        pages=["Home" => "index.md", "References" => "references.md",]
+        pages=["Home" => "index.md", "References" => "references.md",],
+        check_success=true
     ) do dir, result, success, backtrace, output
 
         @test success
@@ -31,16 +32,9 @@ include("run_makedocs.jl")
         sitename="Test",
         warnonly=false,
         plugins=[bib],
-        pages=["Home" => "index.md", "References" => "references.md",]
+        pages=["Home" => "index.md", "References" => "references.md",],
+        check_failure=true
     ) do dir, result, success, backtrace, output
-
-        #if !success
-        #   println("")
-        #   @error "Failed makedocs:\n$output" dir
-        #end
-        #if result isa Exception
-        #   @error "Raised $(typeof(result))\n" result
-        #end
 
         @test !success
         @test occursin("Error: Citation not found in bibliography: NoExist2023", output)

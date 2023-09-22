@@ -5,7 +5,7 @@ using Test
 include("run_makedocs.jl")
 
 
-@testset "@Contents Block Test" begin
+@testset "keys with underscores" begin
 
     # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/14
 
@@ -17,15 +17,9 @@ include("run_makedocs.jl")
         joinpath(@__DIR__, "test_keys_with_underscores");
         sitename="Test",
         plugins=[bib],
-        pages=["Home" => "index.md", "References" => "references.md",]
+        pages=["Home" => "index.md", "References" => "references.md",],
+        check_failure=true # XXX
     ) do dir, result, success, backtrace, output
-        #if !success
-        #    println("")
-        #    @error "Failed makedocs:\n$output" dir  # XXX
-        #end
-        #if result isa Exception
-        #    @error "Raised $(typeof(result))\n" result  # XXX
-        #end
         @test result isa ErrorException # XXX
         @test occursin("Invalid citation", result.msg)  # XXX
         @test_broken success

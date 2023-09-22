@@ -1,12 +1,14 @@
 using IOCapture: IOCapture
 using Documenter: Documenter, makedocs
+import Logging
 
 
 # Run `makedocs` as part of a test.
 #
+# Use as:
+#
 # ```julia
 # run_makedocs(root; kwargs...) do dir, result, success, backtrace, output
-#     success || @error "Failed makedocs:\n$output" dir
 #     @test success
 #     # * dir is the temporary folder where `root` was copied. It should
 #     #   contain the `build` output folder etc.
@@ -16,7 +18,28 @@ using Documenter: Documenter, makedocs
 #     # * `output` contains the STDOUT produced by `run_makedocs`
 # end
 # ```
-function run_makedocs(f, root; plugins=[], kwargs...)
+#
+# Keyword args are:
+#
+# * `check_success`: If true, log an error if the call to `makedocs` does not
+#   succeed
+# * `check_failure`: If true, log an error if the call to `makedocs`
+#   unexpectedly succeeds
+#
+# You must still `@test` the value of `success` inside the `do` block.
+#
+# All other keyword arguments are forwarded to `makedocs`.
+#
+# To show the output of every `run_makedocs` run, set the environment variable
+# `JULIA_DEBUG=Main` or `ENV["JULIA_DEBUG"] = Main` in the dev-REPL.
+function run_makedocs(
+    f,
+    root;
+    plugins=[],
+    check_success=false,
+    check_failure=false,
+    kwargs...
+)
 
     dir = mktempdir()
 
@@ -38,20 +61,32 @@ function run_makedocs(f, root; plugins=[], kwargs...)
         end
     end
 
-    @debug """run_makedocs(root=$root,...) -> $(c.error ? "fail" : "success")
-    Running in $dir
+    level = Logging.Debug
+    checked = (check_success || check_failure) ? " (expected)" : ""
+    success = !c.error
+    if (check_success && !success) || (check_failure && success)
+        checked = " (UNEXPECTED)"
+        level = Logging.Error
+    end
+
+    calling_frame = stacktrace()[3]
+    result = c.value
+    Logging.@logmsg level """
+
+    run_makedocs(root=$root,...) -> $(success ? "success" : "failure")$checked
+    @$(calling_frame.file):$(calling_frame.line)
     --------------------------------- output ---------------------------------
     $(c.output)
     --------------------------------------------------------------------------
-    """ c.value stacktrace(c.backtrace) dir
+    """ dir typeof(result) result stacktrace = stacktrace(c.backtrace)
 
     write(joinpath(dir, "output"), c.output)
     open(joinpath(dir, "result"), "w") do io
-        show(io, "text/plain", c.value)
+        show(io, "text/plain", result)
         println(io, "-"^80)
         show(io, "text/plain", stacktrace(c.backtrace))
     end
 
-    f(dir, c.value, !c.error, c.backtrace, c.output)
+    f(dir, result, success, c.backtrace, c.output)
 
 end

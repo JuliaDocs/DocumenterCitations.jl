@@ -16,16 +16,9 @@ include("run_makedocs.jl")
         splitext(@__FILE__)[1];
         sitename="Test",
         plugins=[bib],
-        pages=["Home" => "index.md", "References" => "references.md",]
+        pages=["Home" => "index.md", "References" => "references.md",],
+        check_success=true
     ) do dir, result, success, backtrace, output
-
-        if !success
-            println("")
-            @error "Failed makedocs:\n$output" dir
-        end
-        if result isa Exception
-            @error "Raised $(typeof(result))\n" result
-        end
 
         @test success
 
