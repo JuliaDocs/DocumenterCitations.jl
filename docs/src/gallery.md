@@ -22,6 +22,8 @@ This is the default style (`style=:numeric`) used throughout the other pages of 
 * `[GoerzQ2022; Eq. (1)](@citet*)` renders as "[GoerzQ2022; Eq. (1)](@citet*)"
 * `[WinckelIP2008](@citet)` renders as "[WinckelIP2008](@citet)"
 * `[WinckelIP2008](@Citet)` renders as "[WinckelIP2008](@Citet)"
+* `[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite)` renders as "[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite)"
+* `[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@Citet)` renders as "[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@Citet)"
 * `[arbitrary text](@cite GoerzQ2022)` renders as "[arbitrary text](@cite GoerzQ2022)"
 
 **References:**
@@ -48,6 +50,8 @@ The author-year style (`style=:authoryear`) formats citations with the author na
 * `[GoerzQ2022; Eq. (1)](@citet*)` renders as "[GoerzQ2022; Eq. (1)](@citet*%authoryear%)"
 * `[WinckelIP2008](@citet)` renders as "[WinckelIP2008](@citet%authoryear%)"
 * `[WinckelIP2008](@Citet)` renders as "[WinckelIP2008](@Citet%authoryear%)"
+* `[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite)` renders as "[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite%authoryear%)"
+* `[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@Citet)` renders as "[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@Citet%authoryear%)"
 * `[arbitrary text](@cite GoerzQ2022)` renders as "[arbitrary text](@cite GoerzQ2022)"
 
 **References:**
@@ -72,6 +76,8 @@ The `style=:alpha` formats citations and references like `:numeric`, except that
 * `[GoerzQ2022; Eq. (1)](@citet*)` renders as "[GoerzQ2022; Eq. (1)](@citet*%alpha%)"
 * `[WinckelIP2008](@citet)` renders as "[WinckelIP2008](@citet%alpha%)"
 * `[WinckelIP2008](@Citet)` renders as "[WinckelIP2008](@Citet%alpha%)"
+* `[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite)` renders as "[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite%alpha%)". Note that unlike for `style=:numeric`, the citations are not compressed.
+* `[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@Citet)` renders as "[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@Citet%alpha%)"
 * `[arbitrary text](@cite GoerzQ2022)` renders as "[arbitrary text](@cite GoerzQ2022)"
 
 **References:**

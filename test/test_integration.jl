@@ -64,3 +64,43 @@ include(CUSTOM2)
     end
 
 end
+
+
+@testset "Integration Test - dumb :alpha" begin
+
+    # We build the documentation of DocumenterCitations itself with the
+    # genuinely dumb :alpha style. Since `:alpha` usually gets upgraded
+    # automatically to `AlphaStyle`, we don't get good coverage for :alpha
+    # otherwise.
+
+    using Bibliography
+    using OrderedCollections: OrderedDict
+
+    bibfile = joinpath(@__DIR__, "..", "docs", "src", "refs.bib")
+    style = :alpha
+    entries = Bibliography.import_bibtex(bibfile)
+    citations = OrderedDict{String,Int64}()
+    page_citations = Dict{String,Set{String}}()
+    anchor_map = Documenter.AnchorMap()
+
+    bib =
+        CitationBibliography(bibfile, style, entries, citations, page_citations, anchor_map)
+
+    run_makedocs(
+        joinpath(@__DIR__, "..", "docs");
+        sitename="DocumenterCitations.jl",
+        plugins=[bib],
+        pages=[
+            "Home"                   => "index.md",
+            "Syntax"                 => "syntax.md",
+            "Citation Style Gallery" => "gallery.md",
+            "CSS Styling"            => "styling.md",
+            "Internals"              => "internals.md",
+            "References"             => "references.md",
+        ],
+        check_success=true
+    ) do dir, result, success, backtrace, output
+        @test success
+    end
+
+end

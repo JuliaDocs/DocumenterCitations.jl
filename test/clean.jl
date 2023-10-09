@@ -19,7 +19,9 @@ function clean(; distclean=false, _exit=true)
 
     ###########################################################################
     CLEAN = String[]
-    for folder in ["", "src", "test"]
+    src_folders =
+        ["", "src", joinpath("src", "styles"), "test", joinpath("docs", "custom_styles")]
+    for folder in src_folders
         append!(CLEAN, _glob(joinpath(ROOT, folder), ".cov"))
     end
     _push!(CLEAN, joinpath(ROOT, "coverage"))

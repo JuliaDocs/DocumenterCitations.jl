@@ -25,8 +25,11 @@ import Logging
 #   succeed
 # * `check_failure`: If true, log an error if the call to `makedocs`
 #   unexpectedly succeeds
+# * `env`: dict temporary overrides for environment variables. Consider passing
+#   `"JULIA_DEBUG" => ""` if testing `output` against some expected output.
 #
-# You must still `@test` the value of `success` inside the `do` block.
+# Note that even with `check_success`/`check_failure`, you must still `@test`
+# the value of `success` inside the `do` block.
 #
 # All other keyword arguments are forwarded to `makedocs`.
 #
@@ -38,6 +41,7 @@ function run_makedocs(
     plugins=[],
     check_success=false,
     check_failure=false,
+    env=Dict{String,String}(),
     kwargs...
 )
 
@@ -47,9 +51,7 @@ function run_makedocs(
 
     c = IOCapture.capture(rethrow=InterruptException) do
         default_format = Documenter.HTML(; edit_link="master", repolink=" ")
-        # In case JULIA_DEBUG is set to something, we'll override that, so that
-        # we wouldn't get some unexpected debug output from makedocs.
-        withenv("JULIA_DEBUG" => "") do
+        withenv(env...) do
             makedocs(;
                 plugins=plugins,
                 remotes=get(kwargs, :remotes, nothing),

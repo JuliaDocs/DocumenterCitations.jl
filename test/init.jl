@@ -1,6 +1,7 @@
 # init file for "make devrepl"
 using Revise
 using JuliaFormatter
+using Documenter: doctest
 using LiveServer: LiveServer, serve, servedocs
 include(joinpath(@__DIR__, "clean.jl"))
 
@@ -215,6 +216,8 @@ Revise, JuliaFormatter, LiveServer are loaded.
 * `help()` – Show this message
 * `include("test/runtests.jl")` – Run the entire test suite
 * `test()` – Run the entire test suite in a subprocess with coverage
+* `import DocumenterCitations; doctest(DocumenterCitations)` –
+  Run doctests for docstrings in package
 * `include("docs/make.jl")` – Generate the documentation
 * `format(".")` – Apply code formatting to all files
 * `servedocs([port=8000, verbose=false])` –
