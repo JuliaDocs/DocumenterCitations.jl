@@ -38,14 +38,14 @@ using IOCapture: IOCapture
     @test cit.cmd == :cite
     @test cit.style ≡ :authoryear
 
-    cit = CitationLink("[GoerzQ2022; Eq. (1)](@cite)")
+    cit = CitationLink("[GoerzQ2022; Eq.\u00A0(1)](@cite)")
     @test cit.cmd == :cite
     @test cit.style ≡ nothing
     @test cit.keys == ["GoerzQ2022"]
-    @test cit.note ≡ "Eq. (1)"
+    @test cit.note ≡ "Eq.\u00A0(1)"
 
-    cit = CitationLink("[GoerzQ2022;   Eq. (1)](@cite)")
-    @test cit.note ≡ "Eq. (1)"
+    cit = CitationLink("[GoerzQ2022;   Eq.\u00A0(1)](@cite)")
+    @test cit.note ≡ "Eq.\u00A0(1)"
 
     cit = CitationLink("[GoerzQ2022,CarrascoPRA2022,GoerzA2023](@cite)")
     @test cit.keys == ["GoerzQ2022", "CarrascoPRA2022", "GoerzA2023"]

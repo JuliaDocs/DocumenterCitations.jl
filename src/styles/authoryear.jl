@@ -110,7 +110,7 @@ end
 """Format a bibliography reference as for the `:authoryear` style.
 
 ```julia
-html = format_authoryear_bibliography_reference(
+mdstr = format_authoryear_bibliography_reference(
     style, entry; namesfmt=:lastfirst, empty_names="—"
 )
 ```
@@ -136,7 +136,7 @@ function format_authoryear_bibliography_reference(
     end
     title = xtitle(entry)
     if !isempty(title)
-        title = "<i>" * tex2unicode(title) * "</i>"
+        title = "*" * tex2unicode(title) * "*"
     end
     linked_title = linkify(title, entry.access.url)
     published_in = linkify(

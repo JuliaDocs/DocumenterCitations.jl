@@ -55,7 +55,7 @@ function linkify(text, link)
     if isempty(link)
         return text
     else
-        return "<a href='$link'>$text</a>"
+        return "[$text]($link)"
     end
 end
 
@@ -140,7 +140,8 @@ function format_names(
     names=:full,
     and=true,
     et_al=0,
-    et_al_text="et al."
+    et_al_text="*et al.*",
+    nbsp="\u00A0",  # non-breaking space
 )
     # forces the names to be editors' name if the entry are Proceedings
     if !editors && entry.type ∈ ["proceedings"]
@@ -168,14 +169,14 @@ function format_names(
         formatted_names = String[]
         for name in entry_names
             last_parts = [name.particle, name.last, name.junior]
-            last = join(filter(!isempty, last_parts), " ")
+            last = join(filter(!isempty, last_parts), nbsp)
             first_parts = [_initial(name.first), _initial(name.middle)]
-            first = join(filter(!isempty, first_parts), " ")
-            push!(formatted_names, "$last, $first")
+            first = join(filter(!isempty, first_parts), nbsp)
+            push!(formatted_names, "$last,$nbsp$first")
         end
     else
         formatted_names = map(parts) do s
-            return join(filter(!isempty, s), " ")
+            return join(filter(!isempty, s), nbsp)
         end
     end
 
@@ -205,12 +206,12 @@ function format_names(
 end
 
 
-function format_published_in(entry; include_date=true)
+function format_published_in(entry; include_date=true, nbsp="\u00A0")
     str = ""
     if entry.type == "article"
-        str *= entry.in.journal
+        str *= replace(entry.in.journal, " " => nbsp)  # non-breaking space
         if !isempty(entry.in.volume)
-            str *= " <b>$(entry.in.volume)</b>"
+            str *= " **$(entry.in.volume)**"
         end
         if !isempty(entry.in.pages)
             str *= ", $(entry.in.pages)"
@@ -336,35 +337,42 @@ function format_eprint(entry)
 end
 
 
-# Not a safe tag stripper (you can't process HTML with regexes), but we
-# generated the input `html` being passed to this function, so we have some
-# control over not having pathological HTML here. Also, at worst we end up with
-# punctuation that isn't quite perfect.
-_strip_tags(html) = replace(html, r"<[^>]*>" => "")
+function _strip_md_formatting(mdstr)
+    try
+        ast = Documenter.mdparse(mdstr; mode=:single)
+        buffer = IOBuffer()
+        Documenter.MDFlatten.mdflatten(buffer, ast)
+        return String(take!(buffer))
+    catch exc
+        @warn "Cannot strip formatting from $(repr(mdstr))" exc
+        return strip(mdstr)
+    end
+end
+
 
 # Intelligently join the parts with appropriate punctuation
 function _join_bib_parts(parts)
-    html = ""
+    mdstr = ""
     if length(parts) == 0
-        html = ""
+        mdstr = ""
     elseif length(parts) == 1
-        html = strip(parts[1])
-        if !endswith(_strip_tags(html), r"[.!?]")
-            html *= "."
+        mdstr = strip(parts[1])
+        if !endswith(_strip_md_formatting(mdstr), r"[.!?]")
+            mdstr *= "."
         end
     else
-        html = strip(parts[1])
+        mdstr = strip(parts[1])
         rest = _join_bib_parts(parts[2:end])
-        rest_text = _strip_tags(rest)
-        if endswith(_strip_tags(html), r"[,;.!?]") || startswith(rest_text, "(")
-            html *= " " * rest
+        rest_text = _strip_md_formatting(rest)
+        if endswith(_strip_md_formatting(mdstr), r"[,;.!?]") || startswith(rest_text, "(")
+            mdstr *= " " * rest
         else
             if uppercase(rest_text[1]) == rest_text[1]
-                html *= ". " * rest
+                mdstr *= ". " * rest
             else
-                html *= ", " * rest
+                mdstr *= ", " * rest
             end
         end
     end
-    return html
+    return mdstr
 end

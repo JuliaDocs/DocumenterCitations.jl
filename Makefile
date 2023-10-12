@@ -36,6 +36,10 @@ docs: test/Manifest.toml ## Build the documentation
 	$(JULIA) --project=test docs/make.jl
 	@echo "Done. Consider using 'make devrepl'"
 
+pdf: test/Manifest.toml ## Build the documentation in PDF format
+	$(JULIA) --project=test docs/makepdf.jl
+	@echo "Done. Consider using 'make devrepl'"
+
 servedocs: test/Manifest.toml  ## Build (auto-rebuild) and serve documentation at PORT=8000
 	$(JULIA) --project=test -e 'include("devrepl.jl"); servedocs(port=$(PORT), verbose=true)'
 

@@ -218,7 +218,7 @@ function citation_label end  # implemented by various styles
 """Format a bibliography reference as in a "labeled" style.
 
 ```julia
-html = format_labeled_bibliography_reference(style, entry; namesfmt=:last)
+mdstr = format_labeled_bibliography_reference(style, entry; namesfmt=:last)
 ```
 
 # Options
@@ -229,7 +229,7 @@ function format_labeled_bibliography_reference(style, entry; namesfmt=:last)
     authors = format_names(entry; names=namesfmt) |> tex2unicode
     title = xtitle(entry)
     if !isempty(title)
-        title = "<i>" * tex2unicode(title) * "</i>"
+        title = "*" * tex2unicode(title) * "*"
     end
     linked_title = linkify(title, entry.access.url)
     published_in = linkify(tex2unicode(format_published_in(entry)), _doi_link(entry))

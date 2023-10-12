@@ -25,7 +25,8 @@ include("run_makedocs.jl")
         index_outfile = joinpath(dir, "build", "index.html")
         @test isfile(index_outfile)
         html = read(index_outfile, String)
-        @test occursin("citing Ref. [<a href=\"references/#GoerzQ2022\">1</a>]", html)
+        nbsp = "\u00A0"  # non-breaking space
+        @test occursin("citing Ref.$(nbsp)[<a href=\"references/#GoerzQ2022\">1</a>]", html)
 
         ref_outfile = joinpath(dir, "build", "references", "index.html")
         @test isfile(ref_outfile)

@@ -56,6 +56,11 @@ using DocumenterCitations
         include("test_doctest.jl")
     end
 
+    println("\n* latex rendering (test_latex_rendering.jl)")
+    @time @safetestset "latex_rendering" begin
+        include("test_latex_rendering.jl")
+    end
+
     println("\n* test undefined citations (test_undefined_citations.jl):")
     @time @safetestset "undefined_citations" begin
         include("test_undefined_citations.jl")
