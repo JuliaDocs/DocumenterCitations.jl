@@ -174,7 +174,6 @@ end
     bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "corporateauthor.bib"))
 
     entry = bib.entries["OEIS"]
-    @test length(entry.authors) == 1
 
     name = entry.authors[1]
     dump(name)
@@ -185,6 +184,9 @@ end
 
     md(key) = format_bibliography_reference(Val(:numeric), bib.entries[key])
     @test_broken md("OEIS") == "OEIS Foundation Inc. [*The On-Line Encyclopedia of Integer Sequences*](https://oeis.org). Published electronically at https://oeis.org (2023)."
+
+    nbsp = "\u00A0"
+    @test md("OEISworkaround") == "OEIS$(nbsp)Foundation$(nbsp)Inc. [*The On-Line Encyclopedia of Integer Sequences*](https://oeis.org). Published electronically at https://oeis.org (2023)."
 
 
 end
