@@ -1,7 +1,14 @@
 name: CI
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+      - 'release-*'
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - master
 concurrency:
   # Skip intermediate builds: always.
   # Cancel intermediate builds: only if it is a pull request build.

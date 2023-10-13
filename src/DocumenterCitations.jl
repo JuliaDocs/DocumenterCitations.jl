@@ -75,7 +75,7 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing)
     bibfile_entries = Bibliography.import_bibtex(bibfile)
     entries = OrderedDict{String,eltype(values(bibfile_entries))}()
     for (bibfile_key, entry) in bibfile_entries
-        # The `text` in `[text](@cite)` has to be unambigous when
+        # The `text` in `[text](@cite)` has to be unambiguous when
         # round-tripping between String and MarkdownAST.Node. Since `_` and `*`
         # can both indicate emphasis in markdown, we normalize to `_` (which
         # should be *much* more common in real-life BibTeX keys). The same

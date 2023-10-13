@@ -144,7 +144,7 @@ If `show_coverage` is passed as `true` (default), a coverage summary is shown.
 Further, if `genhtml` is `true`, a full HTML coverage report will be generated
 in `covdir` (relative to `root`). This requires the `genhtml` executable (part
 of the [lcov](http://ltp.sourceforge.net/coverage/lcov.php) package). Instead
-of `true`, it is also possible to pass the path to the `genhtml` exectuable.
+of `true`, it is also possible to pass the path to the `genhtml` executable.
 
 All other keyword arguments correspond to the respective command line flag for
 the `julia` executable that is run as the subprocess.

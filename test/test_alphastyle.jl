@@ -35,7 +35,7 @@ end
 
     lbl1 = format_bibliography_label(dumb, entry("GraceJPB2007"), _c)
     @Test lbl1 == "[GBR+07]"
-    # The dumb style can general labels without any any initalization, while
+    # The dumb style can generate labels without any any initialization, while
     # the smart style *requires* that init_bibliography! was called.
     c = IOCapture.capture(rethrow=InterruptException) do
         format_bibliography_label(smart, entry("GraceJPB2007"), _c)
