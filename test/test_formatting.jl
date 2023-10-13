@@ -3,7 +3,12 @@ using TestingUtilities: @Test  # much better at comparing long strings
 using OrderedCollections: OrderedDict
 using DocumenterCitations
 import DocumenterCitations:
-    tex2unicode, two_digit_year, alpha_label, format_citation, format_bibliography_reference
+    tex2unicode,
+    two_digit_year,
+    alpha_label,
+    format_citation,
+    format_bibliography_reference,
+    CitationLink
 using IOCapture: IOCapture
 
 @testset "text2unicode" begin
@@ -50,12 +55,18 @@ end
 
 @testset "format_citation(:authoryear)" begin
     bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
-    _c = OrderedDict{String,Int64}()
-    ctext(key; kwargs...) =
-        format_citation(Val(:authoryear), bib.entries[key], _c; kwargs...)
-    @Test ctext("Wilhelm2003.10132") == "(Wilhelm *et al.*, 2020)"
-    @Test ctext("QCRoadmap") == "(Anonymous, 2004)"
-    @Test ctext("TedRyd") == "(Corcovilos and Weiss, undated)"
+    function ctext(key)
+        return format_citation(
+            Val(:authoryear),
+            CitationLink("[$key](@cite)"),
+            bib.entries,
+            OrderedDict{String,Int64}()
+        )
+    end
+    @Test ctext("Wilhelm2003.10132") ==
+          "([Wilhelm *et al.*, 2020](@cite Wilhelm2003.10132))"
+    @Test ctext("QCRoadmap") == "([Anonymous, 2004](@cite QCRoadmap))"
+    @Test ctext("TedRyd") == "([Corcovilos and Weiss, undated](@cite TedRyd))"
 end
 
 

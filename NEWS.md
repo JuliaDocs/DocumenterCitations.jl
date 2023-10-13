@@ -6,6 +6,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+### Fixed
+
+* Skip the expansion of citations and bibliographies when running in doctest mode [[#34][]]
+* Support underscores in citation keys [[#14][]]
+
+### Added
+
+* Allow multiple citations in a single `@cite` link. In the default numeric style, these can be compressed, e.g. "Refs. [1–3]" [[#6][]]
+* In general (depending on the style and citation syntax), citation links may now render to arbitrarily complex expressions.
+* Citation comments can now have inline markdown elements, e.g., `[GoerzQ2022; definition of $J$ in section *Running costs*](@cite)`
+* When running in non-strict mode, missing bibliographic references (either because the `.bib` file does not contain an entry with a specific BibTeX key, or because of a missing `@biblography` block) are now handled similarly to missing references in LaTeX: They will show as (unlinked) question marks.
+
+### Internal Changes
+
+* Removed the redundant `CitationLink.link_text` field.
+* Added `read_citation_link` replacing the former `CitationLink` constructor.
+* `CitationLink` can now be instantiated directly from markdown strings (for documentation / testing purposes)
+* Added `DirectCitationLink` type to represent citations of the form `[text](@cite key)`.
+* Exposed `CitationLink` to users who want to implement a custom style (see changes in `format_citation`)
+* The interface for the `format_citation` function has changed: Before, the signature was `format_citation(style, entry, citations; note, cite_cmd, capitalize, starred)` and the function would return as string that would replace the link text of the citation link. Now, the signature is `format_citation(style, cit, entries, citations)` where `cit` is a `CitationLink` object, and the function returns a string of markdown code that replaces the *entire* citation link (not just the link text).  Generally, the returned markdown code is expected to contain *direct* citation links which, are automatically expanded subsequently. That is, `format_citation` now generally converts indirect citation links (`CitationLink`) into direct citation links (`DirectCitationLink`).
+* Exposed the internal function `format_labeled_citation` that implements `format_citation` for the built-in styles `:numeric` and `:alpha` and may be useful for custom styles that are variations of these.
+* Exposed the internal function `format_authoryear_citation` that implements `format_citation` for the built-in style `:authoryear`
+* Exposed the internal function `format_labeled_bibliography_reference` that implements `format_bibliography_reference` for the built-in styles `:numeric` and `:alpha`.
+* Exposed the internal function `format_authoryear_bibliography_reference` that implements `format_bibliography_reference` for the built-in style `:authoryear:`.
+* The example custom styles `:enumauthoryear` and `:keylabels` have been rewritten using the above internal functions, illustrating that custom styles will usually not have to rely on the undocumented and even more internal functions like `format_names` and `tex2unicode`.
+
 
 ## [Version 1.2.1][1.2.1] - 2023-09-22
 
@@ -87,8 +113,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#39]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/39
 [#36]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/36
 [#35]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/35
+[#34]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/34
 [#32]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/32
 [#31]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/31
 [#20]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/20
 [#19]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/19
 [#16]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/16
+[#14]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/14
+[#6]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/6

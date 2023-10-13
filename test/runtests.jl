@@ -51,6 +51,11 @@ using DocumenterCitations
         include("test_integration.jl")
     end
 
+    println("\n* doctest (test_doctest.jl)")
+    @time @safetestset "doctest" begin
+        include("test_doctest.jl")
+    end
+
     println("\n* test undefined citations (test_undefined_citations.jl):")
     @time @safetestset "undefined_citations" begin
         include("test_undefined_citations.jl")
@@ -58,4 +63,6 @@ using DocumenterCitations
 
     print("\n")
 
-end;
+end
+
+nothing  # avoid noise when doing `include("test/runtests.jl")`

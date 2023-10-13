@@ -1,0 +1,16 @@
+coverage:
+  precision: 1
+  range:
+  - 70.0
+  - 90.0
+  round: up
+  status:
+    patch:
+      default:
+        informational: true
+        target: 90.0
+    project:
+      default:
+        informational: true
+        target: auto
+        threshold: 3.0

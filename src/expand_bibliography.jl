@@ -33,7 +33,7 @@ end
 
 # Expand all @bibliography blocks in the document
 function expand_bibliography(doc::Documenter.Document)
-    bib = doc.plugins[CitationBibliography]
+    bib = Documenter.getplugin(doc, CitationBibliography)
     style = bib.style  # so that we can dispatch on different styles
     init_bibliography!(style, bib)
     for (src, page) in doc.blueprint.pages
@@ -82,62 +82,6 @@ function init_bibliography!(style::Symbol, bib)
 end
 
 
-function init_bibliography!(style::AlphaStyle, bib)
-
-    # We determine the keys from all the entries in the .bib file
-    # (`bib.entries`), not just the cited ones (`bib.citations`). This keeps
-    # the rendered labels more stable, e.g. if you have one `.bib` file across
-    # multiple related projects. Besides, `bib.citations` isn't guaranteed to
-    # be complete at the point where `init_bibliography!` is called, since
-    # bibliography blocks can also introduce new citations (e.g., if using `*`)
-    entries = OrderedDict{String,Bibliography.Entry}(
-        # best not to mutate bib.entries, so we'll create a copy before sorting
-        key => entry for (key, entry) in bib.entries
-    )
-    Bibliography.sort_bibliography!(entries, :nyt)
-
-    # pass 1 - collect dumb labels, identify duplicates
-    keys_for_label = Dict{String,Vector{String}}()
-    for (key, entry) in entries
-        label = alpha_label(entry)  # dumb label (no suffix)
-        if label in keys(keys_for_label)
-            push!(keys_for_label[label], key)
-        else
-            keys_for_label[label] = String[key,]
-        end
-    end
-
-    # pass 2 - disambiguate duplicates (append suffix to dumb labels)
-    label_for_key = style.label_for_key  # for in-place mutation
-    for (key, entry) in entries
-        label = alpha_label(entry)
-        if length(keys_for_label[label]) > 1
-            i = findfirst(isequal(key), keys_for_label[label])
-            label *= _alpha_suffix(i)
-        end
-        label_for_key[key] = label
-    end
-    @debug "init_bibliography!(style::AlphaStyle, bib)" keys_for_label label_for_key
-
-    # `style.label_for_key` is now up-to-date
-
-end
-
-
-function _alpha_suffix(i)
-    if i <= 25
-        return string(Char(96 + i))  # 1 -> "a", 2 -> "b", etc.
-    else
-        # 26 -> "za", 27 -> "zb", etc.
-        # I couldn't find any information on (and I was too lazy to test) how
-        # LaTeX handles disambiguation of more than 25 identical labels, but
-        # this seems sensible. But also: Seriously? I don't think we'll ever
-        # run into this in real life.
-        return "z" * _alpha_suffix(i - 25)
-    end
-end
-
-
 
 """Format the full reference for an entry in a `@bibliography` block.
 
@@ -159,71 +103,6 @@ function format_bibliography_reference(style::Symbol, entry)
 end
 
 
-function _doi_link(entry)
-    doi = entry.access.doi
-    return isempty(doi) ? "" : "https://doi.org/$doi"
-end
-
-
-function format_bibliography_reference(::Val{:numeric}, entry)
-    authors = format_names(entry; names=:last) |> tex2unicode
-    title = xtitle(entry)
-    if !isempty(title)
-        title = "<i>" * tex2unicode(title) * "</i>"
-    end
-    linked_title = linkify(title, entry.access.url)
-    published_in = linkify(tex2unicode(format_published_in(entry)), _doi_link(entry))
-    eprint = format_eprint(entry)
-    note = format_note(entry)
-    parts = String[]
-    for part in (authors, linked_title, published_in, eprint, note)
-        if !isempty(part)
-            push!(parts, part)
-        end
-    end
-    html = _join_bib_parts(parts)
-    return html
-end
-
-function format_bibliography_reference(::Val{:authoryear}, entry)
-    authors = format_names(entry; names=:lastfirst) |> tex2unicode
-    year = entry.date.year |> tex2unicode
-    if !isempty(year)
-        if isempty(authors)
-            authors = "—"
-        end
-        year = "($year)"
-    end
-    title = xtitle(entry)
-    if !isempty(title)
-        title = "<i>" * tex2unicode(title) * "</i>"
-    end
-    linked_title = linkify(title, entry.access.url)
-    published_in = linkify(
-        tex2unicode(format_published_in(entry; include_date=false)),
-        _doi_link(entry)
-    )
-    eprint = format_eprint(entry)
-    note = format_note(entry)
-    parts = String[]
-    for part in (authors, year, linked_title, published_in, eprint, note)
-        if !isempty(part)
-            push!(parts, part)
-        end
-    end
-    html = _join_bib_parts(parts)
-    return html
-end
-
-
-function format_bibliography_reference(::Val{:alpha}, entry)
-    return format_bibliography_reference(:numeric, entry)
-end
-
-
-function format_bibliography_reference(::AlphaStyle, entry)
-    return format_bibliography_reference(:numeric, entry)
-end
 
 
 """Format the label for an entry in a `@bibliography` block.
@@ -247,43 +126,6 @@ function format_bibliography_label(style::Symbol, args...)
     return format_bibliography_label(Val(style), args...)
 end
 
-function format_bibliography_label(
-    ::Val{:numeric},
-    entry,
-    citations::OrderedDict{String,Int64}
-)
-    key = entry.id
-    i = get(citations, key, 0)
-    if i == 0
-        i = length(citations) + 1
-        citations[key] = i
-        @debug "Mark $key as cited ($i) because it is rendered in a bibliography"
-    end
-    return "[$i]"
-end
-
-
-function format_bibliography_label(
-    ::Val{:alpha},
-    entry,
-    citations::OrderedDict{String,Int64}
-)
-    return "[$(alpha_label(entry))]"
-end
-
-
-function format_bibliography_label(
-    alpha::AlphaStyle,
-    entry,
-    citations::OrderedDict{String,Int64}
-)
-    try
-        return "[$(alpha.label_for_key[entry.id])]"
-    catch
-        @error "No AlphaStyle label for $(entry.id). Was `init_bibliography!` called?" alpha.label_for_key
-        rethrow()
-    end
-end
 
 
 """Identify the type of HTML list associated with a bibliographic style.
@@ -301,10 +143,6 @@ must return one of
 for any `style` that [`CitationBibliography`](@ref) is instantiated with.
 """
 bib_html_list_style(style::Symbol) = bib_html_list_style(Val(style))
-bib_html_list_style(::Val{:numeric}) = :dl
-bib_html_list_style(::Val{:authoryear}) = :ul
-bib_html_list_style(::Val{:alpha}) = :dl
-bib_html_list_style(::AlphaStyle) = :dl
 
 
 """Identify the sorting associated with a bibliographic style.
@@ -318,16 +156,12 @@ must return `:citation` or any of the `sorting_rules` accepted by
 e.g. `:nyt`.
 """
 bib_sorting(style::Symbol) = bib_sorting(Val(style))
-bib_sorting(::Val{:numeric}) = :citation
-bib_sorting(::Val{:authoryear}) = :nyt
-bib_sorting(::Val{:alpha}) = :nyt
-bib_sorting(::AlphaStyle) = :nyt
 
 
 function parse_bibliography_block(block, doc, page)
     fields = Dict{Symbol,Any}()
     lines = String[]
-    for (ex, str) in Documenter.parseblock(block, doc, page)
+    for (ex, str) in Documenter.parseblock(block, doc, page; raise=false)
         if Documenter.isassign(ex)
             fields[ex.args[1]] = Core.eval(Main, ex.args[2])
         else
@@ -364,14 +198,15 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     @assert occursin(r"^@bibliography", node.element.info)
 
     block = node.element.code
-    @debug "Evaluating @bibliography block" page.source block
+    @debug "Evaluating @bibliography block in $(page.source):\n```@bibliography\n$block\n```"
 
-    bib = doc.plugins[CitationBibliography]
+    bib = Documenter.getplugin(doc, CitationBibliography)
     citations = bib.citations
     style::Any = bib.style
     page_citations = bib.page_citations
 
     fields, lines = parse_bibliography_block(block, doc, page)
+    @debug "Parsed bibliography block into fields and lines" fields lines
 
     style = bib.style
     if :Style in keys(fields)
@@ -396,7 +231,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
             for file in fields[:Pages]
                 if key in page_citations[file]
                     push!(keys_to_show, key)
-                    @debug "Add $key to keys_to_show (from page $file)" keys_to_show
+                    @debug "Add $key to keys_to_show (from page $file)"
                     break  # only need the first page that cites the key
                 end
             end
@@ -408,24 +243,27 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
         else
             @warn "There were no citations"
         end
-        @debug "Add all cited keys to keys_to_show" citations keys_to_show
+        @debug "Add all cited keys to keys_to_show" citations
     end
 
     # second, explicitly listed keys
     for key in lines
         if key == "*"
             push!(keys_to_show, keys(bib.entries)...)
-            @debug "Add all keys from $(bib.bibfile) to keys_to_show" keys_to_show
+            @debug "Add all keys from $(bib.bibfile) to keys_to_show"
             break  # we don't need to look at the rest of the lines
         else
             if key in keys(bib.entries)
                 push!(keys_to_show, key)
-                @debug "Add listed $key to keys_to_show" keys_to_show
+                @debug "Add listed $key to keys_to_show"
             else
-                error("Citation key not found in bibliography: $(key)")
+                @error "Explicit key $(repr(key)) from bibliography block not found in entries from $(bib.bibfile)"
+                push!(doc.internal.errors, :bibliography_block)
             end
         end
     end
+
+    @debug "Determined keys to show" keys_to_show
 
     tag = bib_html_list_style(style)
     allowed_tags = (:ol, :ul, :dl)
@@ -440,7 +278,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
         html = """<div class="citation canonical"><$tag>"""
     end
     anchors = bib.anchor_map
-    entries = OrderedDict{String,Bibliography.Entry}(
+    entries_to_show = OrderedDict{String,Bibliography.Entry}(
         key => bib.entries[key] for key in keys_to_show
     )
     sorting = get(fields, :Sorting, bib_sorting(style))
@@ -448,10 +286,9 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     # to the citation style. If someone wants to mess with that, they can, but
     # we probably shouldn't encourage it.
     if sorting ≠ :citation
-        Bibliography.sort_bibliography!(entries, sorting)
+        Bibliography.sort_bibliography!(entries_to_show, sorting)
     end
-    for (key, entry) in entries
-        @assert entry.id == key
+    for (key, entry) in entries_to_show
         if fields[:Canonical]
             # Add anchor that citations can link to from anywhere in the docs.
             if Documenter.anchor_exists(anchors, key)

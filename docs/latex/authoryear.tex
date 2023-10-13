@@ -11,7 +11,7 @@ kamsmath,amssymb,notitlepage,letterpaper]{revtex4-2}
 \usepackage[
   pdftitle={\Title},
   pdfauthor={\Author},
-  colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black,
+  colorlinks=true, linkcolor=magenta, urlcolor=black, citecolor=magenta,
   bookmarksopen=false, breaklinks=true, plainpages=false, pdfpagelabels
 ]{hyperref}
 
@@ -47,10 +47,12 @@ kamsmath,amssymb,notitlepage,letterpaper]{revtex4-2}
   \item \verb|\Citet{WinckelIP2008}| renders as ``\Citet{WinckelIP2008}''.
   \item \verb|\Citealt{WinckelIP2008}| renders as ``\Citealt{WinckelIP2008}''.
   \item \verb|\Citealp{WinckelIP2008}| renders as ``\Citealp{WinckelIP2008}''.
+  \item multi-\verb|\cite|: See~\cite[and references therein]{WinckelIP2008,BrumerShapiro2003,BrifNJP2010,Shapiro2012,KochJPCM2016,GoerzQ2022,SolaAAMOP2018,MorzhinRMS2019,KochEPJQT2022}
+  \item multi-\verb|\citet|: See~\citet[and references therein]{WinckelIP2008,BrumerShapiro2003,BrifNJP2010,Shapiro2012,KochJPCM2016,GoerzQ2022,SolaAAMOP2018,MorzhinRMS2019,KochEPJQT2022}.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\bibliography{../src/refs}
+\bibliography{refs}
 
 \end{document}

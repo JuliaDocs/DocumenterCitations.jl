@@ -59,6 +59,12 @@ function linkify(text, link)
     end
 end
 
+function _doi_link(entry)
+    doi = entry.access.doi
+    return isempty(doi) ? "" : "https://doi.org/$doi"
+end
+
+
 function _initial(name)
     initial = ""
     _name = Unicode.normalize(strip(name))

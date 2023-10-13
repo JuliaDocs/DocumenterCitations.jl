@@ -16,6 +16,7 @@ using Unicode
 
 export CitationBibliography
 
+
 """Plugin for enabling bibliographic citations in Documenter.jl.
 
 ```julia
@@ -71,13 +72,36 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing)
         @debug "Auto-upgrading :alpha to AlphaStyle()"
         style = AlphaStyle()
     end
-    entries = Bibliography.import_bibtex(bibfile)
-    if length(bibfile) > 0
+    bibfile_entries = Bibliography.import_bibtex(bibfile)
+    entries = OrderedDict{String,eltype(values(bibfile_entries))}()
+    for (bibfile_key, entry) in bibfile_entries
+        # The `text` in `[text](@cite)` has to be unambigous when
+        # round-tripping between String and MarkdownAST.Node. Since `_` and `*`
+        # can both indicate emphasis in markdown, we normalize to `_` (which
+        # should be *much* more common in real-life BibTeX keys). The same
+        # normalization happens in `read_citation_link`, so this is transparent
+        # to the user as long as they don't have keys in their `.bib` file that
+        # differ only by `*` vs `_`.
+        key = replace(bibfile_key, "*" => "_")
+        if key in keys(entries)
+            error(
+                "Ambiguous key $(repr(bibfile_key)) in $bibfile. CitationBibliography cannot distinguish between `*` and `_` in BibTex keys."
+            )
+        else
+            entries[key] = entry
+        end
+    end
+    if length(bibfile) == 0
+        # Presumably, we got here because there was no `bib` object passed to
+        # `makedocs`, and then `Documenter.getplugin` instantiated a new object
+        # with the default (empty) constructor
+        @warn "No `bibfile`. Did you instantiate `bib = CitationBibliography(bibfile)` and pass `bib` to `makedocs` as an element of the `plugins` keyword argument?"
+    else
         if !isfile(bibfile)
-            error("bibfile $bibfile does not exist")
+            error("bibfile $(repr(bibfile)) does not exist")
         end
         if length(entries) == 0
-            @warn "No entries loaded from $bibfile"
+            @warn "No entries loaded from $(repr(bibfile))"
         end
     end
     citations = OrderedDict{String,Int64}()
@@ -105,6 +129,10 @@ in its docstring.
 * [GoerzQ2022](@cite) Goerz et al. Quantum 6, 871 (2022)
 """
 struct Example end
+
+
+# `example_bibfile` is used for doctests
+const example_bibfile = normpath(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"))
 
 
 """
@@ -154,9 +182,18 @@ function Bibliography.BibInternal.make_bibtex_entry(id::String, fields; check=:e
 end
 
 
-include("citations.jl")
-include("bibliography.jl")
+include("md_ast.jl")
+include("citation_link.jl")
+include("collect_citations.jl")
+include("expand_citations.jl")
+include("expand_bibliography.jl")
 include("formatting.jl")
+include("labeled_styles_utils.jl")
+
+# Built-in styles
+include(joinpath("styles", "numeric.jl"))
+include(joinpath("styles", "authoryear.jl"))
+include(joinpath("styles", "alpha.jl"))
 
 
 function __init__()

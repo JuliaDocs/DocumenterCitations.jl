@@ -8,7 +8,9 @@ The following syntax is available to create citations in any markdown text:
 
 * `[key; note](@cite)` allows to include a note in the citation, e.g., `See Ref. [GoerzQ2022; Eq. (1)](@cite)` which is rendered as "See Ref. [GoerzQ2022; Eq. (1)](@cite)".
 
-* `[text](@cite key)` can be used to link to a reference from arbitrary text, e.g., `[the Semi-AD paper](@cite GoerzQ2022)` renders as "[the Semi-AD paper](@cite GoerzQ2022)".
+* Multiple keys can be combined in a single citation, e.g., `[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite)` renders as "[BrumerShapiro2003, BrifNJP2010, Shapiro2012, KochJPCM2016; and references therein](@cite)".
+
+* The direct `[text](@cite key)` can be used to link to a reference from arbitrary text, e.g., `[the Semi-AD paper](@cite GoerzQ2022)` renders as "[the Semi-AD paper](@cite GoerzQ2022)".
 
 In `[…](@cite)`, the following variations can be used instead of `@cite`:
 
@@ -161,7 +163,7 @@ GoerzPhd2015
 ```
 
 The `Pages = []` is required to exclude all other cited references.
-Note that the numbers [BrifNJP2010](@cite), [GoerzDiploma2010](@cite), and [GoerzPhd2015](@cite) are from the main (canonical) [References](@ref) page.
+Note that the numbers [BrifNJP2010, GoerzDiploma2010, GoerzPhd2015](@cite) are from the main (canonical) [References](@ref) page.
 
 ### Order of references
 
@@ -213,6 +215,6 @@ For documents that are available *only* as an arXiv eprint, the best result is o
 Beyond arXiv, other preprint servers are supported. The `Archiveprefix` field for non-arXiv preprints is mandatory. For any defined `Archiveprefix`, `Eprint`, and `Primaryclass` fields, the rendered bibliography will include the preprint information in the format `ArchivePrefix:Eprint [Primaryclass]`. However, only certain preprint servers (known `ArchivePrefix`) will automatically be linked. Besides arXiv, the currently supported preprint servers are:
 
 * [BiorXiv](https://www.biorxiv.org). The `Archiveprefix` is `biorXiv`. The `Eprint` ID should be the final part of the DOI, e.g. `2022.09.09.507322` [KatrukhaNC2017](@cite).
-* [HAL](https://hal.science). The `Archiveprefix` is `HAL`. The `Eprint` ID should include the prefix (usually `hal-`, but sometimes `tel-`, etc.), e.g., Refs [SauvagePRXQ2020](@cite) and [BrionPhd2004](@cite).
+* [HAL](https://hal.science). The `Archiveprefix` is `HAL`. The `Eprint` ID should include the prefix (usually `hal-`, but sometimes `tel-`, etc.), e.g., Refs. [SauvagePRXQ2020,BrionPhd2004](@cite).
 
 If you would like support for any additional preprint server, [please open an issue](https://github.com/JuliaDocs/DocumenterCitations.jl/issues/new/choose).

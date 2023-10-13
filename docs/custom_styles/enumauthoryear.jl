@@ -1,12 +1,15 @@
 import DocumenterCitations
 
-function DocumenterCitations.format_bibliography_reference(::Val{:enumauthoryear}, entry)
-    text = DocumenterCitations.format_bibliography_reference(:authoryear, entry)
+function DocumenterCitations.format_bibliography_reference(
+    style::Val{:enumauthoryear},
+    entry
+)
+    text = DocumenterCitations.format_authoryear_bibliography_reference(style, entry)
     return uppercasefirst(text)
 end
 
-DocumenterCitations.format_citation(::Val{:enumauthoryear}, args...; kwargs...) =
-    DocumenterCitations.format_citation(:authoryear, args...; kwargs...)
+DocumenterCitations.format_citation(style::Val{:enumauthoryear}, args...) =
+    DocumenterCitations.format_authoryear_citation(style, args...)
 
 DocumenterCitations.bib_sorting(::Val{:enumauthoryear}) = :nyt  # name, year, title
 

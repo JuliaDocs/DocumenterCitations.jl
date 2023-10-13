@@ -39,6 +39,34 @@ format_citation
 init_bibliography!
 ```
 
+### Auxiliary customization routines
+
+The following routines are used by the default styles to implement specific formatting. They may be reused by custom styles.
+
+```@docs
+format_labeled_citation
+format_authoryear_citation
+citation_label
+format_labeled_bibliography_reference
+format_authoryear_bibliography_reference
+```
+
+### Citation links
+
+The standard citation links described in [Syntax](@ref) are internally parsed into the [`DocumenterCitations.CitationLink`](@ref) data structure:
+
+```@docs
+DocumenterCitations.CitationLink
+```
+
+Note the this does not include direct citation links such as `[the Semi-AD paper](@cite GoerzQ2022)`, which are instead parsed into
+[`DocumenterCitations.DirectCitationLink`](@ref):
+
+```@docs
+DocumenterCitations.DirectCitationLink
+```
+
+
 ## Debugging
 
 Set the environment variable `JULIA_DEBUG=Documenter,DocumenterCitations` before generating the documentation.
