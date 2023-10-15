@@ -164,7 +164,9 @@ function parse_bibliography_block(block, doc, page)
     lines = String[]
     for (ex, str) in Documenter.parseblock(block, doc, page; raise=false)
         if Documenter.isassign(ex)
-            fields[ex.args[1]] = Core.eval(Main, ex.args[2])
+            key = ex.args[1]
+            val = Core.eval(Main, ex.args[2])
+            fields[key] = val
         else
             line = String(strip(str))
             if length(line) > 0
@@ -177,21 +179,44 @@ function parse_bibliography_block(block, doc, page)
     end
     allowed_fields = Set{Symbol}((:Canonical, :Pages, :Sorting, :Style))
     # Note: :Sorting and :Style are undocumented features
+    warn_loc = "N/A"
+    if (doc ≢ nothing) && (page ≢ nothing)
+        warn_loc = Documenter.locrepr(
+            page.source,
+            Documenter.find_block_in_file(block, page.source)
+        )
+    end
     for field in keys(fields)
         if field ∉ allowed_fields
-            warn_loc = "N/A"
-            if (doc ≢ nothing) && (page ≢ nothing)
-                warn_loc = Documenter.locrepr(
-                    page.source,
-                    Documenter.find_block_in_file(block, page.source)
-                )
-            end
             @warn("Invalid field $field ∉ $allowed_fields in $warn_loc")
             (doc ≢ nothing) && push!(doc.internal.errors, :bibliography_block)
         end
     end
+    if (:Canonical in keys(fields)) && !(fields[:Canonical] isa Bool)
+        @warn "The field `Canonical` in $warn_loc must evaluate to a boolean. Setting invalid `Canonical=$(repr(fields[:Canonical]))` to `Canonical=false`"
+        fields[:Canonical] = false
+        (doc ≢ nothing) && push!(doc.internal.errors, :bibliography_block)
+    end
+    if (:Pages in keys(fields)) && !(fields[:Pages] isa Vector)
+        @warn "The field `Pages` in $warn_loc must evaluate to a list of strings. Setting invalid `Pages = $(repr(fields[:Pages]))` to `Pages = []`"
+        fields[:Pages] = String[]
+        (doc ≢ nothing) && push!(doc.internal.errors, :bibliography_block)
+    elseif :Pages in keys(fields)
+        # Pages is a Vector, but maybe not a Vector of strings
+        fields[:Pages] = [_assert_string(name, doc, warn_loc) for name in fields[:Pages]]
+    end
     return fields, lines
 end
+
+function _assert_string(val, doc, warn_loc)
+    str = string(val)  # doesn't ever seem to fail
+    if str != val
+        @warn "The value `$(repr(val))` in $warn_loc is not a string. Replacing with $(repr(str))"
+        (doc ≢ nothing) && push!(doc.internal.errors, :bibliography_block)
+    end
+    return str
+end
+
 
 # Expand a single @bibliography block
 function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
@@ -227,24 +252,53 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     keys_to_show = OrderedSet{String}()
 
     # first, cited keys (filter by Pages)
-    if :Pages in keys(fields)
-        for key in keys(citations)
-            for file in fields[:Pages]
-                if key in page_citations[file]
-                    push!(keys_to_show, key)
-                    @debug "Add $key to keys_to_show (from page $file)"
-                    break  # only need the first page that cites the key
+    if (length(citations) > 0) && (:Pages in keys(fields))
+        page_folder = dirname(Documenter.pagekey(doc, page))
+        # The `page_folder` is relative to `doc.user.source` (corresponding to
+        # the definition of the keys in `page_citations`)
+        keys_in_pages = Set{String}()  # not ordered (see below)
+        Pages = _resolve__FILE__(fields[:Pages], page)
+        @debug "filtering citations to Pages" Pages
+        for name in Pages
+            # names in `Pages` are supposed to be relative to the folder
+            # containing the file containing the `@bibliography` block,
+            # i.e., `page_folder`
+            file = normpath(page_folder, name)
+            # `file` should now be a valid key in `page_citations`
+            try
+                @debug "Add keys cited in $file to keys_to_show"
+                push!(keys_in_pages, page_citations[file]...)
+            catch exc
+                @assert exc isa KeyError
+                expected_file = normpath(doc.user.source, page_folder, name)
+                if isfile(expected_file)
+                    @error "Invalid $(repr(name)) in Pages attribute of @bibliography block on page $(page.source): File $(repr(expected_file)) exists but no references were collected."
+                else
+                    # Files that don't contain any citations don't show up in
+                    # `page_citations`.
+                    @error "Invalid $(repr(name)) in Pages attribute of @bibliography block on page $(page.source): No such file $(repr(expected_file))."
                 end
+                push!(doc.internal.errors, :bibliography_block)
+                continue
             end
+        end
+        keys_to_add = [k for k in keys(citations) if k in keys_in_pages]
+        if length(keys_to_add) > 0
+            push!(keys_to_show, keys_to_add...)
+            @debug "Collected keys_to_show from Pages" keys_to_show
+        elseif length(lines) == 0
+            # Only warn if there are no explicit keys. Otherwise, the common
+            # idiom of `Pages = []` (with explicit keys) would fail
+            @warn "No cited keys remaining after filtering to Pages" Pages
         end
     else
         # all cited keys
         if length(citations) > 0
             push!(keys_to_show, keys(citations)...)
+            @debug "Add all cited keys to keys_to_show" keys(citations)
         else
             @warn "There were no citations"
         end
-        @debug "Add all cited keys to keys_to_show" citations
     end
 
     # second, explicitly listed keys
@@ -264,7 +318,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
         end
     end
 
-    @debug "Determined keys to show" keys_to_show
+    @debug "Determined full list of keys to show" keys_to_show
 
     tag = bib_html_list_style(style)
     allowed_tags = (:ol, :ul, :dl)
@@ -331,4 +385,25 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     end
     node.element = bibliography_node
 
+end
+
+
+# Deal with `@__FILE__` in `Pages`, convert it to the name of the current file.
+function _resolve__FILE__(Pages, page)
+    __FILE__ = let ex = Meta.parse("_ = @__FILE__", 1; raise=false)[1]
+        # What does a `@__FILE__` in the Pages list evaluate to?
+        # Cf. `Core.eval` in `parse_bibliography_block`.
+        # Should be the string "none", but that's an implementation detail.
+        Core.eval(Main, ex.args[2])
+    end
+    result = String[]
+    for name in Pages
+        if name == __FILE__
+            # Replace @__FILE__ in Pages with the current file:
+            name = basename(page.source)
+            @debug "__@FILE__ -> $(repr(name)) in Pages attribute of @bibliography block on page $(page.source)"
+        end
+        push!(result, name)
+    end
+    return result
 end

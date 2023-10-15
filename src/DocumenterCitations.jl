@@ -48,20 +48,28 @@ should not be considered part of the stable API.
   blocks
 """
 struct CitationBibliography <: Documenter.Plugin
+
     # name of bib file
     bibfile::String
+
     # Style name or object (built-in styles are symbols, but custom styles can
     # be anything)
     style::Any
+
     # citation key => entry (set on instantiation; private)
     entries::OrderedDict{String,<:Bibliography.AbstractEntry}
+
     # citation key => order index (when citation was first seen; private)
     citations::OrderedDict{String,Int64}
-    # page file name => set of citation keys (private)
+
+    # page file name => set of citation keys (private). The page file names are
+    # relative to `doc.user.source`, which matches `doc.plueprint.pages`
     page_citations::Dict{String,Set{String}}
+
     # AnchorMap object that stores the link anchors to all references in
     # canonical bibliography blocks
     anchor_map::Documenter.AnchorMap
+
 end
 
 function CitationBibliography(bibfile::AbstractString=""; style=nothing)
