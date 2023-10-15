@@ -86,10 +86,10 @@ end
 """Format the full reference for an entry in a `@bibliography` block.
 
 ```julia
-format_bibliography_reference(style, entry)
+mdstr = format_bibliography_reference(style, entry)
 ```
 
-produces an HTML string for the full reference of a
+produces a markdown string for the full reference of a
 [`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry).
 For the default `style=:numeric`, the result is formatted like in
 [REVTeX](https://www.ctan.org/tex-archive/macros/latex/contrib/revtex/auguide)
@@ -108,10 +108,11 @@ end
 """Format the label for an entry in a `@bibliography` block.
 
 ```julia
-format_bibliography_label(style, entry, citations)
+mdstr = format_bibliography_label(style, entry, citations)
 ```
 
-produces a string for the label in the bibliography for the given
+produces a plain text (technically, markdown) string for the label in the
+bibliography for the given
 [`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry).
 The `citations` argument is a dict that maps citation keys (`entry.id`) to the
 order in which citations appear in the documentation, i.e., a numeric citation
@@ -273,10 +274,9 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
             "Must be one of $(repr(allowed_tags))"
         )
     end
-    html = """<div class="citation noncanonical"><$tag>"""
-    if fields[:Canonical]
-        html = """<div class="citation canonical"><$tag>"""
-    end
+
+    bibliography_node = BibliographyNode(tag, fields[:Canonical], BibliographyItem[])
+
     anchors = bib.anchor_map
     entries_to_show = OrderedDict{String,Bibliography.Entry}(
         key => bib.entries[key] for key in keys_to_show
@@ -290,6 +290,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     end
     for (key, entry) in entries_to_show
         if fields[:Canonical]
+            anchor_key = key
             # Add anchor that citations can link to from anywhere in the docs.
             if Documenter.anchor_exists(anchors, key)
                 # Skip entries that already have a canonical bib entry
@@ -303,26 +304,31 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
                 Documenter.anchor_add!(anchors, entry, key, page.build)
             end
         else
+            anchor_key = nothing
             # For non-canonical bibliographies, no anchors are generated, and
             # we don't skip any keys. That is, multiple non-canonical
             # bibliographies may contain entries for the same keys.
         end
         @debug "Expanding bibliography entry: $key."
+        reference = MarkdownAST.@ast MarkdownAST.Paragraph()
+        append!(
+            reference.children,
+            Documenter.mdparse(format_bibliography_reference(style, entry); mode=:span)
+        )
         if tag == :dl
-            html *= """
-            <dt>$(format_bibliography_label(style, entry, citations))</dt>
-            <dd>
-            <div id="$key">$(format_bibliography_reference(style, entry))</div>
-            </dd>"""
+            label = MarkdownAST.@ast MarkdownAST.Paragraph()
+            append!(
+                label.children,
+                Documenter.mdparse(
+                    format_bibliography_label(style, entry, citations);
+                    mode=:span
+                )
+            )
         else
-            html *= """
-            <li>
-            <div id="$key">$(format_bibliography_reference(style, entry))</div>
-            </li>"""
+            label = nothing
         end
+        push!(bibliography_node.items, BibliographyItem(anchor_key, label, reference))
     end
-    html *= "\n</$tag></div>"
-
-    node.element = Documenter.RawNode(:html, html)
+    node.element = bibliography_node
 
 end

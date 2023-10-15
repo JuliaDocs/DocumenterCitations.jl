@@ -186,6 +186,8 @@ include("md_ast.jl")
 include("citation_link.jl")
 include("collect_citations.jl")
 include("expand_citations.jl")
+include("latex_options.jl")
+include("bibliography_node.jl")
 include("expand_bibliography.jl")
 include("formatting.jl")
 include("labeled_styles_utils.jl")
@@ -202,6 +204,7 @@ function __init__()
             push!(Documenter.ERROR_NAMES, errname)
         end
     end
+    reset_latex_options()
 end
 
 

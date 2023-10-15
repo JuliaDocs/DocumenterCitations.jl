@@ -88,6 +88,10 @@ Style = :alpha
 Canonical = false
 ```
 
+```@raw latex
+Compared to the HTML version of the documentation, the hanging indent in the above list of references is too small for the longer labels of the \texttt{:alpha} style. This can be remedied by adjusting the \texttt{dl\_hangindent} and \texttt{dl\_labelwidth} parameters with \hyperlinkref{sec:customizing_latex_output}{\texttt{DocumenterCitations.set\_latex\_options}}.
+```
+
 Note that the `:alpha` style is able to automatically disambiguate labels:
 
 ```@bibliography
@@ -178,4 +182,8 @@ end
 Pages = ["gallery.md"]
 Style = :keylabels
 Canonical = false
+```
+
+```@raw latex
+As with the \texttt{:alpha} style, for \LaTeX{} output, the \texttt{dl\_hangindent} and \texttt{dl\_labelwidth} parameters should be adjusted with \hyperlinkref{sec:customizing_latex_output}{\texttt{DocumenterCitations.set\_latex\_options}} to obtain a more suitable hanging indent that matches the HTML version of this documentation.
 ```

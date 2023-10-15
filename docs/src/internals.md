@@ -51,6 +51,17 @@ format_labeled_bibliography_reference
 format_authoryear_bibliography_reference
 ```
 
+### Customizing LaTeX output
+
+```@raw latex
+\hypertarget{sec:customizing_latex_output}{}
+```
+
+```@docs
+set_latex_options
+reset_latex_options
+```
+
 ### Citation links
 
 The standard citation links described in [Syntax](@ref) are internally parsed into the [`DocumenterCitations.CitationLink`](@ref) data structure:

@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * In general (depending on the style and citation syntax), citation links may now render to arbitrarily complex expressions.
 * Citation comments can now have inline markdown elements, e.g., `[GoerzQ2022; definition of $J$ in section *Running costs*](@cite)`
 * When running in non-strict mode, missing bibliographic references (either because the `.bib` file does not contain an entry with a specific BibTeX key, or because of a missing `@biblography` block) are now handled similarly to missing references in LaTeX: They will show as (unlinked) question marks.
+* Support for bibliographies in PDFs generate via LaTeX (`format=Documenter.LaTeX()`). Citations and references are rendered exactly as in the HTML version. Specifically, the support does not depend on `bibtex`/`biblatex` and supports any style (including custom styles). [[#18][]]
+* Functions `DocumenterCitations.set_latex_options` and `DocumenterCitations.reset_latex_options` to tweak the rendering of bibliographies in PDFs.
+
 
 ### Internal Changes
 
@@ -31,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Exposed the internal function `format_labeled_bibliography_reference` that implements `format_bibliography_reference` for the built-in styles `:numeric` and `:alpha`.
 * Exposed the internal function `format_authoryear_bibliography_reference` that implements `format_bibliography_reference` for the built-in style `:authoryear:`.
 * The example custom styles `:enumauthoryear` and `:keylabels` have been rewritten using the above internal functions, illustrating that custom styles will usually not have to rely on the undocumented and even more internal functions like `format_names` and `tex2unicode`.
+* Any `@bibliography` block is now internally expanded into an internal `BibliographyNode` instead of a raw HTML node. This `BibliographyNode` can then be translated into the desired output format by `Documenter.HTMLWriter` or `Documenter.LaTeXWriter`. This is how support for bibliographies with `format=Documenter.LaTeX()` can be achieved.
+* The routine `format_bibliography_reference` must now return a markdown string instead of an HTML string.
 
 
 ## [Version 1.2.1][1.2.1] - 2023-09-22
@@ -118,6 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#31]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/31
 [#20]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/20
 [#19]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/19
+[#18]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/18
 [#16]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/16
 [#14]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/14
 [#6]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/6
