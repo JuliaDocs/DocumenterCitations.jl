@@ -33,7 +33,7 @@ end
 """Print out a coverage summary from existing coverage data.
 
 ```julia
-show_coverage(path="./src"; sort_by=nothing)
+show_coverage(path="./src"; root=pwd(), sort_by=nothing)
 ```
 
 prints a a table showing the tracked files in `path`, the total number of
@@ -41,16 +41,24 @@ tracked lines in that file ("Total"), the number of lines with coverage
 ("Hit"), the number of lines without coverage ("Missed") and the "Coverage" as
 a percentage.
 
-The coverage data is collected from `.cov` files in `path`.
+The coverage data is collected from `.cov` files in `path` as well as
+`tracefile-*.info` files in `root`.
 
 Optionally, the table can be sorted by passing the name of a column to
 `sort_by`, e..g. `sort_py=:Missed`.
 """
-function show_coverage(path::String=joinpath(pwd(), "src"); kwargs...)
+function show_coverage(path::String=joinpath(pwd(), "src"); root=pwd(), kwargs...)
+    path = abspath(path)
     local coverage
     logger = Logging.SimpleLogger(stderr, Logging.Error)
     Logging.with_logger(logger) do
-        coverage = Coverage.process_folder(path)
+        coverage = merge_coverage_counts(
+            Coverage.process_folder(path),  # .cov files in path
+            Coverage.LCOV.readfolder(root),  # tracefile.info
+        )
+    end
+    coverage = filter(coverage) do covitem
+        startswith(abspath(covitem.filename), path)
     end
     metrics = eval_coverage_metrics(coverage, path)
     show_coverage(metrics; kwargs...)
@@ -111,8 +119,8 @@ test(
     file="test/runtests.jl";
     root=pwd(),
     project="test",
-    code_coverage="user",
-    show_coverage=(code_coverage == "user"),
+    code_coverage="tracefile-%p.info",
+    show_coverage=(code_coverage != "none"),
     color=<inherit>,
     compiled_modules=<inherit>,
     startup_file=<inherit>,
@@ -155,8 +163,8 @@ function test(
     file="test/runtests.jl";
     root=pwd(),
     project="test",
-    code_coverage="user",
-    show_coverage=(code_coverage == "user"),
+    code_coverage="tracefile-%p.info",  # or "user", for ".cov" files
+    show_coverage=(code_coverage != "none"),
     color=(Base.have_color === nothing ? "auto" : Base.have_color ? "yes" : "no"),
     compiled_modules=(Bool(Base.JLOptions().use_compiled_modules) ? "yes" : "no"),
     startup_file=(Base.JLOptions().startupfile == 1 ? "yes" : "no"),
@@ -189,9 +197,15 @@ function test(
     if show_coverage || genhtml
         logger = Logging.SimpleLogger(stderr, Logging.Error)
         local coverage
-        package_dir = joinpath(root, "src")
+        package_dir = abspath(joinpath(root, "src"))
         Logging.with_logger(logger) do
-            coverage = Coverage.process_folder(package_dir)
+            coverage = merge_coverage_counts(
+                Coverage.process_folder(package_dir),  # .cov files in path
+                Coverage.LCOV.readfolder(root),  # tracefile.info
+            )
+        end
+        coverage = filter(coverage) do covitem
+            startswith(abspath(covitem.filename), package_dir)
         end
         if show_coverage
             metrics = eval_coverage_metrics(coverage, package_dir)

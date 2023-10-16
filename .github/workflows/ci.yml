@@ -40,7 +40,9 @@ jobs:
       - name: "Instantiate test environment"
         run: julia --project=test devrepl.jl
       - name: "Run tests"
-        run: julia --project=test -L devrepl.jl -e 'test()'
+        shell: julia --color=yes --project=test --code-coverage="user" --depwarn="yes" --check-bounds="yes" {0}
+        run: |
+          include(joinpath(pwd(), "test", "runtests.jl"))
       - uses: julia-actions/julia-processcoverage@v1
       - name: "Summarize coverage"
         run: julia --project=test -L devrepl.jl -e 'show_coverage()'
