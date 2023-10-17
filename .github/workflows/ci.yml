@@ -46,26 +46,33 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           files: lcov.info
-  testnocov:
-    name: Test ${{ matrix.title }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - title: 'Linux - Oldest'
-            os: ubuntu-latest
-            version: '1.6'
+  testoldest:
+    name: Test Lower Compat Bounds
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v1
         with:
-          version: ${{ matrix.version }}
+          version: 1.6
       - uses: julia-actions/cache@v1
       - name: "Instantiate test environment"
-        run: julia --project=test devrepl.jl
+        shell: julia --project=test {0}
+        run: |
+          import Pkg
+          println("*** Dev-Installing DocumenterCitations")
+          Pkg.develop(path=pwd())
+          println("*** Pinning minimal dependencies")
+          Pkg.pin([
+              Pkg.PackageSpec(name="AbstractTrees", version="0.4.0"),
+              Pkg.PackageSpec(name="Bibliography", version="0.2.15"),
+              Pkg.PackageSpec(name="Documenter", version="1.0.0"),
+              Pkg.PackageSpec(name="MarkdownAST", version="0.1.2"),
+              Pkg.PackageSpec(name="OrderedCollections", version="1.6.0"),
+          ])
+          Pkg.precompile()
+          Pkg.status()
       - name: "Run tests"
-        shell: julia --color=yes --project=test --depwarn="yes" --check-bounds="yes" {0}
+        shell: julia --color=yes --project=test {0}
         run: |
           include(joinpath(pwd(), "test", "runtests.jl"))
   docs:
