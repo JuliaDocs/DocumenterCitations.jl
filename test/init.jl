@@ -119,7 +119,7 @@ test(
     file="test/runtests.jl";
     root=pwd(),
     project="test",
-    code_coverage="tracefile-%p.info",
+    code_coverage="./.coverage/tracefile-%p.info",
     show_coverage=(code_coverage != "none"),
     color=<inherit>,
     compiled_modules=<inherit>,
@@ -163,7 +163,8 @@ function test(
     file="test/runtests.jl";
     root=pwd(),
     project="test",
-    code_coverage="tracefile-%p.info",  # or "user", for ".cov" files
+    code_coverage=joinpath(root, ".coverage", "tracefile-%p.info"),
+    # code_coverage = "user" or "@", for ".cov" files
     show_coverage=(code_coverage != "none"),
     color=(Base.have_color === nothing ? "auto" : Base.have_color ? "yes" : "no"),
     compiled_modules=(Bool(Base.JLOptions().use_compiled_modules) ? "yes" : "no"),
@@ -201,7 +202,7 @@ function test(
         Logging.with_logger(logger) do
             coverage = merge_coverage_counts(
                 Coverage.process_folder(package_dir),  # .cov files in path
-                Coverage.LCOV.readfolder(root),  # tracefile.info
+                Coverage.LCOV.readfolder(root),  # tracefile.info (recursively)
             )
         end
         coverage = filter(coverage) do covitem

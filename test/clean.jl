@@ -27,6 +27,7 @@ function clean(; distclean=false, _exit=true)
     _push!(CLEAN, joinpath(ROOT, "coverage"))
     _push!(CLEAN, joinpath(ROOT, "docs", "build"))
     append!(CLEAN, _glob(ROOT, ".info"))
+    append!(CLEAN, _glob(joinpath(ROOT, ".coverage"), ".info"))
     ###########################################################################
 
     ###########################################################################
