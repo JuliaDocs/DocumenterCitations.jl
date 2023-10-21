@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Skip the expansion of citations and bibliographies when running in doctest mode [[#34][]]
 * Support underscores in citation keys [[#14][]]
 * The `Pages` in a `@bibliography` block are now relative to the folder containing the current file. The behavior is consistent with `Pages` in Documenter's `@index` and `@contents` blocks. [[#22][]]
+* The parsing of LaTeX strings has improved significantly. In particular, curly braces should now be stripped correctly [[#15][]]. Note that that braces in titles are never needed for `DocumenterCitations`, but handling them correctly makes it easier to use the same `.bib` file for LaTeX and `DocumenterCitations`.
 
 ### Added
 
@@ -21,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Support for bibliographies in PDFs generate via LaTeX (`format=Documenter.LaTeX()`). Citations and references are rendered exactly as in the HTML version. Specifically, the support does not depend on `bibtex`/`biblatex` and supports any style (including custom styles). [[#18][]]
 * Functions `DocumenterCitations.set_latex_options` and `DocumenterCitations.reset_latex_options` to tweak the rendering of bibliographies in PDFs.
 * The `Pages` in a `@bibliography` block can now use `@__FILE__` to refer to the current file. [[#22][]]
-
+* You may now use `\url` and `\href` commands in the `@misc` field of an entry.
 
 ### Internal Changes
 
@@ -128,5 +129,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#19]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/19
 [#18]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/18
 [#16]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/16
+[#15]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/15
 [#14]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/14
 [#6]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/6
