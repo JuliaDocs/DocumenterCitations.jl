@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Skip the expansion of citations and bibliographies when running in doctest mode [[#34][]]
 * Support underscores in citation keys [[#14][]]
+* The `Pages` in a `@bibliography` block are now relative to the folder containing the current file. The behavior is consistent with `Pages` in Documenter's `@index` and `@contents` blocks. [[#22][]]
 
 ### Added
 
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * When running in non-strict mode, missing bibliographic references (either because the `.bib` file does not contain an entry with a specific BibTeX key, or because of a missing `@biblography` block) are now handled similarly to missing references in LaTeX: They will show as (unlinked) question marks.
 * Support for bibliographies in PDFs generate via LaTeX (`format=Documenter.LaTeX()`). Citations and references are rendered exactly as in the HTML version. Specifically, the support does not depend on `bibtex`/`biblatex` and supports any style (including custom styles). [[#18][]]
 * Functions `DocumenterCitations.set_latex_options` and `DocumenterCitations.reset_latex_options` to tweak the rendering of bibliographies in PDFs.
+* The `Pages` in a `@bibliography` block can now use `@__FILE__` to refer to the current file. [[#22][]]
 
 
 ### Internal Changes
@@ -121,6 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#34]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/34
 [#32]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/32
 [#31]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/31
+[#22]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/22
 [#20]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/20
 [#19]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/19
 [#18]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/18

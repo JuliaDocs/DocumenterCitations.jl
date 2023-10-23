@@ -16,6 +16,11 @@ using DocumenterCitations
         include("test_parse_bibliography_block.jl")
     end
 
+    println("\n* bibliography_block_pages (test_bibliography_block_pages.jl):")
+    @time @safetestset "bibliography_block_pages" begin
+        include("test_bibliography_block_pages.jl")
+    end
+
     println("\n* parse_citation_link (test_parse_citation_link.jl):")
     @time @safetestset "parse_citation_link" begin
         include("test_parse_citation_link.jl")

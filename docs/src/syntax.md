@@ -109,7 +109,7 @@ This exact setup is shown on the [References](@ref) page.
 
 Sometimes it can be useful to render a subset of the bibliography, e.g., to show the references for a particular page. Two things are required to achieve this:
 
-* To filter the bibliography to a specific page (or set of pages), add a `Pages` field to the `@bibliography` block.
+* To filter the bibliography to a specific page (or set of pages), add a `Pages` field to the `@bibliography` block. Exactly like the `Pages` field in Documenter's [`@index`](https://documenter.juliadocs.org/stable/man/syntax/#@index-block) and [`@contents`](https://documenter.juliadocs.org/stable/man/syntax/#@contents-block) blocks, it  must evaluate to a list of paths to `.md` files, relative to the folder containing the current file. The value `@__FILE__` as an element in the list can be used to refer to the current file.
 
 * To get around the caveat with [multiple `@bibliography` blocks](@ref canonical) that there can only be one canonical target for each citation, add `Canonical = false` to the `@bibliography` block. The resulting bibliography will be rendered in full, but it will not serve as a link target. This is the only way to have a reference rendered more than once.
 

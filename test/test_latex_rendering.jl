@@ -3,6 +3,7 @@ using Documenter
 using Test
 
 include("run_makedocs.jl")
+include("file_content.jl")
 
 CUSTOM1 = joinpath(@__DIR__, "..", "docs", "custom_styles", "enumauthoryear.jl")
 CUSTOM2 = joinpath(@__DIR__, "..", "docs", "custom_styles", "keylabels.jl")
@@ -77,20 +78,22 @@ end
 
         tex_outfile = joinpath(dir, "build", "DocumenterCitations.jl.tex")
         @test isfile(tex_outfile)
-        tex = read(tex_outfile, String)
-        tex_contains(str) = contains(tex, str)
-        @test tex_contains(raw"{\raggedright% @bibliography")
-        @test tex_contains(raw"}% end @bibliography")
+        tex = FileContent(tex_outfile)
+        @test raw"{\raggedright% @bibliography" in tex
+        @test raw"}% end @bibliography" in tex
         # must use `\hypertarget{id}{}`, not `\hypertarget{id}`
-        @test tex_contains(r"\\hypertarget{\d+}{}")
-        @test tex_contains(
+        @test r"\\hypertarget{\d+}{}" in tex
+        @test contains(
+            tex,
             r"\\hypertarget{\d+}{}\\href{http://qist\.lanl\.gov}{\\emph{Quantum Computation Roadmap}} \(2004\)"
         )
-        @test tex_contains(
+        @test contains(
+            tex,
             raw"\hangindent=0.33in {\makebox[{\ifdim0.33in<\dimexpr\width+1ex\relax\dimexpr\width+1ex\relax\else0.33in\fi}][l]{[1]}}"
         )
         nbsp = "\u00A0"  # nonbreaking space
-        @test tex_contains(
+        @test contains(
+            tex,
             "\\hangindent=0.33in Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
         ) # authoryear :ul
 
@@ -136,12 +139,12 @@ end
 
         tex_outfile = joinpath(dir, "build", "DocumenterCitations.jl.tex")
         @test isfile(tex_outfile)
-        tex = read(tex_outfile, String)
-        tex_contains(str) = contains(tex, str)
-        @test tex_contains(raw"{% @bibliography")
-        @test tex_contains(raw"}% end @bibliography")
+        tex = FileContent(tex_outfile)
+        @test raw"{% @bibliography" in tex
+        @test raw"}% end @bibliography" in tex
         nbsp = "\u00A0"  # nonbreaking space
-        @test tex_contains(
+        @test contains(
+            tex,
             "\\begin{itemize}\n\\item Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
         ) # authoryear :ul
 
@@ -200,18 +203,20 @@ end
 
         tex_outfile = joinpath(dir, "build", "DocumenterCitations.jl.tex")
         @test isfile(tex_outfile)
-        tex = read(tex_outfile, String)
-        tex_contains(str) = contains(tex, str)
-        @test tex_contains(raw"{\raggedright% @bibliography")
-        @test tex_contains(raw"}% end @bibliography")
+        tex = FileContent(tex_outfile)
+        @test raw"{\raggedright% @bibliography" in tex
+        @test raw"}% end @bibliography" in tex
         nbsp = "\u00A0"  # nonbreaking space
-        @test tex_contains(
+        @test contains(
+            tex,
             "\\hangindent=1cm Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
         ) # authoryear :ul
-        @test tex_contains(
+        @test contains(
+            tex,
             raw"\hangindent=1.5cm {\makebox[{\ifdim2.0cm<\dimexpr\width+1ex\relax\dimexpr\width+1ex\relax\else2.0cm\fi}][l]{[BCR10]}}"
         ) # :alpha style
-        @test tex_contains(
+        @test contains(
+            tex,
             raw"\hangindent=1.5cm {\makebox[{\ifdim2.0cm<\dimexpr\width+1ex\relax\dimexpr\width+1ex\relax\else2.0cm\fi}][l]{[1]}}"
         ) # :numeric style
 
