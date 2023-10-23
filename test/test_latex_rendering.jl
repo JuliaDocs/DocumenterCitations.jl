@@ -1,3 +1,4 @@
+using Pkg
 using DocumenterCitations
 using Documenter
 using Test
@@ -10,6 +11,10 @@ CUSTOM2 = joinpath(@__DIR__, "..", "docs", "custom_styles", "keylabels.jl")
 
 include(CUSTOM1)
 include(CUSTOM2)
+
+
+const Documenter_version =
+    Pkg.dependencies()[Base.UUID("e30172f5-a6a5-5a46-863b-614d45cd2de4")].version
 
 
 function dummy_lctx()
@@ -92,6 +97,10 @@ end
             raw"\hangindent=0.33in {\makebox[{\ifdim0.33in<\dimexpr\width+1ex\relax\dimexpr\width+1ex\relax\else0.33in\fi}][l]{[1]}}"
         )
         nbsp = "\u00A0"  # nonbreaking space
+        if Documenter_version >= v"1.1.2"
+            # https://github.com/JuliaDocs/Documenter.jl/pull/2300
+            nbsp = "~"
+        end
         @test contains(
             tex,
             "\\hangindent=0.33in Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
@@ -143,6 +152,10 @@ end
         @test raw"{% @bibliography" in tex
         @test raw"}% end @bibliography" in tex
         nbsp = "\u00A0"  # nonbreaking space
+        if Documenter_version >= v"1.1.2"
+            # https://github.com/JuliaDocs/Documenter.jl/pull/2300
+            nbsp = "~"
+        end
         @test contains(
             tex,
             "\\begin{itemize}\n\\item Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
@@ -207,6 +220,10 @@ end
         @test raw"{\raggedright% @bibliography" in tex
         @test raw"}% end @bibliography" in tex
         nbsp = "\u00A0"  # nonbreaking space
+        if Documenter_version >= v"1.1.2"
+            # https://github.com/JuliaDocs/Documenter.jl/pull/2300
+            nbsp = "~"
+        end
         @test contains(
             tex,
             "\\hangindent=1cm Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
