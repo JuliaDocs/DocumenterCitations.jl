@@ -1,6 +1,30 @@
 const _DEBUG = Logging.LogLevel(-2000)  # below Logging.Debug
 #const _DEBUG = Logging.Info
 
+# COV_EXCL_START
+@static if VERSION >= v"1.7"
+
+    const _replace = replace
+
+else
+
+    # In principle, we really need the ability of `replace` in Julia >= 1.7 to
+    # apply multiple substitutions at once. On Julia 1.6, we instead iterate
+    # over the substitutions. There is a theoretical chance for a collision in
+    # the back-substitution in `_process_tex`. Since the `_keys` function in
+    # `_process_tex` combines a hash and a counter, there's basically zero
+    # chance of this happening by accident, but it would definitely be possible
+    # to hand-craft a string that produces a collision. Oh well.
+    function _replace(str, subs...)
+        for sub in subs
+            str = replace(str, sub)
+        end
+        return str
+    end
+
+end
+# COV_EXCL_STOP
+
 
 const _TEX_ACCENTS = Dict(  # "direct" accents (non-letter commands)
     '`' => "\u0300",   # \`o  ò  grave accent
@@ -98,9 +122,9 @@ function supported_tex_commands()
 end
 
 
-function tex_to_markdown(tex_str; transform_case=s -> s)
+function tex_to_markdown(tex_str; transform_case=s -> s, debug=_DEBUG)
     try
-        md_str = _process_tex(tex_str; transform_case=transform_case)
+        md_str = _process_tex(tex_str; transform_case=transform_case, debug=debug)
         return Unicode.normalize(md_str)
     catch exc
         if exc isa BoundsError
@@ -127,7 +151,11 @@ function _process_tex(tex_str; transform_case=(s -> s), debug=_DEBUG)
         key = get(_keys, s, "")
         if key == ""
             _k += 1
-            key = "{$_k}"
+            # The key must be unique, and on Julia 1.6, the key also must not
+            # collide with any string that might show up in the output of
+            # `_process_tex`. Combining a hash and a counter achieves this for
+            # anything but maliciously crafted strings.
+            key = "{$(hash(s)):$_k}"
             _keys[s] = key
         end
         return key
@@ -191,13 +219,8 @@ function _process_tex(tex_str; transform_case=(s -> s), debug=_DEBUG)
         i = nextind(tex_str, i)
     end
 
-    result = transform_case(result)
-    for pair in subs
-        # In Julia >= 1.7, we'd be able to do this in one go with a single call
-        # to `replace`.
-        result = replace(result, pair)
-    end
-    return result
+    @logmsg debug "Applying back-substitution of protected groups" subs
+    return _replace(transform_case(result), subs...)
 
 end
 

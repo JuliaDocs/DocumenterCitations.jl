@@ -6,6 +6,7 @@ using TestingUtilities: @Test  # much better at comparing long strings
 import DocumenterCitations:
     DocumenterCitations,
     tex_to_markdown,
+    _process_tex,
     _collect_command,
     _collect_accent,
     _collect_math,
@@ -322,6 +323,18 @@ end
     @test c.value isa ArgumentError
     @test c.value.msg ==
           "Cannot evaluate \\href: ArgumentError(\"Unsupported command: \\\\error. Please report a bug.\")"
+
+end
+
+
+@testset "replacement collisions" begin
+
+    # An earlier implementation would fail the check below on Julia 1.6,
+    # because `replace` in Julia 1.6 does not support making multiple
+    # substitutions at once. We've mitigated this by using a more elaborate
+    # `_keys` function inside `_process_tex`
+    s = "{\\{2\\}} {collision} {\\{1\\}}"
+    @test _process_tex(s) == "{2} collision {1}"
 
 end
 
