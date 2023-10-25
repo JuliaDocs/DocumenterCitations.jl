@@ -11,6 +11,11 @@ using DocumenterCitations
         include("test_formatting.jl")
     end
 
+    println("\n* tex to markdown (test_tex_to_markdown.jl):")
+    @time @safetestset "tex_to_markdown" begin
+        include("test_tex_to_markdown.jl")
+    end
+
     println("\n* parse_bibliography_block (test_parse_bibliography_block.jl):")
     @time @safetestset "parse_bibliography_block" begin
         include("test_parse_bibliography_block.jl")

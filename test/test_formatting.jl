@@ -3,7 +3,6 @@ using TestingUtilities: @Test  # much better at comparing long strings
 using OrderedCollections: OrderedDict
 using DocumenterCitations
 import DocumenterCitations:
-    tex2unicode,
     two_digit_year,
     alpha_label,
     format_citation,
@@ -13,17 +12,6 @@ import DocumenterCitations:
     _strip_md_formatting
 using IOCapture: IOCapture
 
-@testset "text2unicode" begin
-    @Test tex2unicode("-- ---") == "– —"
-    @Test tex2unicode(
-        raw"\`{o}\'{o}\^{o}\~{o}\={o}\u{o}\.{o}\\\"{o}\r{a}\H{o}\v{s}\d{u}\c{c}\k{a}\b{b}\~{a}"
-    ) == "òóôõōŏȯöåőšụçąḇã"
-    @Test tex2unicode(raw"\i{}\o{}\O{}\l{}\L{}\i\o\O\l\L") == "ıøØłŁıøØłŁ"
-    @Test tex2unicode(raw"\t{oo}{testText}\t{az}") == "o͡otestTexta͡z"
-    @Test tex2unicode(raw"{\o}verline") == "øverline"
-    @Test tex2unicode(raw"\t{oo}\\\"{\i}{abcdefg}") == "o͡oïabcdefg"
-    @Test tex2unicode(raw"\overline") == "\\overline"
-end
 
 @testset "two_digit_year" begin
     c = IOCapture.capture() do
@@ -131,7 +119,7 @@ end
     @Test md("TedRyd") ==
           "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
     @Test md("jax") ==
-          "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*JAX: composable transformations of Python+NumPy programs*](https://github.com/google/jax)."
+          "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
 end
 
 
@@ -175,5 +163,5 @@ end
     @Test md("TedRyd") ==
           "Corcovilos, T. and Weiss, D. S. *Rydberg Calculations*. Private communication."
     @Test md("jax") ==
-          "Bradbury, J.; Frostig, R.; Hawkins, P.; Johnson, M. J.; Leary, C.; Maclaurin, D.; Necula, G.; Paszke, A.; VanderPlas, J.; Wanderman-Milne, S. and Zhang, Q. [*JAX: composable transformations of Python+NumPy programs*](https://github.com/google/jax)."
+          "Bradbury, J.; Frostig, R.; Hawkins, P.; Johnson, M. J.; Leary, C.; Maclaurin, D.; Necula, G.; Paszke, A.; VanderPlas, J.; Wanderman-Milne, S. and Zhang, Q. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
 end

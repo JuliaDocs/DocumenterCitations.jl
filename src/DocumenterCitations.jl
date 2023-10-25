@@ -9,6 +9,7 @@ using Documenter.Writers.HTMLWriter
 import MarkdownAST
 import AbstractTrees
 
+using Logging
 using Markdown
 using Bibliography: Bibliography, xyear, xlink, xtitle
 using OrderedCollections: OrderedDict, OrderedSet
@@ -197,6 +198,7 @@ include("expand_citations.jl")
 include("latex_options.jl")
 include("bibliography_node.jl")
 include("expand_bibliography.jl")
+include("tex_to_markdown.jl")
 include("formatting.jl")
 include("labeled_styles_utils.jl")
 

@@ -64,16 +64,14 @@ function format_authoryear_citation(
                 rethrow()
             end
         end
-        names = tex2unicode(
-            format_names(entry; names=namesfmt, and=true, et_al, et_al_text="*et al.*")
-        )
+        names = format_names(entry; names=namesfmt, and=true, et_al, et_al_text="*et al.*")
         if isempty(names)
             names = empty_names
         end
         if i == 1 && cit.capitalize
             names = uppercasefirst(names)
         end
-        year = tex2unicode(entry.date.year)
+        year = format_year(entry)
         if isempty(year)
             year = empty_year
         end
@@ -126,33 +124,26 @@ function format_authoryear_bibliography_reference(
     namesfmt=:lastfirst,
     empty_names="—"
 )
-    authors = format_names(entry; names=namesfmt) |> tex2unicode
-    year = entry.date.year |> tex2unicode
+    authors = format_names(entry; names=namesfmt)
+    year = format_year(entry)
     if !isempty(year)
         if isempty(authors)
             authors = empty_names
         end
         year = "($year)"
     end
-    title = xtitle(entry)
-    if !isempty(title)
-        title = "*" * tex2unicode(title) * "*"
-    end
-    linked_title = linkify(title, entry.access.url)
-    published_in = linkify(
-        tex2unicode(format_published_in(entry; include_date=false)),
-        _doi_link(entry)
-    )
+    title = format_title(entry)
+    published_in = format_published_in(entry; include_date=false)
     eprint = format_eprint(entry)
     note = format_note(entry)
     parts = String[]
-    for part in (authors, year, linked_title, published_in, eprint, note)
+    for part in (authors, year, title, published_in, eprint, note)
         if !isempty(part)
             push!(parts, part)
         end
     end
-    html = _join_bib_parts(parts)
-    return html
+    mdtext = _join_bib_parts(parts)
+    return mdtext
 end
 
 

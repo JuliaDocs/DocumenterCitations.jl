@@ -167,9 +167,8 @@ function _format_labeled_citet(
     for (i, key) in enumerate(cit.keys)
         try
             entry = entries[key]
-            names = tex2unicode(
+            names =
                 format_names(entry; names=namesfmt, and=true, et_al, et_al_text="*et al.*")
-            )
             if i == 1 && cit.capitalize
                 names = uppercasefirst(names)
             end
@@ -226,22 +225,17 @@ mdstr = format_labeled_bibliography_reference(style, entry; namesfmt=:last)
 * `namesfmt`: How to format the author names (`:full`, `:last`, `:lastonly`)
 """
 function format_labeled_bibliography_reference(style, entry; namesfmt=:last)
-    authors = format_names(entry; names=namesfmt) |> tex2unicode
-    title = xtitle(entry)
-    if !isempty(title)
-        title = "*" * tex2unicode(title) * "*"
-    end
-    linked_title = linkify(title, entry.access.url)
-    published_in = linkify(tex2unicode(format_published_in(entry)), _doi_link(entry))
-
+    authors = format_names(entry; names=namesfmt)
+    title = format_title(entry)
+    published_in = format_published_in(entry)
     eprint = format_eprint(entry)
     note = format_note(entry)
     parts = String[]
-    for part in (authors, linked_title, published_in, eprint, note)
+    for part in (authors, title, published_in, eprint, note)
         if !isempty(part)
             push!(parts, part)
         end
     end
-    html = _join_bib_parts(parts)
-    return html
+    mdtext = _join_bib_parts(parts)
+    return mdtext
 end

@@ -1,0 +1,47 @@
+\documentclass[aps,pra,onecolumn,noshowpacs,superscriptaddress,preprintnumbers,%
+kamsmath,amssymb,notitlepage,letterpaper]{revtex4-2}
+
+\def\Author{Michael Goerz}
+\def\Title{Demo of Accented Characters}
+
+\usepackage[utf8]{inputenc}
+\usepackage{caption}
+\captionsetup{justification=raggedright, singlelinecheck=true}
+\usepackage[
+  pdftitle={\Title},
+  pdfauthor={\Author},
+  colorlinks=true, linkcolor=magenta, urlcolor=black, citecolor=magenta,
+  bookmarksopen=false, breaklinks=true, plainpages=false, pdfpagelabels
+]{hyperref}
+
+\begin{document}
+
+\title{\Title}
+\author{\Author}
+\date{\today}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+  \item a\oe b, a\oe   b, a\oe{} b
+  \item \`a \'a
+  \item \"o, \"{o}, \"{oe}
+  \item M{\o}lmer
+  \item Fran\c{c}oise Fran{\c c}oise Fran\c{}coise
+  \item {\SS} and \ss.
+  \item {\i} and {\j}
+  \item {\"\i} and {\"\j}
+  \item escaped characters \% and zero-arg command \o behave differently.
+  \item x\d{o}x x\d{ooo}x x\d{}ox x\d ox x\d ooox
+  \item x\emph{word}x x\emph {word}x x\emph wordx x\emph{}wordx
+  \item x\href{http://www.google.com}{Google}x x\href {http://www.google.com} {Google}x
+  \item x\t{oo}x x\t{ou}x x\t{12}x x\t{abc}x
+  \item \i\j \"i \"j \"\i \"\j
+  \item \href{a}{\textit{a}\%x\textit{b}}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

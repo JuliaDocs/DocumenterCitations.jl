@@ -1,2 +1,2 @@
 [files]
-extend-exclude = ["*.bib", "test_formatting.jl"]
+extend-exclude = ["*.bib", "test_formatting.jl", "test_tex_to_markdown.jl"]

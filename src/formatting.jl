@@ -1,53 +1,5 @@
 # helper functions to render references in various styles
 
-const tex2unicode_chars = Dict(
-    'o' => "\u00F8",  # \o 	ø 	latin small letter O with stroke
-    'O' => "\u00D8",  # \O 	Ø 	latin capital letter O with stroke
-    'l' => "\u0142",  # \l 	ł 	latin small letter L with stroke
-    'L' => "\u0141",  # \L 	Ł 	latin capital letter L with stroke
-    'i' => "\u0131",  # \i 	ı 	latin small letter dotless I
-)
-
-const tex2unicode_replacements = (
-    "---" => "—", # em dash needs to go first
-    "--"  => "–",
-
-    # do this before tex2unicode_chars or it wont be recognized
-    r"\\\\\"\{\\i\}" => s"\u0069\u308", # \"{\i} 	ï 	Latin Small Letter I with Diaeresis
-
-    # replace quoted single letters before the remaining replacements, and do
-    # them all at once, as these patterns rely on word boundaries which can
-    # change due to the replacements we perform
-    r"\\[oOlLi]\b" => c -> tex2unicode_chars[c[2]],
-    r"\\`\{(\S{1})\}" => s"\1\u300", # \`{o} 	ò 	grave accent
-    r"\\'\{(\S{1})\}" => s"\1\u301", # \'{o} 	ó 	acute accent
-    r"\\\^\{(\S{1})\}" => s"\1\u302", # \^{o} 	ô 	circumflex
-    r"\\~\{(\S{1})\}" => s"\1\u303", # \~{o} 	õ 	tilde
-    r"\\=\{(\S{1})\}" => s"\1\u304", # \={o} 	ō 	macron accent (a bar over the letter)
-    r"\\u\{(\S{1})\}" => s"\1\u306",  # \u{o} 	ŏ 	breve over the letter
-    r"\\\.\{(\S{1})\}" => s"\1\u307", # \.{o} 	ȯ 	dot over the letter
-    r"\\\\\"\{(\S{1})\}" => s"\1\u308", # \"{o} 	ö 	umlaut, trema or dieresis
-    r"\\r\{(\S{1})\}" => s"\1\u30A",  # \r{a} 	å 	ring over the letter (for å there is also the special command \aa)
-    r"\\H\{(\S{1})\}" => s"\1\u30B",  # \H{o} 	ő 	long Hungarian umlaut (double acute)
-    r"\\v\{(\S{1})\}" => s"\1\u30C",  # \v{s} 	š 	caron/háček ("v") over the letter
-    r"\\d\{(\S{1})\}" => s"\1\u323",  # \d{u} 	ụ 	dot under the letter
-    r"\\c\{(\S{1})\}" => s"\1\u327",  # \c{c} 	ç 	cedilla
-    r"\\k\{(\S{1})\}" => s"\1\u328",  # \k{a} 	ą 	ogonek
-    r"\\b\{(\S{1})\}" => s"\1\u331",  # \b{b} 	ḇ 	bar under the letter
-    r"\\t\{(\S{1})(\S{1})\}" => s"\1\u0361\2",  # \t{oo} 	o͡o 	"tie" (inverted u) over the two letters
-    r"\{\}" => s"",  # empty curly braces should not have any effect
-    r"\{([\w-]+)\}" => s"\1",  # {<text>} 	<text> 	bracket stripping after applying all rules
-
-    # Sources : https://www.compart.com/en/unicode/U+0131 enter the unicode character into the search box
-)
-
-function tex2unicode(s)
-    for replacement in tex2unicode_replacements
-        s = replace(s, replacement)
-    end
-    return Unicode.normalize(s)
-end
-
 function linkify(text, link)
     if isempty(text)
         text = link
@@ -93,7 +45,8 @@ end
 function alpha_label(entry)
     year = isempty(entry.date.year) ? "??" : two_digit_year(entry.date.year)
     if length(entry.authors) == 1
-        name = Unicode.normalize(entry.authors[1].last; stripmark=true)
+        name = tex_to_markdown(entry.authors[1].last)
+        name = Unicode.normalize(name; stripmark=true)
         return uppercasefirst(first(name, 3)) * year
     else
         letters = [_alpha_initial(name) for name in first(entry.authors, 4)]
@@ -199,14 +152,16 @@ function format_names(
     else
         str = join(formatted_names, namesep)
     end
+    str = tex_to_markdown(replace(str, r"[\n\r ]+" => " "))
     if needs_et_al
         str *= " $et_al_text"
     end
-    return replace(str, r"[\n\r ]+" => " ")
+    return str
 end
 
 
-function format_published_in(entry; include_date=true, nbsp="\u00A0")
+function format_published_in(entry; include_date=true, nbsp="\u00A0", link_doi=true)
+    # TODO: option to transform case of title
     str = ""
     if entry.type == "article"
         str *= replace(entry.in.journal, " " => nbsp)  # non-breaking space
@@ -288,12 +243,38 @@ function format_published_in(entry; include_date=true, nbsp="\u00A0")
     if include_date && !isempty(entry.date.year)
         str *= " ($(entry.date.year))"
     end
-    return str
+    mdtext = tex_to_markdown(str)
+    if link_doi
+        link = _doi_link(entry)
+        return linkify(mdtext, link)
+    else
+        return mdtext
+    end
+end
+
+
+function format_title(entry; italicize=true, link_url=true)
+    # TODO: option to transform case of title
+    title = tex_to_markdown(xtitle(entry))
+    already_italics = startswith(title, "*") || endswith(title, "*")
+    if !isempty(title) && italicize && !already_italics
+        title = "*" * title * "*"
+    end
+    if link_url
+        title = linkify(title, entry.access.url)
+    end
+    return title
 end
 
 
 function format_note(entry)
-    return strip(get(entry.fields, "note", "")) |> tex2unicode
+    return strip(get(entry.fields, "note", "")) |> tex_to_markdown
+end
+
+
+function format_year(entry)
+    year = entry.date.year |> tex_to_markdown
+    return year
 end
 
 
