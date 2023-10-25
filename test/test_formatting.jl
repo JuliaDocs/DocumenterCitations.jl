@@ -165,3 +165,29 @@ end
     @Test md("jax") ==
           "Bradbury, J.; Frostig, R.; Hawkins, P.; Johnson, M. J.; Leary, C.; Maclaurin, D.; Necula, G.; Paszke, A.; VanderPlas, J.; Wanderman-Milne, S. and Zhang, Q. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
 end
+
+
+@testset "corporate author" begin
+
+    # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/44
+
+    bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "corporateauthor.bib"))
+
+    entry = bib.entries["OEIS"]
+
+    name = entry.authors[1]
+    @test name.last == "{OEIS Foundation Inc.}"
+    @test name.first == ""
+    @test name.middle == ""
+    @test name.particle == ""
+
+    md(key) = format_bibliography_reference(Val(:numeric), bib.entries[key])
+    @test md("OEIS") ==
+          "OEIS Foundation Inc. [*The On-Line Encyclopedia of Integer Sequences*](https://oeis.org). Published electronically at https://oeis.org (2023)."
+
+    nbsp = "\u00A0"
+    @test md("OEISworkaround") ==
+          "OEIS$(nbsp)Foundation$(nbsp)Inc. [*The On-Line Encyclopedia of Integer Sequences*](https://oeis.org). Published electronically at https://oeis.org (2023)."
+
+
+end
