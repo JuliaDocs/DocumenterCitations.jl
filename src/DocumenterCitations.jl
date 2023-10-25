@@ -14,6 +14,7 @@ using Markdown
 using Bibliography: Bibliography, xyear, xlink, xtitle
 using OrderedCollections: OrderedDict, OrderedSet
 using Unicode
+using Dates: Dates, @dateformat_str
 
 export CitationBibliography
 

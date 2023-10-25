@@ -217,21 +217,35 @@ function citation_label end  # implemented by various styles
 """Format a bibliography reference as in a "labeled" style.
 
 ```julia
-mdstr = format_labeled_bibliography_reference(style, entry; namesfmt=:last)
+mdstr = format_labeled_bibliography_reference(
+    style, entry;
+    namesfmt=:last,
+    urldate_accessed_on="Accessed on ",
+    urldate_fmt=dateformat"u d, Y",
+)
 ```
 
 # Options
 
 * `namesfmt`: How to format the author names (`:full`, `:last`, `:lastonly`)
+* `urldate_accessed_on`: The prefix for a rendered `urldate` field.
+* `urldate_fmt`: The format in which to render an `urldate` field.
 """
-function format_labeled_bibliography_reference(style, entry; namesfmt=:last)
+function format_labeled_bibliography_reference(
+    style,
+    entry;
+    namesfmt=:last,
+    urldate_accessed_on=_URLDATE_ACCESSED_ON,
+    urldate_fmt=_URLDATE_FMT,
+)
     authors = format_names(entry; names=namesfmt)
     title = format_title(entry)
     published_in = format_published_in(entry)
     eprint = format_eprint(entry)
+    urldate = format_urldate(entry; accessed_on=urldate_accessed_on, fmt=urldate_fmt)
     note = format_note(entry)
     parts = String[]
-    for part in (authors, title, published_in, eprint, note)
+    for part in (authors, title, published_in, eprint, urldate, note)
         if !isempty(part)
             push!(parts, part)
         end

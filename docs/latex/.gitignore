@@ -1,4 +1,6 @@
 *.pdf
+*.xml
+*.bcf
 *.aux
 *.log
 *.toc

@@ -109,7 +109,11 @@ end
 
 ```julia
 mdstr = format_authoryear_bibliography_reference(
-    style, entry; namesfmt=:lastfirst, empty_names="—"
+    style, entry;
+    namesfmt=:lastfirst,
+    empty_names="—",
+    urldate_accessed_on="Accessed on ",
+    urldate_fmt=dateformat"u d, Y",
 )
 ```
 
@@ -117,12 +121,16 @@ mdstr = format_authoryear_bibliography_reference(
 
 * `namesfmt`: How to format the author names (`:full`, `:last`, `:lastonly`)
 * `empty_names`: String to use in place of the authors if there are no authors
+* `urldate_accessed_on`: The prefix for a rendered `urldate` field.
+* `urldate_fmt`: The format in which to render an `urldate` field.
 """
 function format_authoryear_bibliography_reference(
     style,
     entry;
     namesfmt=:lastfirst,
-    empty_names="—"
+    empty_names="—",
+    urldate_accessed_on=_URLDATE_ACCESSED_ON,
+    urldate_fmt=_URLDATE_FMT,
 )
     authors = format_names(entry; names=namesfmt)
     year = format_year(entry)
@@ -135,9 +143,10 @@ function format_authoryear_bibliography_reference(
     title = format_title(entry)
     published_in = format_published_in(entry; include_date=false)
     eprint = format_eprint(entry)
+    urldate = format_urldate(entry; accessed_on=urldate_accessed_on, fmt=urldate_fmt)
     note = format_note(entry)
     parts = String[]
-    for part in (authors, year, title, published_in, eprint, note)
+    for part in (authors, year, title, published_in, eprint, urldate, note)
         if !isempty(part)
             push!(parts, part)
         end

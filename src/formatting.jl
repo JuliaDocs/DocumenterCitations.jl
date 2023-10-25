@@ -1,5 +1,11 @@
 # helper functions to render references in various styles
 
+_URLDATE_FMT = Dates.DateFormat("u d, Y", "english")
+_URLDATE_ACCESSED_ON = "Accessed on "
+# We'll leave this not a `const`, as a way for people to "hack" this with
+# `eval`
+
+
 function linkify(text, link)
     if isempty(text)
         text = link
@@ -272,6 +278,34 @@ function format_note(entry)
 end
 
 
+function format_urldate(entry; accessed_on=_URLDATE_ACCESSED_ON, fmt=_URLDATE_FMT)
+    urldate = strip(get(entry.fields, "urldate", ""))
+    if urldate != ""
+        if entry.access.url == ""
+            @warn "Entry $(entry.id) defines an 'urldate' field, but no 'url' field."
+        end
+        formatted_date = urldate
+        try
+            date = Dates.Date(urldate, dateformat"yyyy-mm-dd")
+            formatted_date = Dates.format(date, fmt)
+        catch exc
+            if exc isa ArgumentError
+                @warn "Invalid field urldate = $(repr(urldate)). Must be in the format YYYY-MM-DD. $exc"
+                # We'll continue with the unformatted `formatted_date = urldate`
+            else
+                # Most likely, a MethodError because there's something wrong
+                # with `fmt`.
+                @error "Check if fmt=$(repr(fmt)) is a valid dateformat!"
+                rethrow()
+            end
+        end
+        return "$accessed_on$formatted_date"
+    else
+        return ""
+    end
+end
+
+
 function format_year(entry)
     year = entry.date.year |> tex_to_markdown
     return year
@@ -338,14 +372,14 @@ function _join_bib_parts(parts)
         mdstr = ""
     elseif length(parts) == 1
         mdstr = strip(parts[1])
-        if !endswith(_strip_md_formatting(mdstr), r"[.!?]")
+        if !endswith(_strip_md_formatting(mdstr), r"[:.!?]")
             mdstr *= "."
         end
     else
         mdstr = strip(parts[1])
         rest = _join_bib_parts(parts[2:end])
         rest_text = _strip_md_formatting(rest)
-        if endswith(_strip_md_formatting(mdstr), r"[,;.!?]") || startswith(rest_text, "(")
+        if endswith(_strip_md_formatting(mdstr), r"[:,;.!?]") || startswith(rest_text, "(")
             mdstr *= " " * rest
         else
             if uppercase(rest_text[1]) == rest_text[1]

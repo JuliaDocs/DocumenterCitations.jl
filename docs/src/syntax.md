@@ -188,7 +188,7 @@ The [`refs.bib`](./refs.bib) file is in the standard [BibTeX format](https://www
 You will find that you get the best results by maintaining a `.bib` files by hand, specifically for a given project using `DocumenterCitations`. A `.bib` file that works well with LaTeX will usually, but not always work well with `DocumenterCitations`: Remember that in LaTeX, the strings inside any BibTeX fields are rendered through the TeX engine. At least in principle, they may contain arbitrary macros.
 
 In contrast, `DocumenterCitations` only parses a subset of LaTeX syntax and converts it to markdown. This includes the [commands for special symbols](https://www.bibtex.org/SpecialSymbols/) (although unicode is preferred) and a handful of commands like [`\url` and `\href`](https://www.overleaf.com/learn/latex/Hyperlinks#Linking_web_addresses).  If you would like to have support added  for a specific additional command, [please open an issue](https://github.com/JuliaDocs/DocumenterCitations.jl/issues/new/choose).
-In addition, `DocumeterCitations` recognizes and preserves in-line math and removes braces.
+In addition, `DocumenterCitations` recognizes and preserves in-line math and removes braces.
 
 "Any `.bib` file will render the bibliography you expect" is not a design goal of `DocumenterCitations`: "It is possible to write a `.bib` file so that you get exactly the bibliography you want", and "Most reasonably clean `.bib` files that work with BibTeX should work out of the box" are.
 
@@ -198,6 +198,7 @@ Some tips to keep in mind when editing a `.bib` file to be used with `Documenter
 * You do not need to use [braces to protect capitalization](https://texfaq.org/FAQ-capbibtex). Unlike `bibtex`, `DocumenterCitation` will preserve the capitalization of titles. You should always put the title in the `.bib` file as it appears in the published paper.
 * Use a consistent scheme for citation keys. Shorter keys are better.
 * All entries should have a `Doi` field, or a `Url` field if no DOI is available.
+* When citing websites [WP_Schroedinger](@cite), in addition to the `Url` field, a `Urldate` field may be given in the format `YYYY-MM-DD`. This will be rendered as, e.g., "Accessed on Oct 24, 2023".
 * Use `@string` macros for abbreviated journal names, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
 
 
