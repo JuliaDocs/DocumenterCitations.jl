@@ -198,7 +198,6 @@ Some tips to keep in mind when editing a `.bib` file to be used with `Documenter
 * You do not need to use [braces to protect capitalization](https://texfaq.org/FAQ-capbibtex). Unlike `bibtex`, `DocumenterCitation` will preserve the capitalization of titles. You should always put the title in the `.bib` file as it appears in the published paper.
 * Use a consistent scheme for citation keys. Shorter keys are better.
 * All entries should have a `Doi` field, or a `Url` field if no DOI is available.
-* You may have to work around some bugs in [BibParser.jl](https://github.com/Humans-of-Julia/BibParser.jl]). For example, the parser [does not properly recognize organization names as authors](https://github.com/Humans-of-Julia/BibParser.jl/issues/30). A [workaround](https://github.com/JuliaDocs/DocumenterCitations.jl/issues/44#issuecomment-1762167119) is to use non-breaking spaces in the name.
 * Use `@string` macros for abbreviated journal names, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
 
 
