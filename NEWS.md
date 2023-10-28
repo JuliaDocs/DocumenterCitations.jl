@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Functions `DocumenterCitations.set_latex_options` and `DocumenterCitations.reset_latex_options` to tweak the rendering of bibliographies in PDFs.
 * The `Pages` in a `@bibliography` block can now use `@__FILE__` to refer to the current file. [[#22][]]
 * You may now use `\url` and `\href` commands in the `@misc` field of an entry.
+* The `Urldate` field is now supported for citing websites. [[#53][]]
 
 ### Internal Changes
 
@@ -116,6 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#53]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/53
 [#42]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/42
 [#40]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/40
 [#39]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/39

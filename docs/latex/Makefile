@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-ALL = numeric.pdf authoryear.pdf rmp.pdf prb.pdf alpha.pdf
+ALL = numeric.pdf authoryear.pdf rmp.pdf prb.pdf alpha.pdf biblatex.pdf
 
 all: $(ALL)
 
@@ -34,6 +34,12 @@ alpha.pdf: alpha.tex
 	pdflatex $<
 	pdflatex $<
 
+biblatex.pdf: biblatex.tex
+	pdflatex $<
+	biber $(basename $<)
+	pdflatex $<
+	pdflatex $<
+
 clean:
 	@rm -f ${ALL}
 	@rm -f *.aux
@@ -50,6 +56,8 @@ clean:
 	@rm -f *.table
 	@rm -f *.dvi
 	@rm -f *.fls
+	@rm -f *.xml
+	@rm -f *.bcf
 	@rm -f *~
 	@rm -f *Notes.bib
 	@rm -f *-eps-converted-to.pdf

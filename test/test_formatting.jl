@@ -7,9 +7,11 @@ import DocumenterCitations:
     alpha_label,
     format_citation,
     format_bibliography_reference,
+    format_urldate,
     CitationLink,
     _join_bib_parts,
     _strip_md_formatting
+using Dates: Dates, @dateformat_str
 using IOCapture: IOCapture
 
 
@@ -28,7 +30,7 @@ end
 
 
 @testset "alpha_label" begin
-    bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
     @test alpha_label(bib.entries["Tannor2007"]) == "Tan07"
     @test alpha_label(bib.entries["FuerstNJP2014"]) == "FGP+14"
     @test alpha_label(bib.entries["ImamogluPRE2015"]) == "IW15"
@@ -44,7 +46,7 @@ end
 
 
 @testset "format_citation(:authoryear)" begin
-    bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
     function ctext(key)
         return format_citation(
             Val(:authoryear),
@@ -98,8 +100,49 @@ end
 end
 
 
+@testset "format_urldate" begin
+
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
+    entry = bib.entries["WP_Schroedinger"]
+
+    @Test format_urldate(entry) == "Accessed on Oct 24, 2023"
+    @Test format_urldate(entry; accessed_on="", fmt=dateformat"d.m.Y") == "24.10.2023"
+
+    c = IOCapture.capture(rethrow=Union{}) do
+        fmt = Dates.DateFormat("SDF ", "english")
+        format_urldate(entry; accessed_on="", fmt=fmt)
+    end
+    @test c.value isa MethodError
+    @test contains(
+        c.output,
+        "Error: Check if fmt=dateformat\"SDF \" is a valid dateformat!"
+    )
+
+    bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "urldate.bib"))
+
+    c = IOCapture.capture(rethrow=Union{}) do
+        format_urldate(bib.entries["BrifNJP2010xxx"])
+    end
+    @test c.value == "Accessed on Oct 24, 2023"
+    @test contains(
+        c.output,
+        "Warning: Entry BrifNJP2010xxx defines an 'urldate' field, but no 'url' field."
+    )
+
+    c = IOCapture.capture(rethrow=Union{}) do
+        format_urldate(bib.entries["WP_Schroedingerxxx"], accessed_on="accessed ")
+    end
+    @test c.value == "accessed a few days ago"
+    @test contains(
+        c.output,
+        "Warning: Invalid field urldate = \"a few days ago\". Must be in the format YYYY-MM-DD."
+    )
+
+end
+
+
 @testset "format_bibliography_reference(:numeric)" begin
-    bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
     md(key) = format_bibliography_reference(Val(:numeric), bib.entries[key])
     # Note: the test strings below contain nonbreaking spaces (" " = "\u00A0")
     @Test md("GoerzJPB2011") ==
@@ -120,11 +163,13 @@ end
           "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
     @Test md("jax") ==
           "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
+    @Test md("WP_Schroedinger") ==
+          "Wikipedia: [*Schrödinger equation*](https://en.wikipedia.org/wiki/Schrödinger_equation). Accessed on Oct 24, 2023."
 end
 
 
 @testset "format_biliography_reference (preprints)" begin
-    bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
     bib0 = CitationBibliography(joinpath(splitext(@__FILE__)[1], "preprints.bib"))
     merge!(bib.entries, bib0.entries)
     md(key) = format_bibliography_reference(Val(:numeric), bib.entries[key])
@@ -143,7 +188,7 @@ end
 
 
 @testset "format_bibliography_reference(:authoryear)" begin
-    bib = CitationBibliography(joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),)
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
     md(key) = format_bibliography_reference(Val(:authoryear), bib.entries[key])
     # Note: the test strings below contain nonbreaking spaces (" " = "\u00A0")
     @Test md("GoerzJPB2011") ==
