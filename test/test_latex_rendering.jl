@@ -18,7 +18,7 @@ const Documenter_version =
 
 
 function dummy_lctx()
-    doc = Documenter.Document()
+    doc = Documenter.Document(; remotes=nothing)
     buffer = IOBuffer()
     return Documenter.LaTeXWriter.Context(buffer, doc)
 end
