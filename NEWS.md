@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased][]
+## [Version 1.3.0][1.3.0] - 2023-11-01
 
 ### Fixed
 
@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Support underscores in citation keys [[#14][]]
 * The `Pages` in a `@bibliography` block are now relative to the folder containing the current file. The behavior is consistent with `Pages` in Documenter's `@index` and `@contents` blocks. [[#22][]]
 * The parsing of LaTeX strings has improved significantly. In particular, curly braces should now be stripped correctly [[#15][]]. Note that that braces in titles are never needed for `DocumenterCitations`, but handling them correctly makes it easier to use the same `.bib` file for LaTeX and `DocumenterCitations`.
-* Fixed the rendering of references other than `@article`, especially `@inproceedings`, `@incollection`, `@inbooks`, mimicking RevTeX. The DOI/URL are now linked via the Title and/or Booktitle. Added support for `Chapter`, `Volume`, `Number`, `Edition`, `Month` fields.
+* Fixed the rendering of references other than `@article`, especially `@inproceedings`, `@incollection`, `@inbooks`, mimicking RevTeX. The DOI/URL are now linked via the Title and/or Booktitle. Added support for `Chapter`, `Volume`, `Number`, `Edition`, `Month` fields. [[#56][]]
 
 ### Added
 
@@ -113,11 +113,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#56]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/56
 [#53]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/53
 [#42]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/42
 [#40]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/40

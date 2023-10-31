@@ -131,6 +131,11 @@ jobs:
           using Pkg
           VERSION = VersionNumber(Pkg.TOML.parsefile("Project.toml")["version"])
           BRANCH = ENV["GITHUB_REF_NAME"]
+          if ENV["GITHUB_EVENT_NAME"] == "pull_request"
+              # For pull_request events, return the head (aka., "from") branch,
+              # not the base (aka., "to") branch.
+              BRANCH = ENV["GITHUB_HEAD_REF"]
+          end
           if startswith(BRANCH, "release-")
               if (length(VERSION.prerelease) == length(VERSION.build))
                   println("Version $VERSION on release branch OK")
