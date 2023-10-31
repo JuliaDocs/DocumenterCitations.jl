@@ -26,6 +26,10 @@ if !isfile(joinpath("test", "Manifest.toml"))
 end
 include("test/init.jl")
 
+# Disable link-checking in interactive REPL, since it is the slowest part
+# of building the docs.
+ENV["DOCUMENTER_CHECK_LINKS"] = "0"
+
 if abspath(PROGRAM_FILE) == @__FILE__
     help()
 end

@@ -114,6 +114,7 @@ mdstr = format_authoryear_bibliography_reference(
     empty_names="—",
     urldate_accessed_on="Accessed on ",
     urldate_fmt=dateformat"u d, Y",
+    title_transform_case=(s->s),
 )
 ```
 
@@ -123,6 +124,9 @@ mdstr = format_authoryear_bibliography_reference(
 * `empty_names`: String to use in place of the authors if there are no authors
 * `urldate_accessed_on`: The prefix for a rendered `urldate` field.
 * `urldate_fmt`: The format in which to render an `urldate` field.
+* `title_transform_case`: A function that transforms the case of a Title
+  (Booktitle, Series) field. Strings enclosed in braces are protected
+  from the transformation.
 """
 function format_authoryear_bibliography_reference(
     style,
@@ -131,8 +135,17 @@ function format_authoryear_bibliography_reference(
     empty_names="—",
     urldate_accessed_on=_URLDATE_ACCESSED_ON,
     urldate_fmt=_URLDATE_FMT,
+    title_transform_case=(s -> s),
 )
     authors = format_names(entry; names=namesfmt)
+    if entry.type == "article"
+        title =
+            format_title(entry; url=entry.access.url, transform_case=title_transform_case)
+    else
+        urls = get_urls(entry)
+        # Link URL, or DOI if no URL is available
+        title = format_title(entry; url=pop_url!(urls), transform_case=title_transform_case)
+    end
     year = format_year(entry)
     if !isempty(year)
         if isempty(authors)
@@ -140,8 +153,12 @@ function format_authoryear_bibliography_reference(
         end
         year = "($year)"
     end
-    title = format_title(entry)
-    published_in = format_published_in(entry; include_date=false)
+    published_in = format_published_in(
+        entry;
+        include_date=false,
+        namesfmt=namesfmt,
+        title_transform_case=title_transform_case
+    )
     eprint = format_eprint(entry)
     urldate = format_urldate(entry; accessed_on=urldate_accessed_on, fmt=urldate_fmt)
     note = format_note(entry)

@@ -185,12 +185,16 @@ In general, the citation style determines the order of the references, see the [
 
 The [`refs.bib`](./refs.bib) file is in the standard [BibTeX format](https://www.bibtex.com/g/bibtex-format/). It must be parsable by [BibParser.jl](https://github.com/Humans-of-Julia/BibParser.jl).
 
-You will find that you get the best results by maintaining a `.bib` files by hand, specifically for a given project using `DocumenterCitations`. A `.bib` file that works well with LaTeX will usually, but not always work well with `DocumenterCitations`: Remember that in LaTeX, the strings inside any BibTeX fields are rendered through the TeX engine. At least in principle, they may contain arbitrary macros.
+Even in LaTeX, you cannot blindly use `.bib` entries exported from a bibliography manager. [All `.bib` files must be curated by hand](https://clauswilke.com/blog/2015/10/02/bibtex/)! This is true even more so for a project using `DocumenterCitations`.
+A `.bib` file that works well with LaTeX will usually, but not always work well with `DocumenterCitations`: Remember that in LaTeX, the strings inside any BibTeX fields are rendered through the TeX engine. At least in principle, they may contain arbitrary macros.
 
 In contrast, `DocumenterCitations` only parses a subset of LaTeX syntax and converts it to markdown. This includes the [commands for special symbols](https://www.bibtex.org/SpecialSymbols/) (although unicode is preferred) and a handful of commands like [`\url` and `\href`](https://www.overleaf.com/learn/latex/Hyperlinks#Linking_web_addresses).  If you would like to have support added  for a specific additional command, [please open an issue](https://github.com/JuliaDocs/DocumenterCitations.jl/issues/new/choose).
 In addition, `DocumenterCitations` recognizes and preserves in-line math and removes braces.
 
-"Any `.bib` file will render the bibliography you expect" is not a design goal of `DocumenterCitations`: "It is possible to write a `.bib` file so that you get exactly the bibliography you want", and "Most reasonably clean `.bib` files that work with BibTeX should work out of the box" are.
+"Any `.bib` file will render the bibliography you expect" is not a design goal. Instead, `DocumenterCitations` tries to ensure that
+
+1. It is possible to write a `.bib` file that produces the expected results; and
+2. Most reasonably clean (hand-curated) `.bib` files that work with BibTeX also work with `DocumenterCitations`.
 
 Some tips to keep in mind when editing a `.bib` file to be used with `DocumenterCitations`:
 

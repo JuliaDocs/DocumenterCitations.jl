@@ -222,6 +222,7 @@ mdstr = format_labeled_bibliography_reference(
     namesfmt=:last,
     urldate_accessed_on="Accessed on ",
     urldate_fmt=dateformat"u d, Y",
+    title_transform_case=(s->s),
 )
 ```
 
@@ -230,6 +231,9 @@ mdstr = format_labeled_bibliography_reference(
 * `namesfmt`: How to format the author names (`:full`, `:last`, `:lastonly`)
 * `urldate_accessed_on`: The prefix for a rendered `urldate` field.
 * `urldate_fmt`: The format in which to render an `urldate` field.
+* `title_transform_case`: A function that transforms the case of a Title
+  (Booktitle, Series) field. Strings enclosed in braces are protected
+  from the transformation.
 """
 function format_labeled_bibliography_reference(
     style,
@@ -237,10 +241,22 @@ function format_labeled_bibliography_reference(
     namesfmt=:last,
     urldate_accessed_on=_URLDATE_ACCESSED_ON,
     urldate_fmt=_URLDATE_FMT,
+    title_transform_case=(s -> s),
 )
     authors = format_names(entry; names=namesfmt)
-    title = format_title(entry)
-    published_in = format_published_in(entry)
+    if entry.type == "article"
+        title =
+            format_title(entry; url=entry.access.url, transform_case=title_transform_case)
+    else
+        urls = get_urls(entry)
+        # Link URL, or DOI if no URL is available
+        title = format_title(entry; url=pop_url!(urls), transform_case=title_transform_case)
+    end
+    published_in = format_published_in(
+        entry;
+        namesfmt=namesfmt,
+        title_transform_case=title_transform_case
+    )
     eprint = format_eprint(entry)
     urldate = format_urldate(entry; accessed_on=urldate_accessed_on, fmt=urldate_fmt)
     note = format_note(entry)

@@ -13,7 +13,7 @@ The built-in styles are:
 This is the default style (`style=:numeric`) used throughout the other pages of this documentation, cf. the [Syntax](@ref) examples.
 
 * `[GoerzQ2022](@cite)` renders as "[GoerzQ2022](@cite)"
-* `[FuerstNJP2014](@cite)` renders as "[FuerstNJP2014](@cite)"
+* `[FuerstNJP2014,SolaAAMOP2018](@cite)` renders as "[FuerstNJP2014,SolaAAMOP2018](@cite)"
 * `[GoerzQ2022](@citet)` renders as "[GoerzQ2022](@citet)"
 * `[GoerzQ2022](@citep)` renders as "[GoerzQ2022](@citep)" — `@citep` is the same as `@cite` for this style
 * `[GoerzQ2022; Eq. (1)](@cite)` renders as "[GoerzQ2022; Eq. (1)](@cite)"
@@ -29,7 +29,7 @@ This is the default style (`style=:numeric`) used throughout the other pages of 
 **References:**
 
 ```@bibliography
-Pages = ["gallery.md"]
+Pages = [@__FILE__]
 Style = :numeric
 Canonical = false
 ```
@@ -39,7 +39,7 @@ Canonical = false
 The author-year style (`style=:authoryear`) formats citations with the author name and publication year. This is the citation style used, e.g., in [Rev. Mod. Phys.](https://journals.aps.org/rmp/) (`rmp` option in [REVTeX](https://www.ctan.org/tex-archive/macros/latex/contrib/revtex/auguide)). The bibliography is sorted alphabetically by author name. The default `@cite` command is parenthetical (`@cite` and `@citep` are equivalent) which is different from the `authoryear` style in [natbib](https://mirrors.rit.edu/CTAN/macros/latex/contrib/natbib/natnotes.pdf).
 
 * `[GoerzQ2022](@cite)` renders as "[GoerzQ2022](@cite%authoryear%)"
-* `[FuerstNJP2014](@cite)` renders as "[FuerstNJP2014](@cite%authoryear%)"
+* `[FuerstNJP2014,SolaAAMOP2018](@cite)` renders as "[FuerstNJP2014,SolaAAMOP2018](@cite%authoryear%)"
 * `[GoerzQ2022](@citet)` renders as "[GoerzQ2022](@citet%authoryear%)"
 * `[GoerzQ2022](@citep)` renders as "[GoerzQ2022](@citep%authoryear%)" — `@citep` is the same as `@cite` for this style
 * `[GoerzQ2022; Eq. (1)](@cite)` renders as "[GoerzQ2022; Eq. (1)](@cite%authoryear%)"
@@ -57,7 +57,7 @@ The author-year style (`style=:authoryear`) formats citations with the author na
 **References:**
 
 ```@bibliography
-Pages = ["gallery.md"]
+Pages = [@__FILE__]
 Style = :authoryear
 Canonical = false
 ```
@@ -67,7 +67,7 @@ Canonical = false
 The `style=:alpha` formats citations and references like `:numeric`, except that it uses labels derived from the author names and publication year and sorts the references alphabetically.
 
 * `[GoerzQ2022](@cite)` renders as "[GoerzQ2022](@cite%alpha%)"
-* `[FuerstNJP2014](@cite)` renders as "[FuerstNJP2014](@cite%alpha%)"
+* `[FuerstNJP2014,SolaAAMOP2018](@cite)` renders as "[FuerstNJP2014,SolaAAMOP2018](@cite%alpha%)"
 * `[GoerzQ2022](@citet)` renders as "[GoerzQ2022](@citet%alpha%)"
 * `[GoerzQ2022](@citep)` renders as "[GoerzQ2022](@citep%alpha%)" — `@citep` is the same as `@cite` for this style
 * `[GoerzQ2022; Eq. (1)](@cite)` renders as "[GoerzQ2022; Eq. (1)](@cite%alpha%)"
@@ -83,9 +83,11 @@ The `style=:alpha` formats citations and references like `:numeric`, except that
 **References:**
 
 ```@bibliography
-Pages = ["gallery.md"]
+Pages = [@__FILE__]
 Style = :alpha
 Canonical = false
+
+SolaAAMOP2018
 ```
 
 ```@raw latex
@@ -135,13 +137,13 @@ end
 The important part of the definition is in the last line, indicating that the References should be shown as an enumeration (ordered list, `<ol>`, in HTML), see below. Meanwhile, citations render exactly as with `style=:authoryear`:
 
 * `[GoerzQ2022](@cite)` renders as "[GoerzQ2022](@cite%enumauthoryear%)"
-* `[FuerstNJP2014](@cite)` renders as "[FuerstNJP2014](@cite%enumauthoryear%)"
+* `[FuerstNJP2014,SolaAAMOP2018](@cite)` renders as "[FuerstNJP2014,SolaAAMOP2018](@cite%enumauthoryear%)"
 * `[WinckelIP2008](@Citet)` renders as "[WinckelIP2008](@Citet%enumauthoryear%)"
 
 **References:**
 
 ```@bibliography
-Pages = ["gallery.md"]
+Pages = [@__FILE__]
 Style = :enumauthoryear
 Canonical = false
 ```
@@ -165,7 +167,7 @@ end
 ~~~
 
 * `[GoerzQ2022](@cite)` renders as "[GoerzQ2022](@cite%keylabels%)"
-* `[FuerstNJP2014](@cite)` renders as "[FuerstNJP2014](@cite%keylabels%)"
+* `[FuerstNJP2014,SolaAAMOP2018](@cite)` renders as "[FuerstNJP2014,SolaAAMOP2018](@cite%keylabels%)"
 * `[GoerzQ2022](@citet)` renders as "[GoerzQ2022](@citet%keylabels%)"
 * `[GoerzQ2022](@citep)` renders as "[GoerzQ2022](@citep%keylabels%)" — `@citep` is the same as `@cite` for this style
 * `[GoerzQ2022; Eq. (1)](@cite)` renders as "[GoerzQ2022; Eq. (1)](@cite%keylabels%)"
@@ -179,7 +181,7 @@ end
 **References:**
 
 ```@bibliography
-Pages = ["gallery.md"]
+Pages = [@__FILE__]
 Style = :keylabels
 Canonical = false
 ```
