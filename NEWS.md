@@ -3,11 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased][]
+
+## [Version 1.3.1][1.3.1] - 2023-11-02
 
 ### Fixed
 
-* Added a fallback for the `Pages` attribute in a `@bibliography` block to behave as in pre-`1.3.0`: If `Pages` references a file with a path relative to the `docs/src` directory (which was the unintentional requirement pre-`1.3.0`), this now works again, but shows a warning that the name should be updated to be relative to the folder containing the file that contains the `@bibliography` block.
+* Added a fallback for the `Pages` attribute in a `@bibliography` block to behave as in pre-`1.3.0`: If `Pages` references a file with a path relative to the `docs/src` directory (which was the unintentional requirement pre-`1.3.0`), this now works again, but shows a warning that the name should be updated to be relative to the folder containing the file that contains the `@bibliography` block. [[#61][]]
 
   This fixes the `v1.3.0` release arguably having been "breaking" [[#59][]] in that anybody who was using `Pages` pre-1.3.0 would have had to use paths relative to `docs/src`, even though that was a workaround for a known bug [[#22][]]. Note that whenever `Pages` references the current file, `@__FILE__` should be used.
 
@@ -133,12 +134,14 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#61]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/61
 [#59]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/59
 [#56]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/56
 [#53]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/53
