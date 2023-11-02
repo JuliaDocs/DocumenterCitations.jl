@@ -47,7 +47,8 @@ end
 
         @test success
         #! format: off
-        @test contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/index.md\"."))
+        @test_broken contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/index.md\"."))
+        @test contains(output, prx("Warning: The entry \"index.md\" in the Pages attribute of the @bibliography block on page src/part3/section2/invalidpages.md appears to be relative to \"src\"."))
         @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/p3_s1_page.md\"."))
         @test contains(output, prx("Error: Invalid \"noexist.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/noexist.md\"."))
         @test contains(output, "Warning: No cited keys remaining after filtering to Pages")
@@ -174,7 +175,8 @@ end
 
         @test !success
         #! format: off
-        @test contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/index.md\"."))
+        @test_broken contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/index.md\"."))
+        @test contains(output, prx("Warning: The entry \"index.md\" in the Pages attribute of the @bibliography block on page src/part3/section2/invalidpages.md appears to be relative to \"src\"."))
         @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/p3_s1_page.md\"."))
         @test contains(output, prx("Error: Invalid \"noexist.md\" in Pages attribute of @bibliography block on page src/part3/section2/invalidpages.md: No such file \"src/part3/section2/noexist.md\"."))
         @test contains(output, "Warning: No cited keys remaining after filtering to Pages")

@@ -3,6 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased][]
+
+### Fixed
+
+* Added a fallback for the `Pages` attribute in a `@bibliography` block to behave as in pre-`1.3.0`: If `Pages` references a file with a path relative to the `docs/src` directory (which was the unintentional requirement pre-`1.3.0`), this now works again, but shows a warning that the name should be updated to be relative to the folder containing the file that contains the `@bibliography` block.
+
+  This fixes the `v1.3.0` release arguably having been "breaking" [[#59][]] in that anybody who was using `Pages` pre-1.3.0 would have had to use paths relative to `docs/src`, even though that was a workaround for a known bug [[#22][]]. Note that whenever `Pages` references the current file, `@__FILE__` should be used.
+
 
 ## [Version 1.3.0][1.3.0] - 2023-11-01
 
@@ -41,6 +49,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * The example custom styles `:enumauthoryear` and `:keylabels` have been rewritten using the above internal functions, illustrating that custom styles will usually not have to rely on the undocumented and even more internal functions like `format_names` and `tex2unicode`.
 * Any `@bibliography` block is now internally expanded into an internal `BibliographyNode` instead of a raw HTML node. This `BibliographyNode` can then be translated into the desired output format by `Documenter.HTMLWriter` or `Documenter.LaTeXWriter`. This is how support for bibliographies with `format=Documenter.LaTeX()` can be achieved.
 * The routine `format_bibliography_reference` must now return a markdown string instead of an HTML string.
+
+**Upgrade guidelines**:
+
+For anyone who was using custom styles, which rely on the [Internals](https://juliadocs.org/DocumenterCitations.jl/stable/internals/) of `DocumenterCitations`, this release will almost certainly break the customization. See the above list of internal changes.
+
+There were some subtle changes in how DOI and URL fields are linked in the rendered documentation, which may require adjustments. In particular, in version `1.3.0`, non-`@article` entries that do not have both a `title` and a `booktitle` can only have a DOI *or* a URL, but not both. This most likely occurs for `@book` entries. For `@book` entries that have both a DOI and a URL, the URL should be placed in the `note` field (using `\url`/`\href`, as appropriate).
+
+There were several bugs and limitations in version `1.2.x` for which some existing documentations may have been using workarounds. These workarounds may cause some breakage in the new version `1.3.0`. In particular:
+
+* The `Pages` attribute in a `@bibliography` block in version `1.2.x` required any names to be relative to the `docs/src` directory [[#22][]]. This was both unintentional and undocumented. These names must now be updated to be relative to to the folder containing the file which contains the `@bibliography` block. This is consistent with how `Pages` is used, e.g., in `@contents` or `@index` blocks. For the common usage where `Pages` was referring to the current file, `@__FILE__` should be used.
+
+* Pre-`1.3.0`, strings in entries in the `.bib` file were extremely limited.  There was no official support for any kind of `tex` macros: only plain-text (unicode) was fully supported. As a workaround, some users exploited an (undocumented/buggy) implementation detail that would cause html or markdown strings inside the `.bib` file to "work", e.g. for adding links in a `note` field. These workarounds may break in `v1.3.0`. While unicode is still very much supported (`ö` over `\"{o}`), `.bib` files should otherwise be written to be fully compatible with `bibtex`. For links in particular, the LaTeX `\href` macro should be used. Any `tex` commands that are not supported  (`Error: Unsupported command`) should be reported. Some `tex` characters (`$%@{}&`) that may have worked directly pre-`1.3.0` will have to be escaped in version `1.3.0`.
 
 
 ## [Version 1.2.1][1.2.1] - 2023-09-22
@@ -119,6 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#59]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/59
 [#56]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/56
 [#53]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/53
 [#42]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/42
