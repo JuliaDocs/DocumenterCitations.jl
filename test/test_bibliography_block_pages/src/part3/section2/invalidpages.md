@@ -2,12 +2,12 @@
 
 ## References from Nonexisting Pages
 
-Nothing should render here
+Nothing should render here (except for the fallback introduced in version 1.3.1)
 
 ```@bibliography
 Canonical = false
 Pages = [
-    "index.md",
+    "index.md",  # not valid in 1.3, valid in 1.3.1 (fallback)
     "p3_s1_page.md",
     "noexist.md",
 ]
