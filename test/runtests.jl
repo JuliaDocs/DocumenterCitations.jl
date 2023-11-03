@@ -76,6 +76,21 @@ using DocumenterCitations
         include("test_undefined_citations.jl")
     end
 
+    println("\n* test link checking (test_linkcheck.jl):")
+    @time @safetestset "linkcheck" begin
+        import Pkg
+        using Documenter: DOCUMENTER_VERSION
+        run_linkcheck = true
+        if !Sys.isexecutable("/usr/bin/env")  # used by mock `curl`
+            run_linkcheck = false
+            @info "Skipped test_linkcheck.jl (cannot mock `curl`)"
+        elseif DOCUMENTER_VERSION < v"1.2"
+            run_linkcheck = false
+            @info "Skipped test_linkcheck.jl (old version of Documenter)"
+        end
+        run_linkcheck && include("test_linkcheck.jl")
+    end
+
     print("\n")
 
 end

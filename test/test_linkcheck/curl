@@ -1,0 +1,26 @@
+#!/usr/bin/env julia
+
+RESPONSE = Dict(
+    "http://httpbin.org/status/404" => "404 http://httpbin.org/status/404 ",
+    "http://httpbin.org/status/500" => "500 http://httpbin.org/status/500 ",
+    "http://httpbin.org/status/403" => "403 http://httpbin.org/status/403 ",
+)
+
+# The above responses must match what `curl` as called by the `linkcheck`
+# function in Documenter would return. In particular, `linkcheck` calls `curl`
+# with `--write-out "%{http_code} %{url_effective} %{redirect_url}"`
+
+if "--version" in ARGS
+    println("mocked")
+    exit(0)
+else
+    url = ARGS[findfirst(startswith("http"), ARGS)]
+    try
+        print(RESPONSE[url])
+    catch
+        # URLs not in RESPONSE will cause an failure, equivalent to the normal
+        # `curl` not being able to connect.
+        exit(1)
+    end
+    exit(0)
+end

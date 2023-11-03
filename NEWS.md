@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Warn about markdown link syntax in `.bib` files [[#60][]]
 * Warn about invalid DOIs in `.bib` files. The DOI field should never contain a URL (`https://doi.org/...`). This is detected as a special case, and the DOI is extracted from the URL.
 * Automatically link both URL and DOI fields. This fixes a regression in `v1.3.0`, which would throw an error for `@book` and `@proceeding` entries with both a URL and a DOI field. Now, the DOI in such a case will be automatically linked via the `Title` field, and the DOI via the `organization`/`publisher`/`address` fields, similar to the behavior in `v1.2.0`. You may prefer to have the DOI linked via that `Title`, in which case you should add a `Note` field containing the `URL` (using `\url`/`\href`, as appropriate).
- 
+* Calling `makedocs` with `linkcheck=true` now also checks links (e.g., DOIs) inside the bibliography. [[#58][]]
+
 
 ## [Version 1.3.1][1.3.1] - 2023-11-02
 
@@ -151,6 +152,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [#61]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/61
 [#60]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/60
 [#59]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/59
+[#58]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/58
 [#56]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/56
 [#53]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/53
 [#42]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/42

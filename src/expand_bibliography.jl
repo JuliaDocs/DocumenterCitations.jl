@@ -30,6 +30,9 @@ Selectors.order(::Type{ExpandBibliography}) = 2.12  # after CollectCitations
 function Selectors.runner(::Type{ExpandBibliography}, doc::Documenter.Document)
     Documenter.is_doctest_only(doc, "ExpandBibliography") && return
     @info "ExpandBibliography: expanding `@bibliography` blocks."
+    if (DOCUMENTER_VERSION < v"1.2") && doc.user.linkcheck
+        @warn "Checking links in the bibliography (`linkcheck=true`) requires Documenter >= 1.2" DOCUMENTER_VERSION
+    end
     expand_bibliography(doc)
 end
 
