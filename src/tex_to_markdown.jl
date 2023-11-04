@@ -360,7 +360,8 @@ function _collect_command(tex_str, i; debug=_DEBUG)
         end
     end
     if !haskey(_COMMANDS_TO_MD, cmd)
-        @error "Unsupported command: $cmd" supported_commands = supported_tex_commands()
+        supported_commands = join(supported_tex_commands(), "  ")
+        @error "Unsupported command: $cmd.\nSupported commands are: $supported_commands"
         throw(ArgumentError("Unsupported command: $cmd. Please report a bug."))
     end
     try

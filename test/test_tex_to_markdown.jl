@@ -291,7 +291,7 @@ end
     end
     @test c.value isa ArgumentError
     @test contains(c.value.msg, "Unsupported command: \\invalidcommand")
-    @test contains(c.output, "supported_commands")
+    @test contains(c.output, "Supported commands are: ")
 
     s = "Text with unescaped %"
     c = IOCapture.capture(rethrow=Union{}) do
@@ -357,5 +357,8 @@ end
 
     s = "\\ket{Ψ}"
     @test tex_to_markdown(s) == "|Ψ⟩"
+
+    delete!(DocumenterCitations._COMMANDS_NUM_ARGS, "\\ket")
+    delete!(DocumenterCitations._COMMANDS_TO_MD, "\\ket")
 
 end
