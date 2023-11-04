@@ -324,6 +324,16 @@ end
     @test c.value.msg ==
           "Cannot evaluate \\href: ArgumentError(\"Unsupported command: \\\\error. Please report a bug.\")"
 
+    s = "The krotov Pyhon package is available on [Github](https://github.com/qucontrol/krotov)"
+    c = IOCapture.capture(rethrow=Union{}) do
+        tex_to_markdown(s)
+    end
+    @test c.value == s
+    @test contains(
+        c.output,
+        "Warning: The tex string \"The krotov Pyhon package is available on [Github](https://github.com/qucontrol/krotov)\" appears to contain a link in markdown syntax"
+    )
+
 end
 
 
