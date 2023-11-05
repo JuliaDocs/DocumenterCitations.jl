@@ -123,6 +123,10 @@ end
 
 
 function tex_to_markdown(tex_str; transform_case=s -> s, debug=_DEBUG)
+    if contains(tex_str, "](http")
+        # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/60
+        @warn "The tex string $(repr(tex_str)) appears to contain a link in markdown syntax. Links in a `.bib` entry should use the `\\href` tex command."
+    end
     try
         md_str = _process_tex(tex_str; transform_case=transform_case, debug=debug)
         return Unicode.normalize(md_str)

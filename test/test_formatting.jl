@@ -5,6 +5,8 @@ using DocumenterCitations
 import DocumenterCitations:
     two_digit_year,
     alpha_label,
+    get_urls,
+    doi_url,
     format_names,
     format_citation,
     format_bibliography_reference,
@@ -152,6 +154,20 @@ end
     @Test md("SciPy"; names=:full) ==
           "Eric Jones, Travis Oliphant, Pearu Peterson and others"
     @test_throws ArgumentError md("SciPy"; names=:first)
+end
+
+
+@testset "get_urls" begin
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
+    @test get_urls(bib.entries["GoerzSPIEO2021"]) == [
+        "https://michaelgoerz.net/research/GoerzSPIEO2021.pdf",
+        "https://doi.org/10.1117/12.2587002"
+    ]
+    @test get_urls(bib.entries["GoerzSPIEO2021"]; skip=1) ==
+          ["https://doi.org/10.1117/12.2587002"]
+    @test length(get_urls(bib.entries["GoerzSPIEO2021"]; skip=2)) == 0
+    @test get_urls(bib.entries["Nolting1997Coulomb"]) ==
+          ["https://doi.org/10.1007/978-3-663-14691-9"]
 end
 
 
@@ -365,5 +381,39 @@ end
     @test md("OEISworkaround") ==
           "OEIS$(nbsp)Foundation$(nbsp)Inc. [*The On-Line Encyclopedia of Integer Sequences*](https://oeis.org). Published electronically at https://oeis.org (2023)."
 
+
+end
+
+
+@testset "invalid DOI" begin
+
+    bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "invalid_doi.bib"))
+
+    c = IOCapture.capture() do
+        doi_url(bib.entries["Brif"])
+    end
+    @test contains(
+        c.output,
+        "Warning: The DOI field in bibtex entry \"Brif\" should not be a URL."
+    )
+    @test c.value == "https://doi.org/10.1088/1367-2630/12/7/075008"
+
+    c = IOCapture.capture() do
+        doi_url(bib.entries["Shapiro"])
+    end
+    @test contains(
+        c.output,
+        "Warning: Invalid DOI \"doi:10.1002/9783527639700\" in bibtex entry \"Shapiro\"."
+    )
+    @test c.value == "https://doi.org/10.1002/9783527639700"
+
+    c = IOCapture.capture() do
+        doi_url(bib.entries["Tannor"])
+    end
+    @test contains(
+        c.output,
+        "Warning: Invalid DOI \"0.1007/978-94-011-2642-7_23\" in bibtex entry \"Tannor\"."
+    )
+    @test c.value == ""
 
 end

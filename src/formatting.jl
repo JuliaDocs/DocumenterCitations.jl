@@ -203,11 +203,12 @@ function format_published_in(
             push!(urls, doi_url(entry))
         end
     else
-        append!(urls, get_urls(entry))
-        if !isempty(get_title(entry))
+        if isempty(get_title(entry))
+            append!(urls, get_urls(entry; skip=0))
+        else
             # The title already linked to the URL (or DOI, if no
-            # URL available)
-            pop_url!(urls)
+            # URL available), hence we skip the first link here.
+            append!(urls, get_urls(entry; skip=1))
         end
     end
     segments = [String[], String[], String[]]
@@ -347,15 +348,22 @@ function get_booktitle(entry)
 end
 
 
-function get_urls(entry)
+function get_urls(entry; skip=0)
     # URL is first priority, DOI second (cf. `pop_url!`)
+    # Passing `skip = 1` skips the first available link
     urls = String[]
-    if !isempty(entry.access.doi)
-        url = doi_url(entry)
-        push!(urls, url)
-    end
     if !isempty(entry.access.url)
-        push!(urls, entry.access.url)
+        if skip <= 0
+            push!(urls, entry.access.url)
+        end
+        skip = skip - 1
+    end
+    if !isempty(entry.access.doi)
+        if skip <= 0
+            url = doi_url(entry)
+            push!(urls, url)
+        end
+        skip = skip - 1
     end
     return urls
 end
@@ -366,16 +374,28 @@ function doi_url(entry)
     if isempty(doi)
         return ""
     else
+        if !startswith(doi, "10.")
+            doi_match = match(r"\b10.\d{4,9}/.*\b", doi)
+            if isnothing(doi_match)
+                @warn "Invalid DOI $(repr(doi)) in bibtex entry $(repr(entry.id)). Ignoring DOI."
+                return ""
+            else
+                if startswith(doi, "http")
+                    @warn "The DOI field in bibtex entry $(repr(entry.id)) should not be a URL. Extracting $(repr(doi)) -> $(repr(doi_match.match))."
+                else
+                    @warn "Invalid DOI $(repr(doi)) in bibtex entry $(repr(entry.id)). Extracting $(repr(doi_match.match))."
+                end
+                doi = doi_match.match
+            end
+        end
         return "https://doi.org/$doi"
     end
 end
 
 
 function pop_url!(urls)
-    # pop from the back so later entries have higher priority (i.e., URL has
-    # highest priority if `urls=get_urls(entry)`.)
     try
-        return pop!(urls)
+        return popfirst!(urls)
     catch
         return ""
     end
