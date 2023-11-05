@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Warn about markdown link syntax in `.bib` files [[#60][]]
+* Warn about invalid DOIs in `.bib` files. The DOI field should never contain a URL (`https://doi.org/...`). This is detected as a special case, and the DOI is extracted from the URL.
 
 
 ## [Version 1.3.1][1.3.1] - 2023-11-02
