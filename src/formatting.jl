@@ -230,6 +230,7 @@ function format_published_in(
     elseif entry.type in ["book", "proceedings"]
         _push!(1, format_edition(entry))
         _push!(1, format_vol_num_series(entry; title_transform_case=title_transform_case))
+        _push!(2, tex_to_markdown(entry.in.organization))
         _push!(2, tex_to_markdown(entry.in.publisher))
         _push!(2, tex_to_markdown(entry.in.address))
         _push!(2, format_year(entry); _if=include_date)
@@ -270,7 +271,6 @@ function format_published_in(
         _push!(2, tex_to_markdown(entry.in.organization))
         _push!(2, tex_to_markdown(entry.in.publisher))
         _push!(2, tex_to_markdown(entry.in.address))
-        # TODO: month/day date???
         _push!(2, format_year(entry); _if=include_date)
         _push!(3, format_chapter(entry))
         _push!(3, format_pages(entry))
@@ -307,15 +307,19 @@ function format_published_in(
             @warn "unpublished $(entry.id) does not have a 'note'"
         end
     end
-    if length(urls) > 0
-        @warn "Could not link $(repr(urls)) in \"published in\" information for entry $(entry.id). Add a Note field that links to the URL(s)."
-    end
     mdstr = join(segments[1], ", ")
     if length(segments[2]) > 0
-        mdstr *= " (" * join(segments[2], ", ") * ")"
+        segment2 = join(segments[2], ", ")
+        if length(urls) > 0
+            segment2 = linkify(segment2, pop_url!(urls))
+        end
+        mdstr *= " (" * segment2 * ")"
     end
     if length(segments[3]) > 0
         mdstr *= "; " * join(segments[3], ", ")
+    end
+    if length(urls) > 0
+        @warn "Could not link $(repr(urls)) in \"published in\" information for entry $(entry.id). Add a Note field that links to the URL(s)."
     end
     return mdstr
 end

@@ -254,60 +254,36 @@ end
     numeric = Val(:numeric)
     authoryear = Val(:authoryear)
 
-    c = IOCapture.capture() do
-        md(numeric, "JuhlARNMRS2020X")
-    end
-    @test contains(
-        c.output,
-        "Warning: Could not link [\"https://doi.org/10.1016/bs.arnmr.2019.12.001\"] in \"published in\" information for entry JuhlARNMRS2020X. Add a Note field that links to the URL(s)."
-    )
-    @Test c.value ==
-          "D. W. Juhl, Z. Tošner and T. Vosegaard. [*Versatile NMR simulations using SIMPSON*](https://pure.au.dk/portal/files/230817709/Versatile_NMR_simulations_using_SIMPSON.pdf). Vol. 100 of *Annual Reports on NMR Spectroscopy*, edited by G. A. Webb (Elsevier, 2020); Chapter 1, pp. 1–59."
-
-    c = IOCapture.capture() do
-        md(authoryear, "JuhlARNMRS2020X")
-    end
-    @test contains(
-        c.output,
-        "Warning: Could not link [\"https://doi.org/10.1016/bs.arnmr.2019.12.001\"] in \"published in\" information for entry JuhlARNMRS2020X. Add a Note field that links to the URL(s)."
-    )
-    @Test c.value ==
-          "Juhl, D. W.; Tošner, Z. and Vosegaard, T. (2020). [*Versatile NMR simulations using SIMPSON*](https://pure.au.dk/portal/files/230817709/Versatile_NMR_simulations_using_SIMPSON.pdf). Vol. 100 of *Annual Reports on NMR Spectroscopy*, edited by Webb, G. A. (Elsevier); Chapter 1, pp. 1–59."
-
-    c = IOCapture.capture() do
-        md(numeric, "Nolting1997CoulombX")
-    end
-    @test contains(
-        c.output,
-        "Warning: Could not link [\"https://doi.org/10.1007/978-3-663-14691-9\"] in \"published in\" information for entry Nolting1997CoulombX. Add a Note field that links to the URL(s)."
-    )
-    @Test c.value ==
-          "W. Nolting. In: [*Quantenmechanik*](https://link.springer.com/book/10.1007/978-3-662-44230-2), Vol. 5 no. 2 of *Grundkurs Theoretische Physik* (Vieweg & Teubner Verlag, 1997); 6th chapter, p. 100."
-
-    c = IOCapture.capture() do
-        md(authoryear, "Nolting1997CoulombX")
-    end
-    @test contains(
-        c.output,
-        "Warning: Could not link [\"https://doi.org/10.1007/978-3-663-14691-9\"] in \"published in\" information for entry Nolting1997CoulombX. Add a Note field that links to the URL(s)."
-    )
-    @Test c.value ==
-          "Nolting, W. (1997). In: [*Quantenmechanik*](https://link.springer.com/book/10.1007/978-3-662-44230-2), Vol. 5 no. 2 of *Grundkurs Theoretische Physik* (Vieweg & Teubner Verlag); 6th chapter, p. 100."
-
+    @Test md(numeric, "JuhlARNMRS2020X") ==
+          "D. W. Juhl, Z. Tošner and T. Vosegaard. [*Versatile NMR simulations using SIMPSON*](https://pure.au.dk/portal/files/230817709/Versatile_NMR_simulations_using_SIMPSON.pdf). Vol. 100 of *Annual Reports on NMR Spectroscopy*, edited by G. A. Webb ([Elsevier, 2020](https://doi.org/10.1016/bs.arnmr.2019.12.001)); Chapter 1, pp. 1–59."
+    @Test md(authoryear, "JuhlARNMRS2020X") ==
+          "Juhl, D. W.; Tošner, Z. and Vosegaard, T. (2020). [*Versatile NMR simulations using SIMPSON*](https://pure.au.dk/portal/files/230817709/Versatile_NMR_simulations_using_SIMPSON.pdf). Vol. 100 of *Annual Reports on NMR Spectroscopy*, edited by Webb, G. A. ([Elsevier](https://doi.org/10.1016/bs.arnmr.2019.12.001)); Chapter 1, pp. 1–59."
+    @Test md(numeric, "Nolting1997CoulombX") ==
+          "W. Nolting. In: [*Quantenmechanik*](https://link.springer.com/book/10.1007/978-3-662-44230-2), Vol. 5 no. 2 of *Grundkurs Theoretische Physik* ([Vieweg & Teubner Verlag, 1997](https://doi.org/10.1007/978-3-663-14691-9)); 6th chapter, p. 100."
+    @Test md(authoryear, "Nolting1997CoulombX") ==
+          "Nolting, W. (1997). In: [*Quantenmechanik*](https://link.springer.com/book/10.1007/978-3-662-44230-2), Vol. 5 no. 2 of *Grundkurs Theoretische Physik* ([Vieweg & Teubner Verlag](https://doi.org/10.1007/978-3-663-14691-9)); 6th chapter, p. 100."
     @Test md(numeric, "Shapiro2012X") ==
           "M. Shapiro and P. Brumer. [*Quantum Control of Molecular Processes*](https://onlinelibrary.wiley.com/doi/book/10.1002/9783527639700). ``2^{nd}`` Ed. (Wiley and Sons, 2012)."
     @Test md(authoryear, "Shapiro2012X") ==
           "Shapiro, M. and Brumer, P. (2012). [*Quantum Control of Molecular Processes*](https://onlinelibrary.wiley.com/doi/book/10.1002/9783527639700). ``2^{nd}`` Ed. (Wiley and Sons)."
-
     @Test md(numeric, "PercontiSPIE2016") ==
           "P. Perconti, W. C. Alberts, J. Bajaj, J. Schuster and M. Reed. [*Sensors, nano-electronics and photonics for the Army of 2030 and beyond*](https://doi.org/10.1117/12.2217797). In: *Quantum Sensing and Nano Electronics and Photonics XIII*, Vol. 9755 no. 6 of *Proceedings SPIE* (2016)."
     @Test md(authoryear, "PercontiSPIE2016") ==
           "Perconti, P.; Alberts, W. C.; Bajaj, J.; Schuster, J. and Reed, M. (2016). [*Sensors, nano-electronics and photonics for the Army of 2030 and beyond*](https://doi.org/10.1117/12.2217797). In: *Quantum Sensing and Nano Electronics and Photonics XIII*, Vol. 9755 no. 6 of *Proceedings SPIE*."
-
     @Test md(numeric, "DevoretLH1995") ==
           "M. H. Devoret. [*Quantum fluctuations in electrical circuits*](https://boulderschool.yale.edu/sites/default/files/files/devoret_quantum_fluct_les_houches.pdf). In: *Quantum Fluctuations*, Session LXIII (1995) of *the Les Houches Summer School*, edited by S. Reynaud, E. Giacobino and J. Zinn-Justin (Elsevier, 1997); Chapter 10, p. 353."
     @Test md(authoryear, "DevoretLH1995") ==
           "Devoret, M. H. (1997). [*Quantum fluctuations in electrical circuits*](https://boulderschool.yale.edu/sites/default/files/files/devoret_quantum_fluct_les_houches.pdf). In: *Quantum Fluctuations*, Session LXIII (1995) of *the Les Houches Summer School*, edited by Reynaud, S.; Giacobino, E. and Zinn-Justin, J. (Elsevier); Chapter 10, p. 353."
+
+    c = IOCapture.capture() do
+        md(numeric, "Nolting1997CoulombXX")
+    end
+    @test contains(
+        c.output,
+        "Warning: Could not link [\"https://doi.org/10.1007/978-3-663-14691-9\"] in \"published in\" information for entry Nolting1997CoulombXX."
+    )
+    @Test c.value ==
+          "W. Nolting. Vol. 5 no. 2 of *Grundkurs Theoretische Physik* ([Vieweg & Teubner Verlag, 1997](https://link.springer.com/book/10.1007/978-3-662-44230-2)); 6th chapter, p. 100."
 
 end
 
