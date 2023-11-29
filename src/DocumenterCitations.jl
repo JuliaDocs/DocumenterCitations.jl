@@ -1,6 +1,6 @@
 module DocumenterCitations
 
-using Documenter
+using Documenter: Documenter, DOCUMENTER_VERSION
 using Documenter.Builder
 using Documenter.Selectors
 using Documenter.Expanders

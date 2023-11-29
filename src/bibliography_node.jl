@@ -188,3 +188,17 @@ function Documenter.LaTeXWriter.latex(
     println(io, "}% end @bibliography")
 
 end
+
+
+function Documenter.linkcheck(
+    node::MarkdownAST.Node,
+    bibliography::BibliographyNode,
+    doc::Documenter.Document
+)
+    success = true
+    for item in bibliography.items
+        success &= !(Documenter.linkcheck(item.reference, doc) === false)
+        # `linkcheck` may return `true` / `false` / `nothing`
+    end
+    return success
+end
