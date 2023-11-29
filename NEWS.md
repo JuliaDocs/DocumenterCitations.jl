@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Warn about markdown link syntax in `.bib` files [[#60][]]
 * Warn about invalid DOIs in `.bib` files. The DOI field should never contain a URL (`https://doi.org/...`). This is detected as a special case, and the DOI is extracted from the URL.
-
+* Automatically link both URL and DOI fields. This fixes a regression in `v1.3.0`, which would throw an error for `@book` and `@proceeding` entries with both a URL and a DOI field. Now, the DOI in such a case will be automatically linked via the `Title` field, and the DOI via the `organization`/`publisher`/`address` fields, similar to the behavior in `v1.2.0`. You may prefer to have the DOI linked via that `Title`, in which case you should add a `Note` field containing the `URL` (using `\url`/`\href`, as appropriate).
+ 
 
 ## [Version 1.3.1][1.3.1] - 2023-11-02
 
@@ -62,8 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Upgrade guidelines**:
 
 For anyone who was using custom styles, which rely on the [Internals](https://juliadocs.org/DocumenterCitations.jl/stable/internals/) of `DocumenterCitations`, this release will almost certainly break the customization. See the above list of internal changes.
-
-There were some subtle changes in how DOI and URL fields are linked in the rendered documentation, which may require adjustments. In particular, in version `1.3.0`, non-`@article` entries that do not have both a `title` and a `booktitle` can only have a DOI *or* a URL, but not both. This most likely occurs for `@book` entries. For `@book` entries that have both a DOI and a URL, the URL should be placed in the `note` field (using `\url`/`\href`, as appropriate).
 
 There were several bugs and limitations in version `1.2.x` for which some existing documentations may have been using workarounds. These workarounds may cause some breakage in the new version `1.3.0`. In particular:
 
