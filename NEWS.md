@@ -4,14 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased][]
+## [Version 1.3.2][1.3.2] - 2023-11-29
 
 ### Fixed
 
 * Warn about markdown link syntax in `.bib` files [[#60][]]
-* Warn about invalid DOIs in `.bib` files. The DOI field should never contain a URL (`https://doi.org/...`). This is detected as a special case, and the DOI is extracted from the URL.
-* Automatically link both URL and DOI fields. This fixes a regression in `v1.3.0`, which would throw an error for `@book` and `@proceeding` entries with both a URL and a DOI field. Now, the DOI in such a case will be automatically linked via the `Title` field, and the DOI via the `organization`/`publisher`/`address` fields, similar to the behavior in `v1.2.0`. You may prefer to have the DOI linked via that `Title`, in which case you should add a `Note` field containing the `URL` (using `\url`/`\href`, as appropriate).
-* Calling `makedocs` with `linkcheck=true` now also checks links (e.g., DOIs) inside the bibliography. [[#58][]]
+* Warn about invalid DOIs in `.bib` files. The DOI field should never contain a URL (`https://doi.org/...`). However, such usage is detected as a special case, and the DOI is automatically extracted from the URL.
+* Automatically link both URL and DOI fields. This fixes a regression in `v1.3.0`, which would throw an error for `@book` and `@proceeding` entries with both a URL and a DOI field. Now, the URL in such a case will be automatically linked via the `Title` field, and the DOI via the `organization`/`publisher`/`address` fields, similar to the behavior in `v1.2.0`. You may prefer to have the DOI linked via that `Title`, in which case you should add a `Note` field containing the `URL` (using `\url`/`\href`, as appropriate). [[#65][]]
+* Calling `makedocs` with `linkcheck=true` now also checks links (e.g., DOIs) inside the bibliography. Note that the correct behavior requires [Documenter 1.2](https://github.com/JuliaDocs/Documenter.jl/releases/tag/v1.2.0). With older versions of Documenter, broken links in the bibliography will be silently ignored. [[#58][], [#62][], [Documenter#2329](https://github.com/JuliaDocs/Documenter.jl/issues/2329), [Documenter#2330](https://github.com/JuliaDocs/Documenter.jl/pull/2330)]
 
 
 ## [Version 1.3.1][1.3.1] - 2023-11-02
@@ -142,13 +142,16 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#65]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/65
+[#62]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/62
 [#61]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/61
 [#60]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/60
 [#59]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/59

@@ -37,3 +37,5 @@ jobs:
           @show result.status
           @show result.reason
           exit(result.status == :ok ? 0 : 1)
+        env:
+          JULIA_PKGEVAL: 1

@@ -87,6 +87,9 @@ using DocumenterCitations
         elseif DOCUMENTER_VERSION < v"1.2"
             run_linkcheck = false
             @info "Skipped test_linkcheck.jl (old version of Documenter)"
+        elseif haskey(ENV, "JULIA_PKGEVAL")
+            run_linkcheck = false
+            @info "Skipped test_linkcheck.jl (running in PkgEval)"
         end
         run_linkcheck && include("test_linkcheck.jl")
     end
