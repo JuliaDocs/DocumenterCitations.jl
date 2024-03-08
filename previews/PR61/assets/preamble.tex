@@ -1,0 +1,36 @@
+\documentclass[oneside]{memoir}
+\usepackage{./documenter}
+\usepackage{./custom}
+
+\renewcommand{\part}[1]{}
+
+
+\AfterPreamble{\hypersetup{
+  pdfauthor={Michael H. Goerz and Contributors},
+  pdftitle={\DocMainTitle{} v\DocVersion{}},
+  pdfsubject={Documentation of Julia package \DocMainTitle{}}
+}}
+
+
+%% Title Page
+\title{%
+    {\HUGE\DocMainTitle{}}\\
+    \vspace{16pt}
+    {\Large version \DocVersion{}}
+}
+\author{Michael H. Goerz and Contributors}
+
+
+\settocdepth{section}
+
+
+%% Main document begin
+\begin{document}
+\frontmatter
+\maketitle
+%\clearpage
+\tableofcontents
+\widowpenalty10000
+\clubpenalty10000
+\raggedright%
+\mainmatter
