@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+### Fixed
+
+* The recommended CSS (`citations.css`) now includes a fix to be compatible with the dark-mode CSS of Documenter. Existing pages should update their `citations.css` to add `!important` to the `list-style` of `.citation ul`. [[#70][]]
+
 
 ## [Version 1.3.2][1.3.2] - 2023-11-29
 
@@ -153,6 +157,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#70]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/70
 [#65]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/65
 [#62]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/62
 [#61]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/61
