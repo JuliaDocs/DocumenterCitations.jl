@@ -1,7 +1,7 @@
 name = "DocumenterCitations"
 uuid = "daee34ce-89f3-4625-b898-19384cb65244"
 authors = ["Michael Goerz <mail@michaelgoerz.net>"]
-version = "1.3.2"
+version = "1.3.2+dev"
 
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"

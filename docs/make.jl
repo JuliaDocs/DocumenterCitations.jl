@@ -26,7 +26,7 @@ makedocs(
     sitename="DocumenterCitations.jl",
     format=Documenter.HTML(
         prettyurls=true,
-        canonical="https://juliadocs.github.io/DocumenterCitations.jl",
+        canonical="https://juliadocs.org/DocumenterCitations.jl",
         assets=String["assets/citations.css"],
         footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl).",
     ),
