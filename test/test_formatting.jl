@@ -288,52 +288,56 @@ end
 end
 
 @testset "format_labeled_bibliography_reference(:numeric; article_link_doi_in_title=true)" begin
-      bib = CitationBibliography(DocumenterCitations.example_bibfile)
-      md(key) = DocumenterCitations.format_labeled_bibliography_reference(Val(:numeric), bib.entries[key]; article_link_doi_in_title=true)
-      # Note: the test strings below contain nonbreaking spaces (" " = "\u00A0")
-      @Test md("GoerzJPB2011") ==
-            "M. H. Goerz, T. Calarco and C. P. Koch. [*The quantum speed limit of optimal controlled phasegates for trapped neutral atoms*](https://doi.org/10.1088/0953-4075/44/15/154011). J. Phys. B **44**, 154011 (2011), [arXiv:1103.6050](https://arxiv.org/abs/1103.6050). Special issue on quantum control theory for coherence and information dynamics."
-      @Test md("Luc-KoenigEPJD2004") ==
-            "E. Luc-Koenig, M. Vatasescu and F. Masnou-Seeuws. [*Optimizing the photoassociation of cold atoms by use of chirped laser pulses*](https://doi.org/10.1140/epjd/e2004-00161-8). Eur. Phys. J. D **31**, 239 (2004), [arXiv:physics/0407112 [physics.atm-clus]](https://arxiv.org/abs/physics/0407112)."
-      @Test md("GoerzNPJQI2017") ==
-            "M. H. Goerz, F. Motzoi, K. B. Whaley and C. P. Koch. [*Charting the circuit QED design landscape using optimal control theory*](https://doi.org/10.1038/s41534-017-0036-0), npj Quantum Inf **3**, 37 (2017)."
-      @Test md("Wilhelm2003.10132") ==
-            "F. K. Wilhelm, S. Kirchhoff, S. Machnes, N. Wittler and D. Sugny. [*An introduction into optimal control for quantum technologies*](https://doi.org/10.48550/ARXIV.2003.10132), arXiv:2003.10132 (2020)."
-      @Test md("Evans1983") ==
-            "L. C. Evans. [*An Introduction to Mathematical Optimal Control Theory*](https://math.berkeley.edu/~evans/control.course.pdf). Lecture Notes, University of California, Berkeley."
-      @Test md("Giles2008b") ==
-            "M. B. Giles. [*An extended collection of matrix derivative results for forward and reverse mode automatic differentiation*](https://people.maths.ox.ac.uk/gilesm/files/NA-08-01.pdf). Technical Report NA-08-01 (Oxford University Computing Laboratory, Jan 2008)."
-      @Test md("QCRoadmap") ==
-            "[*Quantum Computation Roadmap*](http://qist.lanl.gov) (2004). Version 2.0; April 2, 2004."
-      @Test md("TedRyd") ==
-            "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
-      @Test md("jax") ==
-            "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
-      @Test md("WP_Schroedinger") ==
-            "Wikipedia: [*Schrödinger equation*](https://en.wikipedia.org/wiki/Schrödinger_equation). Accessed on Oct 24, 2023."
-      @Test md("SciPy") ==
-            "E. Jones, T. Oliphant, P. Peterson and others. [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/) (2001–). Project website at [`https://scipy.org`](https://scipy.org)."
-      @Test md("BrionPhd2004") ==
-            "E. Brion. *Contrôle Quantique et Protection de la Cohérence par effet Zénon, Applications à l'Informatique Quantique*. Ph.D. Thesis, Université Pierre et Marie Curie - Paris VI (2014). [HAL:tel-00007910v2](https://hal.science/tel-00007910v2)."
-      @Test md("Tannor2007") ==
-            "D. J. Tannor. [*Introduction to Quantum Mechanics: A Time-Dependent Perspective*](https://uscibooks.aip.org/books/introduction-to-quantum-mechanics-a-time-dependent-perspective/) (University Science Books, Sausalito, California, 2007)."
-      @Test md("SolaAAMOP2018") ==
-            "I. R. Sola, B. Y. Chang, S. A. Malinovskaya and V. S. Malinovsky. [*Quantum Control in Multilevel Systems*](https://doi.org/10.1016/bs.aamop.2018.02.003). In: *Advances In Atomic, Molecular, and Optical Physics*, Vol. 67, edited by E. Arimondo, L. F. DiMauro and S. F. Yelin (Academic Press, 2018); Chapter 3, pp. 151–256."
-      @Test md("GoerzSPIEO2021") ==
-            "M. H. Goerz, M. A. Kasevich and V. S. Malinovsky. [*Quantum optimal control for atomic fountain interferometry*](https://michaelgoerz.net/research/GoerzSPIEO2021.pdf). In: [*Proc. SPIE 11700, Optical and Quantum Sensing and Precision Metrology*](https://doi.org/10.1117/12.2587002) (2021)."
-      @Test md("NielsenChuangCh10QEC") ==
-            "M. Nielsen and I. L. Chuang. [*Quantum error-correction*](https://doi.org/10.1017/CBO9780511976667). In: *Quantum Computation and Quantum Information* (Cambridge University Press, 2000); Chapter 10."
-      @Test md("Nolting1997Coulomb") ==
-            "W. Nolting. In: [*Quantenmechanik*](https://doi.org/10.1007/978-3-663-14691-9), Vol. 5.2 of *Grundkurs Theoretische Physik* (Vieweg & Teubner Verlag, 1997); Chapter 6, p. 100."
-      @Test md("AnderssonSGS2014") ==
-            "E. Andersson and P. Öhberg (Editors). [*Quantum Information and Coherence*](https://doi.org/10.1007/978-3-319-04063-9). *Scottish Graduate Series* (Springer, 2014). Lecture notes of [SUSSP 67 (2011)](https://sussp67.phys.strath.ac.uk)."
-      @Test md("SuominenSGS2014") ==
-            "K.-A. Suominen. [*Open Quantum Systems and Decoherence*](https://doi.org/10.1007/978-3-319-04063-9_10). In: *Quantum Information and Coherence*, *Scottish Graduate Series*, edited by E. Andersson and P. Öhberg (Springer, 2014); pp. 247–282. Notes from lecture at [SUSSP 67 (2011)](https://sussp67.phys.strath.ac.uk)."
-      @Test md("PaszkeNIPS2019") ==
-            "A. Paszke, S. Gross, F. Massa, A. Lerer, J. Bradbury, G. Chanan, T. Killeen, Z. Lin, N. Gimelshein, L. Antiga, A. Desmaison, A. Köpf, E. Yang, Z. DeVito, M. Raison, A. Tejani, S. Chilamkurthy, B. Steiner, L. Fang, J. Bai and S. Chintala. [*PyTorch: An Imperative Style, High-Performance Deep Learning Library*](http://papers.neurips.cc/paper/9015-pytorch-an-imperative-style-high-performance-deep-learning-library.pdf). In: *Proceedings of the 33rd International Conference on Neural Information Processing Systems*, edited by H. M. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alché-Buc, E. A. Fox and R. Garnett (NeurIPS 2019, Vancouver, BC, Canada, Dec 2019); pp. 8024–8035."
-      @Test md("Giles2008") ==
-            "M. B. Giles. [*Collected Matrix Derivative Results for Forward and Reverse Mode Algorithmic Differentiation*](https://people.maths.ox.ac.uk/gilesm/files/AD2008.pdf). In: [*Advances in Automatic Differentiation*](https://doi.org/10.1007/978-3-540-68942-3_4), Vol. 64 of *Lecture Notes in Computational Science and Engineering*, edited by C. H. Bischof, H. M. Bücker, P. Hovland, U. Naumann and J. Utke (Springer, Berlin, Heidelberg, 2008); pp. 35–44."
-  end
+    bib = CitationBibliography(DocumenterCitations.example_bibfile)
+    md(key) = DocumenterCitations.format_labeled_bibliography_reference(
+        Val(:numeric),
+        bib.entries[key];
+        article_link_doi_in_title=true
+    )
+    # Note: the test strings below contain nonbreaking spaces (" " = "\u00A0")
+    @Test md("GoerzJPB2011") ==
+          "M. H. Goerz, T. Calarco and C. P. Koch. [*The quantum speed limit of optimal controlled phasegates for trapped neutral atoms*](https://doi.org/10.1088/0953-4075/44/15/154011). J. Phys. B **44**, 154011 (2011), [arXiv:1103.6050](https://arxiv.org/abs/1103.6050). Special issue on quantum control theory for coherence and information dynamics."
+    @Test md("Luc-KoenigEPJD2004") ==
+          "E. Luc-Koenig, M. Vatasescu and F. Masnou-Seeuws. [*Optimizing the photoassociation of cold atoms by use of chirped laser pulses*](https://doi.org/10.1140/epjd/e2004-00161-8). Eur. Phys. J. D **31**, 239 (2004), [arXiv:physics/0407112 [physics.atm-clus]](https://arxiv.org/abs/physics/0407112)."
+    @Test md("GoerzNPJQI2017") ==
+          "M. H. Goerz, F. Motzoi, K. B. Whaley and C. P. Koch. [*Charting the circuit QED design landscape using optimal control theory*](https://doi.org/10.1038/s41534-017-0036-0), npj Quantum Inf **3**, 37 (2017)."
+    @Test md("Wilhelm2003.10132") ==
+          "F. K. Wilhelm, S. Kirchhoff, S. Machnes, N. Wittler and D. Sugny. [*An introduction into optimal control for quantum technologies*](https://doi.org/10.48550/ARXIV.2003.10132), arXiv:2003.10132 (2020)."
+    @Test md("Evans1983") ==
+          "L. C. Evans. [*An Introduction to Mathematical Optimal Control Theory*](https://math.berkeley.edu/~evans/control.course.pdf). Lecture Notes, University of California, Berkeley."
+    @Test md("Giles2008b") ==
+          "M. B. Giles. [*An extended collection of matrix derivative results for forward and reverse mode automatic differentiation*](https://people.maths.ox.ac.uk/gilesm/files/NA-08-01.pdf). Technical Report NA-08-01 (Oxford University Computing Laboratory, Jan 2008)."
+    @Test md("QCRoadmap") ==
+          "[*Quantum Computation Roadmap*](http://qist.lanl.gov) (2004). Version 2.0; April 2, 2004."
+    @Test md("TedRyd") ==
+          "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
+    @Test md("jax") ==
+          "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
+    @Test md("WP_Schroedinger") ==
+          "Wikipedia: [*Schrödinger equation*](https://en.wikipedia.org/wiki/Schrödinger_equation). Accessed on Oct 24, 2023."
+    @Test md("SciPy") ==
+          "E. Jones, T. Oliphant, P. Peterson and others. [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/) (2001–). Project website at [`https://scipy.org`](https://scipy.org)."
+    @Test md("BrionPhd2004") ==
+          "E. Brion. *Contrôle Quantique et Protection de la Cohérence par effet Zénon, Applications à l'Informatique Quantique*. Ph.D. Thesis, Université Pierre et Marie Curie - Paris VI (2014). [HAL:tel-00007910v2](https://hal.science/tel-00007910v2)."
+    @Test md("Tannor2007") ==
+          "D. J. Tannor. [*Introduction to Quantum Mechanics: A Time-Dependent Perspective*](https://uscibooks.aip.org/books/introduction-to-quantum-mechanics-a-time-dependent-perspective/) (University Science Books, Sausalito, California, 2007)."
+    @Test md("SolaAAMOP2018") ==
+          "I. R. Sola, B. Y. Chang, S. A. Malinovskaya and V. S. Malinovsky. [*Quantum Control in Multilevel Systems*](https://doi.org/10.1016/bs.aamop.2018.02.003). In: *Advances In Atomic, Molecular, and Optical Physics*, Vol. 67, edited by E. Arimondo, L. F. DiMauro and S. F. Yelin (Academic Press, 2018); Chapter 3, pp. 151–256."
+    @Test md("GoerzSPIEO2021") ==
+          "M. H. Goerz, M. A. Kasevich and V. S. Malinovsky. [*Quantum optimal control for atomic fountain interferometry*](https://michaelgoerz.net/research/GoerzSPIEO2021.pdf). In: [*Proc. SPIE 11700, Optical and Quantum Sensing and Precision Metrology*](https://doi.org/10.1117/12.2587002) (2021)."
+    @Test md("NielsenChuangCh10QEC") ==
+          "M. Nielsen and I. L. Chuang. [*Quantum error-correction*](https://doi.org/10.1017/CBO9780511976667). In: *Quantum Computation and Quantum Information* (Cambridge University Press, 2000); Chapter 10."
+    @Test md("Nolting1997Coulomb") ==
+          "W. Nolting. In: [*Quantenmechanik*](https://doi.org/10.1007/978-3-663-14691-9), Vol. 5.2 of *Grundkurs Theoretische Physik* (Vieweg & Teubner Verlag, 1997); Chapter 6, p. 100."
+    @Test md("AnderssonSGS2014") ==
+          "E. Andersson and P. Öhberg (Editors). [*Quantum Information and Coherence*](https://doi.org/10.1007/978-3-319-04063-9). *Scottish Graduate Series* (Springer, 2014). Lecture notes of [SUSSP 67 (2011)](https://sussp67.phys.strath.ac.uk)."
+    @Test md("SuominenSGS2014") ==
+          "K.-A. Suominen. [*Open Quantum Systems and Decoherence*](https://doi.org/10.1007/978-3-319-04063-9_10). In: *Quantum Information and Coherence*, *Scottish Graduate Series*, edited by E. Andersson and P. Öhberg (Springer, 2014); pp. 247–282. Notes from lecture at [SUSSP 67 (2011)](https://sussp67.phys.strath.ac.uk)."
+    @Test md("PaszkeNIPS2019") ==
+          "A. Paszke, S. Gross, F. Massa, A. Lerer, J. Bradbury, G. Chanan, T. Killeen, Z. Lin, N. Gimelshein, L. Antiga, A. Desmaison, A. Köpf, E. Yang, Z. DeVito, M. Raison, A. Tejani, S. Chilamkurthy, B. Steiner, L. Fang, J. Bai and S. Chintala. [*PyTorch: An Imperative Style, High-Performance Deep Learning Library*](http://papers.neurips.cc/paper/9015-pytorch-an-imperative-style-high-performance-deep-learning-library.pdf). In: *Proceedings of the 33rd International Conference on Neural Information Processing Systems*, edited by H. M. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alché-Buc, E. A. Fox and R. Garnett (NeurIPS 2019, Vancouver, BC, Canada, Dec 2019); pp. 8024–8035."
+    @Test md("Giles2008") ==
+          "M. B. Giles. [*Collected Matrix Derivative Results for Forward and Reverse Mode Algorithmic Differentiation*](https://people.maths.ox.ac.uk/gilesm/files/AD2008.pdf). In: [*Advances in Automatic Differentiation*](https://doi.org/10.1007/978-3-540-68942-3_4), Vol. 64 of *Lecture Notes in Computational Science and Engineering*, edited by C. H. Bischof, H. M. Bücker, P. Hovland, U. Naumann and J. Utke (Springer, Berlin, Heidelberg, 2008); pp. 35–44."
+end
 
 
 @testset "format_bibliography_reference(:authoryear)" begin

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased][]
 
 
+## [Version 1.3.4][1.3.4] - 2024-09-19
+
+### Internal Changes
+
+* Added an `article_link_doi_in_title` option to the internal `format_published_in` and `format_labeled_bibliography_reference` functions. This allows custom styles to change how links appear in bibliography entries for articles. By setting the option to `true`, the title of the article,instead of the "published in" information, will be used as the link text for a DOI . This makes the bibliography for articles more consistent with other types or entries, but is recommended only if no entries have both a DOI and a URL. [[#73][], [#74][]]
+
+
 ## [Version 1.3.3][1.3.3] - 2024-03-08
 
 ### Fixed
@@ -152,7 +159,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.3...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.4...HEAD
+[1.3.4]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.0...v1.3.1
@@ -161,6 +169,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#74]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/74
+[#73]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/73
 [#70]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/70
 [#65]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/65
 [#62]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/62

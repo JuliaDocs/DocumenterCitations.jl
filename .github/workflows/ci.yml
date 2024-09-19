@@ -31,10 +31,10 @@ jobs:
             version: '1'
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
-      - uses: julia-actions/cache@v1
+      - uses: julia-actions/cache@v2
       - name: "Instantiate test environment"
         run: julia --project=test devrepl.jl
       - name: "Run tests"
@@ -44,18 +44,19 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
       - name: "Summarize coverage"
         run: julia --project=test -L devrepl.jl -e 'show_coverage()'
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
   testoldest:
     name: Test Lower Compat Bounds
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
         with:
           version: 1.6
-      - uses: julia-actions/cache@v1
+      - uses: julia-actions/cache@v2
       - name: "Instantiate test environment"
         shell: julia --project=test {0}
         run: |
@@ -85,7 +86,7 @@ jobs:
       pages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
       - name: "Instantiate test environment"
@@ -95,7 +96,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: documenter-citations-docs
           path: docs/build/
@@ -104,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
       - name: Install JuliaFormatter and format
