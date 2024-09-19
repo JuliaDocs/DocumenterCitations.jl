@@ -115,6 +115,7 @@ mdstr = format_authoryear_bibliography_reference(
     urldate_accessed_on="Accessed on ",
     urldate_fmt=dateformat"u d, Y",
     title_transform_case=(s->s),
+    article_link_doi_in_title=false,
 )
 ```
 
@@ -127,6 +128,11 @@ mdstr = format_authoryear_bibliography_reference(
 * `title_transform_case`: A function that transforms the case of a Title
   (Booktitle, Series) field. Strings enclosed in braces are protected
   from the transformation.
+* `article_link_doi_in_title`: If `false`, the URL is linked to the title for
+  Article entries, and the DOI is linked to the published-in. If `true`, 
+  Article entries are handled as other entries, i.e. the first available URL
+  (URL or, if no URL available, DOI) is linked to the title, while only in
+  the presence of both, the DOI is linked to the published-in.
 """
 function format_authoryear_bibliography_reference(
     style,
@@ -136,9 +142,10 @@ function format_authoryear_bibliography_reference(
     urldate_accessed_on=_URLDATE_ACCESSED_ON,
     urldate_fmt=_URLDATE_FMT,
     title_transform_case=(s -> s),
+    article_link_doi_in_title=false,
 )
     authors = format_names(entry; names=namesfmt)
-    if entry.type == "article"
+    if entry.type == "article" && !article_link_doi_in_title
         title =
             format_title(entry; url=entry.access.url, transform_case=title_transform_case)
     else

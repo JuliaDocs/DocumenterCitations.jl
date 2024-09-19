@@ -192,11 +192,12 @@ function format_published_in(
     namesfmt=:last,
     include_date=true,
     nbsp="\u00A0",
-    title_transform_case=(s -> s)
+    title_transform_case=(s -> s),
+    article_link_doi_in_title=false,
 )
     # We mostly follows https://www.bibtex.com/format/
     urls = String[]
-    if entry.type == "article"
+    if entry.type == "article" && !article_link_doi_in_title
         # Article titles link exclusively to `entry.access.url`, so
         # "published in" only links to DOI, if available
         if !isempty(entry.access.doi)
