@@ -14,7 +14,7 @@ import Logging
 #     #   contain the `build` output folder etc.
 #     # * `result` is whatever `makedocs` returns (usually `nothing`)
 #     # * `success` is a boolean whether the call returned successfully
-#     # * `backtrace` contains the backgrace for any thrown exception
+#     # * `backtrace` contains the backtrace for any thrown exception
 #     # * `output` contains the STDOUT produced by `run_makedocs`
 # end
 # ```
