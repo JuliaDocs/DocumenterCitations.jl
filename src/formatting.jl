@@ -304,7 +304,7 @@ function format_published_in(
     else
         @assert entry.type == "unpublished" "Unexpected type $(repr(entry.type))"
         # @unpublished should be rendered entirely via the Note field.
-        if isempty(get(entry.fields, "note", ""))
+        if !has_note(entry)
             @warn "unpublished $(entry.id) does not have a 'note'"
         end
     end
@@ -512,8 +512,23 @@ function format_vol_num_series(
 end
 
 
+function has_note(entry)
+    if hasproperty(entry, :note)
+        return !isempty(entry.note)
+    else
+        return !isempty(get(entry.fields, "note", ""))
+    end
+end
+
+
 function format_note(entry)
-    return strip(get(entry.fields, "note", "")) |> tex_to_markdown
+    if hasproperty(entry, :note)
+        # BibInternal v0.3.7
+        return strip(entry.note) |> tex_to_markdown
+    else
+        # BibInternal <=v0.3.6
+        return strip(get(entry.fields, "note", "")) |> tex_to_markdown
+    end
 end
 
 
