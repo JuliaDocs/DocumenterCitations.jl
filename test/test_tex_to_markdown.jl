@@ -205,6 +205,8 @@ end
     @test tex_to_markdown(raw"Ga{\\\"e}tan") == "Gaëtan"
     @test tex_to_markdown(raw"C\^ot\'e") == "Côté"
     @test tex_to_markdown(raw"Gro{\ss}") == "Groß"
+    @test tex_to_markdown(raw"{\L}ukasz") == "Łukasz"
+    @test tex_to_markdown(raw"Ji\v{r}\'i") == "Jiří"
 end
 
 @testset "titles" begin

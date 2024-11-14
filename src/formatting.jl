@@ -22,7 +22,7 @@ end
 
 function _initial(name)
     initial = ""
-    _name = Unicode.normalize(strip(name))
+    _name = Unicode.normalize(tex_to_markdown(strip(name)))
     if length(_name) > 0
         initial = "$(_name[1])."
         for part in split(_name, "-")[2:end]
