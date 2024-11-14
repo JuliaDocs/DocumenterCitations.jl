@@ -7,6 +7,11 @@ on:
 jobs:
   doc-preview-cleanup:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      statuses: write
+      pages: write
     steps:
       - name: Checkout gh-pages branch
         uses: actions/checkout@v3
