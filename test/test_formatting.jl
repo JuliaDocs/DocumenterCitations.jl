@@ -413,6 +413,18 @@ end
 end
 
 
+@testset "Handling initial for tex-escaped Ł (#78)" begin
+
+    # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/78
+
+    bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "issue78.bib"))
+    md(key) = format_bibliography_reference(Val(:numeric), bib.entries[key])
+    @test md("vaswani2017Attention") ==
+          "Ł. Kaiser. *Attention Is All You Need*. In: *Proceedings of the 31st International Conference on Neural Information Processing Systems* (2017)."
+
+end
+
+
 @testset "invalid DOI" begin
 
     bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "invalid_doi.bib"))
