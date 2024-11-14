@@ -48,6 +48,10 @@ jobs:
         with:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manifest-${{ matrix.os }}
+          path: test/Manifest.toml
   testoldest:
     name: Test Lower Compat Bounds
     runs-on: ubuntu-latest
@@ -81,6 +85,7 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: write
       statuses: write
       pages: write
