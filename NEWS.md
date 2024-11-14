@@ -4,7 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased][]
+## [Version 1.3.5][1.3.5] - 2024-11-14
+
+### Fixed
+
+* Compatibility with [BibInternals v0.3.7](https://github.com/Humans-of-Julia/BibInternal.jl/releases/tag/v0.3.7) [[#80][], [#83][]]
+* Allow LaTeX escape codes to appear at the beginning of a first name. That is, names are now un-escaped before generating name initials. [[#78][], [#83][]]
+
+### Internal Changes
+
+* The internal `format_labeled_bibliography_reference` function now forwards keyword arguments to the internal `format_names` functions. This makes it easier to customize styles, e.g., to limit the number of author before "et al." is used. [[#79][]]
 
 
 ## [Version 1.3.4][1.3.4] - 2024-09-19
@@ -159,7 +168,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.4...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.5...HEAD
+[1.3.5]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.4...v1.3.5
 [1.3.4]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.1...v1.3.2
@@ -169,6 +179,10 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#83]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/83
+[#80]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/80
+[#79]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/79
+[#78]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/78
 [#74]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/74
 [#73]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/73
 [#70]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/70
