@@ -249,8 +249,9 @@ function format_labeled_bibliography_reference(
     urldate_fmt=_URLDATE_FMT,
     title_transform_case=(s -> s),
     article_link_doi_in_title=false,
+    kws...,
 )
-    authors = format_names(entry; names=namesfmt)
+    authors = format_names(entry; names=namesfmt, kws...)
     if entry.type == "article" && !article_link_doi_in_title
         title =
             format_title(entry; url=entry.access.url, transform_case=title_transform_case)
