@@ -425,6 +425,24 @@ end
 end
 
 
+@testset "More escaped unicode (#85)" begin
+
+    # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/85
+    bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "issue85.bib"))
+    md(key) = format_bibliography_reference(Val(:numeric), bib.entries[key])
+
+    @test md("Unlu2024") ==
+          "Ç. Ünlü. *More issues with escaped unicode* (2024). Bug Report #85."
+    @test md("baumgartner2022") ==
+          "M. Baumgartner, C. Rolf, J.-U. Grooß, J. Schneider, T. Schorr, O. Möhler, P. Spichtinger and M. Krämer. [*New investigations on homogeneous ice nucleation: the effects of water activity and water saturation formulations*](https://acp.copernicus.org/articles/22/65/2022/). [Atmospheric Chemistry and Physics **22**, 65–91](https://doi.org/10.5194/acp-22-65-2022) (2022)."
+    @test md("Kaul2015") ==
+          "C. M. Kaul, J. Teixeira and K. Suzuki. *Sensitivities in large-eddy simulations of mixed-phase Arctic stratocumulus clouds using a simple microphysics approach*. [Monthly Weather Review **143**, 4393–4421](https://doi.org/10.1175/MWR-D-14-00319.1) (2015)."
+    @test md("Lehtinen2007") ==
+          "K. E. Lehtinen, M. Dal Maso, M. Kulmala and V.-M. Kerminen. *Estimating nucleation rates from apparent particle formation rates and vice versa: Revised formulation of the Kerminen–Kulmala equation*. [Journal of Aerosol Science **38**, 988–994](https://doi.org/10.1016/j.jaerosci.2007.06.009) (2007)."
+
+end
+
+
 @testset "invalid DOI" begin
 
     bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "invalid_doi.bib"))

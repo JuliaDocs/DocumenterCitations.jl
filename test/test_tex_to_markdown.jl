@@ -207,6 +207,9 @@ end
     @test tex_to_markdown(raw"Gro{\ss}") == "Groß"
     @test tex_to_markdown(raw"{\L}ukasz") == "Łukasz"
     @test tex_to_markdown(raw"Ji\v{r}\'i") == "Jiří"
+    @test tex_to_markdown(raw"{\\\"U}nl{\\\"u}") == "Ünlü"
+    @test tex_to_markdown(raw"{\c C}a{\u g}lar") == "Çağlar"
+    @test tex_to_markdown(raw"{\\\"U}nl{\\\"u}, {\c C}a{\u g}lar") == "Ünlü, Çağlar"
 end
 
 @testset "titles" begin
