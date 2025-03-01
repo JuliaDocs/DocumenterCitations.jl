@@ -7,6 +7,7 @@ import DocumenterCitations:
     alpha_label,
     get_urls,
     doi_url,
+    format_authoryear_bibliography_reference,
     format_names,
     format_citation,
     format_bibliography_reference,
@@ -474,4 +475,19 @@ end
     )
     @test c.value == ""
 
+end
+
+
+@testset "Avoid double-linking of DOI in authoryear style (#87)" begin
+    bib = CitationBibliography(joinpath(splitext(@__FILE__)[1], "preprints.bib"))
+    b = bib.entries["NonStandardPreprint"]
+    md = format_authoryear_bibliography_reference(
+        :authoryear,
+        b,
+        article_link_doi_in_title=true
+    )
+    @test md !=
+          "Tomza, M.; Goerz, M. H.; Musiał, M.; Moszynski, R. and Koch, C. P. (2012). [*Optimized production of ultracold ground-state molecules: Stabilization employing potentials with ion-pair character and strong spin-orbit coupling*](https://doi.org/10.1103/PhysRevA.86.043424). [Phys. Rev. A **86**, 043424](https://doi.org/10.1103/PhysRevA.86.043424), xxx-preprint:1208.4331."
+    @Test md ==
+          "Tomza, M.; Goerz, M. H.; Musiał, M.; Moszynski, R. and Koch, C. P. (2012). [*Optimized production of ultracold ground-state molecules: Stabilization employing potentials with ion-pair character and strong spin-orbit coupling*](https://doi.org/10.1103/PhysRevA.86.043424). Phys. Rev. A **86**, 043424, xxx-preprint:1208.4331."
 end
