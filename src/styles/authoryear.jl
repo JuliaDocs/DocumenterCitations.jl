@@ -164,7 +164,8 @@ function format_authoryear_bibliography_reference(
         entry;
         include_date=false,
         namesfmt=namesfmt,
-        title_transform_case=title_transform_case
+        title_transform_case=title_transform_case,
+        article_link_doi_in_title=article_link_doi_in_title
     )
     eprint = format_eprint(entry)
     urldate = format_urldate(entry; accessed_on=urldate_accessed_on, fmt=urldate_fmt)
