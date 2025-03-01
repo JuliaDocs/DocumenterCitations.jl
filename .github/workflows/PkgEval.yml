@@ -31,7 +31,7 @@ jobs:
           @show config
           @show package
           println("##################################################")
-          result = PkgEval.evaluate_test(config, package; echo=true)
+          result = PkgEval.evaluate([config], [package]; echo=true)
           println("##################################################")
           @show result.version
           @show result.duration

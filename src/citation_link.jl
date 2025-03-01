@@ -92,7 +92,7 @@ parses the given `link` string of the form `[text](@cite key)`.
 """
 struct DirectCitationLink
     node::MarkdownAST.Node  # the original markdown link
-    key::String             # bibtex cite keys
+    key::String             # BibTeX cite keys
 end
 
 
