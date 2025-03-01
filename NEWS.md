@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased][]
 
 
+## [Version 1.3.6][1.3.6] - 2025-03-01
+
+### Fixed
+
+* The `format_authoryear_bibliography_reference` function with `article_link_doi_in_title = true` would link the DOI both from the journal reference and from the title. Now, the DOI is linked from the journal when `article_link_doi_in_title = false` and from the title when `article_link_doi_in_title = true`. [[#87][]]
+
+
 ## [Version 1.3.5][1.3.5] - 2024-11-14
 
 ### Fixed
@@ -171,7 +178,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.5...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.6...HEAD
+[1.3.6]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.4...v1.3.5
 [1.3.4]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.2...v1.3.3
@@ -182,6 +190,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#87]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/87
 [#83]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/83
 [#80]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/80
 [#79]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/79
