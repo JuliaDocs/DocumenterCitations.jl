@@ -4,7 +4,6 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliadocs.github.io/DocumenterCitations.jl/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliadocs.github.io/DocumenterCitations.jl/dev)
 [![Build Status](https://github.com/JuliaDocs/DocumenterCitations.jl/workflows/CI/badge.svg)](https://github.com/JuliaDocs/DocumenterCitations.jl/actions)
-[![PkgEval](https://juliahub.com/docs/General/DocumenterCitations/stable/pkgeval.svg)](https://juliaci.github.io/NanosoldierReports/pkgeval_badges/report.html)
 [![Coverage](https://codecov.io/gh/JuliaDocs/DocumenterCitations.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaDocs/DocumenterCitations.jl)
 
 
