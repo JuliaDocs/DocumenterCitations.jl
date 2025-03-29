@@ -225,11 +225,14 @@ end
 
 # Expand a single @bibliography block
 function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
+
     @assert node.element isa MarkdownAST.CodeBlock
     @assert occursin(r"^@bibliography", node.element.info)
 
     block = node.element.code
-    @debug "Evaluating @bibliography block in $(page.source):\n```@bibliography\n$block\n```"
+    warn_loc =
+        Documenter.locrepr(page.source, Documenter.find_block_in_file(block, page.source))
+    @debug "Evaluating @bibliography block in $warn_loc:\n```@bibliography\n$block\n```"
 
     bib = Documenter.getplugin(doc, CitationBibliography)
     citations = bib.citations
@@ -277,20 +280,20 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
                 @assert exc isa KeyError
                 expected_file = normpath(doc.user.source, page_folder, name)
                 if isfile(expected_file)
-                    @error "Invalid $(repr(name)) in Pages attribute of @bibliography block on page $(page.source): File $(repr(expected_file)) exists but no references were collected."
+                    @error "Invalid $(repr(name)) in Pages attribute of @bibliography block on page $(warn_loc): File $(repr(expected_file)) exists but no references were collected."
                     push!(doc.internal.errors, :bibliography_block)
                 else
                     # try falling back to pre-1.3 behavior
                     exists_in_src = isfile(joinpath(doc.user.source, name))
                     valid_pre_13 = exists_in_src && haskey(page_citations, name)
                     if _ALLOW_PRE_13_FALLBACK && valid_pre_13
-                        @warn "The entry $(repr(name)) in the Pages attribute of the @bibliography block on page $(page.source) appears to be relative to $(repr(doc.user.source)). Starting with DocumenterCitations 1.3, names in `Pages` must be relative to the folder containing the file which contains the `@bibliography` block."
+                        @warn "The entry $(repr(name)) in the Pages attribute of the @bibliography block on page $(warn_loc) appears to be relative to $(repr(doc.user.source)). Starting with DocumenterCitations 1.3, names in `Pages` must be relative to the folder containing the file which contains the `@bibliography` block."
                         @debug "Add keys cited in $(abspath(normpath(doc.user.source, name))) to keys_to_show (pre-1.3 fallback)"
                         push!(keys_in_pages, page_citations[name]...)
                     else
                         # Files that don't contain any citations don't show up in
                         # `page_citations`.
-                        @error "Invalid $(repr(name)) in Pages attribute of @bibliography block on page $(page.source): No such file $(repr(expected_file))."
+                        @error "Invalid $(repr(name)) in Pages attribute of @bibliography block on page $(warn_loc): No such file $(repr(expected_file))."
                         push!(doc.internal.errors, :bibliography_block)
                     end
                 end
