@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+### Fixed
+
+* Show error file paths consistently with `Documenter`. With `Documenter < 1.10`, paths in error messages are relative to the `docs` folder. With `Documenter >= 1.10`, they are relative to the current working directory.
+
 
 ## [Version 1.3.6][1.3.6] - 2025-03-01
 
