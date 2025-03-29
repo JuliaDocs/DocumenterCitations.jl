@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+
+## [Version 1.3.7][1.3.7] - 2025-03-29
+
 ### Fixed
 
-* Show error file paths consistently with `Documenter`. With `Documenter < 1.10`, paths in error messages are relative to the `docs` folder. With `Documenter >= 1.10`, they are relative to the current working directory.
+* Show error file paths consistently with `Documenter`. With `Documenter < 1.10`, paths in error messages are relative to the `docs` folder. With `Documenter >= 1.10`, they are relative to the current working directory [[#89][]]
 
 
 ## [Version 1.3.6][1.3.6] - 2025-03-01
@@ -182,7 +185,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.6...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.7...HEAD
+[1.3.7]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.4...v1.3.5
 [1.3.4]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.3...v1.3.4
@@ -194,6 +198,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#89]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/89
 [#87]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/87
 [#83]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/83
 [#80]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/80
