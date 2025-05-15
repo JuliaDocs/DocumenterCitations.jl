@@ -296,7 +296,7 @@ function format_published_in(
         report_type = strip(get(entry.fields, "type", "Technical Report"))
         number = strip(entry.in.number)
         report_spec = tex_to_markdown("$report_type~$number")
-        _push!(1, report_spec; _if=!isempty(number))
+        _push!(1, report_spec; _if=(!isempty(number)))
         _push!(2, tex_to_markdown(entry.in.institution))
         _push!(2, tex_to_markdown(entry.in.address))
         _push!(2, format_year(entry); _if=include_date)

@@ -87,7 +87,7 @@ function ast_linktext(node)
     @assert node.element isa MarkdownAST.Link "node must be a Link, not $(typeof(node.element))"
     no_nested_markdown =
         length(node.children) === 1 &&
-        (first_node = first(node.children); first_node.element isa MarkdownAST.Text)
+        (first_node=first(node.children); first_node.element isa MarkdownAST.Text)
     if no_nested_markdown
         text = first_node.element.text
     else
