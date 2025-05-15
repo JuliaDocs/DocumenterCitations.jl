@@ -8,7 +8,7 @@ include("file_content.jl")
 
 # regex for strings containing paths
 function prx(s)
-    rx = s
+    rx = escape_string(s)
     # work around limitations of `replace` in Julia 1.6
     for mapping in ["[" => "\\[", "]" => "\\]", "." => "\\.", "/" => "\\W*"]
         # The mapping for path separators ("/") to "\W*" (sequence of non-word
@@ -56,14 +56,17 @@ end
 
         @test success
         #! format: off
-        @test_broken contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md: No such file \"src/part3/section2/index.md\"."))
-        @test contains(output, prx("Warning: The entry \"index.md\" in the Pages attribute of the @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14 appears to be relative to \"src\"."))
-        @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/p3_s1_page.md\"."))
-        @test contains(output, prx("Error: Invalid \"noexist.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/noexist.md\"."))
-        @test contains(output, "Warning: No cited keys remaining after filtering to Pages")
-        @test contains(output, prx("Error: Invalid \"../../addendum.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:20-25: File \"src/addendum.md\" exists but no references were collected."))
-        @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:29-35: No such file \"src/part3/section2/p3_s1_page.md\"."))
-        @test contains(output, prx("Warning: The field `Pages` in $(rp)src/part3/section2/invalidpages.md:41-44 must evaluate to a list of strings. Setting invalid `Pages = \"none\"` to `Pages = []`"))
+        if Sys.isunix()
+            # These regexes are impossible to get right on Windows
+            @test_broken contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md: No such file \"src/part3/section2/index.md\"."))
+            @test contains(output, prx("Warning: The entry \"index.md\" in the Pages attribute of the @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14 appears to be relative to \"src\"."))
+            @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/p3_s1_page.md\"."))
+            @test contains(output, prx("Error: Invalid \"noexist.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/noexist.md\"."))
+            @test contains(output, "Warning: No cited keys remaining after filtering to Pages")
+            @test contains(output, prx("Error: Invalid \"../../addendum.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:20-25: File \"src/addendum.md\" exists but no references were collected."))
+            @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:29-35: No such file \"src/part3/section2/p3_s1_page.md\"."))
+            @test contains(output, prx("Warning: The field `Pages` in $(rp)src/part3/section2/invalidpages.md:41-44 must evaluate to a list of strings. Setting invalid `Pages = \"none\"` to `Pages = []`"))
+        end
         #! format: on
 
         build(paths...) = joinpath(dir, "build", paths...)
@@ -192,14 +195,17 @@ end
 
         @test !success
         #! format: off
-        @test_broken contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/index.md\"."))
-        @test contains(output, prx("Warning: The entry \"index.md\" in the Pages attribute of the @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14 appears to be relative to \"src\"."))
-        @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/p3_s1_page.md\"."))
-        @test contains(output, prx("Error: Invalid \"noexist.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/noexist.md\"."))
-        @test contains(output, "Warning: No cited keys remaining after filtering to Pages")
-        @test contains(output, prx("Error: Invalid \"../../addendum.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:20-25: File \"src/addendum.md\" exists but no references were collected."))
-        @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:29-35: No such file \"src/part3/section2/p3_s1_page.md\"."))
-        @test contains(output, prx("Warning: The field `Pages` in $(rp)src/part3/section2/invalidpages.md:41-44 must evaluate to a list of strings. Setting invalid `Pages = \"none\"` to `Pages = []`"))
+        if Sys.isunix()
+            # These regexes are impossible to get right on Windows
+            @test_broken contains(output, prx("Error: Invalid \"index.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/index.md\"."))
+            @test contains(output, prx("Warning: The entry \"index.md\" in the Pages attribute of the @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14 appears to be relative to \"src\"."))
+            @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/p3_s1_page.md\"."))
+            @test contains(output, prx("Error: Invalid \"noexist.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:7-14: No such file \"src/part3/section2/noexist.md\"."))
+            @test contains(output, "Warning: No cited keys remaining after filtering to Pages")
+            @test contains(output, prx("Error: Invalid \"../../addendum.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:20-25: File \"src/addendum.md\" exists but no references were collected."))
+            @test contains(output, prx("Error: Invalid \"p3_s1_page.md\" in Pages attribute of @bibliography block on page $(rp)src/part3/section2/invalidpages.md:29-35: No such file \"src/part3/section2/p3_s1_page.md\"."))
+            @test contains(output, prx("Warning: The field `Pages` in $(rp)src/part3/section2/invalidpages.md:41-44 must evaluate to a list of strings. Setting invalid `Pages = \"none\"` to `Pages = []`"))
+        end
         #! format: on
         @test result isa ErrorException
         @test occursin("`makedocs` encountered an error [:bibliography_block]", result.msg)
