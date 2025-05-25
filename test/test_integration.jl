@@ -1,5 +1,6 @@
 using DocumenterCitations
 using Documenter
+using Bijections
 using Test
 
 include("run_makedocs.jl")
@@ -82,9 +83,17 @@ end
     citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
     anchor_map = Documenter.AnchorMap()
+    anchor_keys = Bijections.Bijection{String,String}()
 
-    bib =
-        CitationBibliography(bibfile, style, entries, citations, page_citations, anchor_map)
+    bib = CitationBibliography(
+        bibfile,
+        style,
+        entries,
+        citations,
+        page_citations,
+        anchor_map,
+        anchor_keys
+    )
 
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");

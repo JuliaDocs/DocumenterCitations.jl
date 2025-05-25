@@ -82,6 +82,7 @@ jobs:
               Pkg.PackageSpec(name="Documenter", version="1.0.0"),
               Pkg.PackageSpec(name="MarkdownAST", version="0.1.2"),
               Pkg.PackageSpec(name="OrderedCollections", version="1.6.0"),
+              Pkg.PackageSpec(name="Bijections", version="0.1.4"),
           ])
           Pkg.precompile()
           Pkg.status()

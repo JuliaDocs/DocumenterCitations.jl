@@ -133,18 +133,19 @@ function expand_citation(
         @assert cit isa DirectCitationLink
         # E.g., "[Semi-AD paper](@cite GoerzQ2022)"
         key = cit.key
-        anchor = Documenter.anchor(anchors, key)
-        if isnothing(anchor)
-            link_text = ast_linktext(cit.node)
-            @error "expand_citation$rec: No destination for key=$(repr(key)) → unlinked text $(repr(link_text))"
-            return Documenter.mdparse(link_text; mode=:span)
-        else
+        if haskey(bib.anchor_keys, key)
+            anchor_key = bib.anchor_keys[key]
+            anchor = Documenter.anchor(anchors, anchor_key)
             expanded_node = MarkdownAST.copy_tree(node)
             path = relpath(anchor.file, dirname(page.build))
             expanded_node.element.destination =
                 string(path, Documenter.anchor_fragment(anchor))
             @debug "expand_citation$rec: $cit → link to $(expanded_node.element.destination)"
             return expanded_node
+        else
+            link_text = ast_linktext(cit.node)
+            @error "expand_citation$rec: No destination for key=$(repr(key)) → unlinked text $(repr(link_text))"
+            return Documenter.mdparse(link_text; mode=:span)
         end
     end
 end
