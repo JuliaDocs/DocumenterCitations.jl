@@ -362,13 +362,7 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     end
     for (key, entry) in entries_to_show
         if fields[:Canonical]
-            try
-                anchor_key = get_anchor_key(key, bib.anchor_keys)
-            catch exception
-                @error "Cannot generate anchor for $(repr(key)) on page $(warn_loc)" exception
-                push!(doc.internal.errors, :bibliography_block)
-                continue  # skip entry
-            end
+            anchor_key = get_anchor_key(key, bib.anchor_keys)
             # Add anchor that citations can link to from anywhere in the docs.
             if Documenter.anchor_exists(anchors, anchor_key)
                 # Skip entries that already have a canonical bib entry
@@ -422,12 +416,20 @@ end
 # compatibility with CSS selectors, see https://stackoverflow.com/a/79022.
 # Even more importantly, these characters are not supported by the
 # `Documenter.DOM` framework that we use to generate HTML: it will silently
-# drop anything after a colon or period.
-function get_anchor_key(citation_key::String, cache::Bijections.Bijection{String,String})
+# drop anything after a colon or period. The numerical `suffix_index` gets
+# appended to the anchor name if > 0 and can be used to disambiguate labels.
+function get_anchor_key(
+    citation_key::String,
+    cache::Bijections.Bijection{String,String};
+    suffix_index::Int64=1
+)
     if haskey(cache, citation_key)
         anchor_key = cache[citation_key]
     else
         anchor_key = normalize_anchor(citation_key) # => [A-Za-z0-0_-]
+        if suffix_index > 1
+            anchor_key *= "-$suffix_index"
+        end
         if !startswith(anchor_key, r"[A-Za-z]")
             # Anchors must start with a letter. Instead of rejecting "invalid"
             # anchors, we just prepend something arbitrary.
@@ -438,8 +440,14 @@ function get_anchor_key(citation_key::String, cache::Bijections.Bijection{String
             # duplicates here.
             cache[citation_key] = anchor_key
         catch
-            msg = "Cannot generate HTML anchor for citation key $(repr(citation_key)): normalizes to ambiguous $(repr(anchor_key)) conflicting with citation key $(repr(cache(anchor_key)))"
-            error(msg)
+            suffix_index += 1
+            msg = "HTML anchor for citation key $(repr(citation_key)) normalizes to ambiguous $(repr(anchor_key)) conflicting with citation key $(repr(cache(anchor_key))). Disambiguating with suffix \"-$(suffix_index)\""
+            @warn(msg)
+            if suffix_index < 100
+                return get_anchor_key(citation_key, cache; suffix_index)
+            else
+                error("Internal error: cannot find disambiguated anchor key")
+            end
         end
         @debug "Generated anchor key $(repr(anchor_key)) for citation key $(repr(citation_key))"
     end

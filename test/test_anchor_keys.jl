@@ -25,10 +25,9 @@ include("run_makedocs.jl")
     c = IOCapture.capture(rethrow=Union{}) do
         get_anchor_key("AbsilMahonySepulchre.2008", cache)
     end
-    @test c.value isa ErrorException
-    msg = "Cannot generate HTML anchor for citation key \"AbsilMahonySepulchre.2008\": normalizes to ambiguous \"AbsilMahonySepulchre2008\" conflicting with citation key \"AbsilMahonySepulchre:2008\""
-    @Test c.value.msg == msg
-
+    @test c.value == "AbsilMahonySepulchre2008-2"
+    msg = "Warning: HTML anchor for citation key \"AbsilMahonySepulchre.2008\" normalizes to ambiguous \"AbsilMahonySepulchre2008\" conflicting with citation key \"AbsilMahonySepulchre:2008\". Disambiguating with suffix \"-2\""
+    @test contains(c.output, msg)
 
 end
 
@@ -54,16 +53,18 @@ end
         @test success
 
         @test bib.anchor_keys["Chirikjian:2012"] == "Chirikjian2012"
+        @test bib.anchor_keys["Chirikjian2012"] == "Chirikjian2012-2"
 
-        @test contains(output, "Error: Cannot generate anchor for \"Chirikjian2012\"")
         @test contains(output, "normalizes to ambiguous \"Chirikjian2012\"")
 
         #! format: off
         index_html = read(joinpath(dir, "build", "index.html"), String)
         @Test contains(index_html, "<a href=\"references/#Chirikjian2012\">")
+        @Test contains(index_html, "<a href=\"references/#Chirikjian2012-2\">")
 
         references_html = read(joinpath(dir, "build", "references", "index.html"), String)
         @Test contains(references_html, "<div id=\"Chirikjian2012\">")
+        @Test contains(references_html, "<div id=\"Chirikjian2012-2\">")
         #! format: on
 
     end
