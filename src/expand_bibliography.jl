@@ -456,9 +456,10 @@ end
 
 
 # Transform an arbitrary string `s` into a normalized string containing only
-# ASCII letters, numbers, and the symbols `_` and `-`, i.e., matching the regex
-# `r"^[A-Za-z0-9_-]+$"`. Letters with diacritics are normalized into their
-# ASCII equivalents, and all other characters are dropped.
+# ASCII letters, numbers, and the symbols `_` and `-`, i.e., matching the
+# regex `r"^[A-Za-z0-9._-]+$"`. Letters with diacritics are normalized into
+# their ASCII equivalents, `:` and `/` are converted to `_`, and all other
+# characters are dropped.
 function normalize_anchor(s::AbstractString)
     s_norm = Unicode.normalize(s, :NFKD)  # decompose diacritics
     chars = Char[]
@@ -469,6 +470,8 @@ function normalize_anchor(s::AbstractString)
            c == '_' ||
            c == '-'
             push!(chars, c)
+        elseif (c == ':') || (c == '/') || (c == '.')
+            push!(chars, '_')
         end
     end
     return String(chars)

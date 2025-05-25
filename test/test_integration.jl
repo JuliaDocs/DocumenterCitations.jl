@@ -2,6 +2,7 @@ using DocumenterCitations
 using Documenter
 using Bijections
 using Test
+using TestingUtilities: @Test  # much better at comparing strings
 
 include("run_makedocs.jl")
 
@@ -109,7 +110,18 @@ end
         ],
         check_success=true
     ) do dir, result, success, backtrace, output
+
         @test success
+
+        # ArXiV references were (unnoticed) broken prior to PR #95
+
+        references_html = read(joinpath(dir, "build", "references", "index.html"), String)
+        @test !contains(references_html, "<div id=\"Wilhelm2003\">")  # pre-#95
+        @Test contains(references_html, "<div id=\"Wilhelm2003_10132\">")
+
+        syntax_html = read(joinpath(dir, "build", "syntax", "index.html"), String)
+        @test contains(syntax_html, "<a href=\"../references/#Wilhelm2003_10132\">")
+
     end
 
 end
