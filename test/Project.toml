@@ -1,6 +1,7 @@
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
 Bibliography = "f1be7e48-bf82-45af-a471-ae754a193061"
+Bijections = "e2ed5e7c-b2de-5872-ae92-c73ca462fb04"
 Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"

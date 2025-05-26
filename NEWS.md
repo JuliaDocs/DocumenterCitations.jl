@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+### Added
+
+* The `CitationBibliography` plugin object now has an internal field `anchor_keys` that is a bijective mapping of citation keys to HTML anchor names. The anchor names are normalized versions of the citation keys that are restricted to ASCII alphanumerics, dashes (`-`) and underscores (`_`). This provides [compatibility with HTML4](https://www.w3.org/TR/html4/types.html#type-id) and additionally [avoids issues with CSS selectors](https://stackoverflow.com/a/79022). It also works around restrictions of the `Documenter.DOM` framework that is used internally to render HTML content. [[#95][]]
+
+
+### Fixed
+
+* Citation keys the contain special characters (like colons) no longer produce broken links. This is achieved by normalizing HTML anchor names to contain only alphanumeric ASCII characters, dashes, and underscores [[#86][], [#95][]]
+
 
 ## [Version 1.3.7][1.3.7] - 2025-03-29
 
@@ -198,8 +207,10 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#95]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/95
 [#89]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/89
 [#87]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/87
+[#86]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/86
 [#83]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/83
 [#80]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/80
 [#79]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/79

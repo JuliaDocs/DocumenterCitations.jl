@@ -9,6 +9,7 @@ using Documenter.Writers.HTMLWriter
 import MarkdownAST
 import AbstractTrees
 
+using Bijections: Bijections
 using Logging
 using Markdown
 using Bibliography: Bibliography, xyear, xlink, xtitle
@@ -48,6 +49,11 @@ should not be considered part of the stable API.
 * `anchor_map`: an [`AnchorMap`](https://documenter.juliadocs.org/stable/lib/internals/anchors/#Documenter.AnchorMap)
   object that keeps track of the link anchors for references in bibliography
   blocks
+* `anchor_keys`: a [bijective map](https://github.com/scheinerman/Bijections.jl?tab=readme-ov-file#bijections)
+  of citation keys to HTML anchor names. Whenever possible, an anchor name is
+  identical to the citation key, but anchor names are restricted to consist
+  only of ASCII letters, digits, and the symbols `-`, `_`. Thus, citation keys
+  are normalized to meet that restriction.
 """
 struct CitationBibliography <: Documenter.Plugin
 
@@ -71,6 +77,9 @@ struct CitationBibliography <: Documenter.Plugin
     # AnchorMap object that stores the link anchors to all references in
     # canonical bibliography blocks
     anchor_map::Documenter.AnchorMap
+
+    # Map citation key => anchor name
+    anchor_keys::Bijections.Bijection{String,String}
 
 end
 
@@ -117,13 +126,15 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing)
     citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
     anchor_map = Documenter.AnchorMap()
+    anchor_keys = Bijections.Bijection{String,String}()
     return CitationBibliography(
         bibfile,
         style,
         entries,
         citations,
         page_citations,
-        anchor_map
+        anchor_map,
+        anchor_keys
     )
 end
 

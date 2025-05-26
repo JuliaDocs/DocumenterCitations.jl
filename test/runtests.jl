@@ -56,6 +56,11 @@ using DocumenterCitations
         include("test_keys_with_underscores.jl")
     end
 
+    println("\n* anchor_keys (test_anchor_keys.jl):")
+    @time @safetestset "anchor_keys" begin
+        include("test_anchor_keys.jl")
+    end
+
     println("\n* integration test (test_integration.jl):")
     @time @safetestset "integration" begin
         include("test_integration.jl")

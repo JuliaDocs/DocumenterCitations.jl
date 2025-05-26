@@ -4,7 +4,7 @@ _ALLOW_PRE_13_FALLBACK = true
 
 Runs after [`CollectCitations`](@ref) but before [`ExpandCitations`](@ref).
 
-Each bibliography is rendered into HTML as a a [definition
+Each bibliography is rendered into HTML as a [definition
 list](https://www.w3schools.com/tags/tag_dl.asp), a [bullet
 list](https://www.w3schools.com/tags/tag_ul.asp), or an
 [enumeration](https://www.w3schools.com/tags/tag_ol.asp) depending on
@@ -362,9 +362,9 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     end
     for (key, entry) in entries_to_show
         if fields[:Canonical]
-            anchor_key = key
+            anchor_key = get_anchor_key(key, bib.anchor_keys)
             # Add anchor that citations can link to from anywhere in the docs.
-            if Documenter.anchor_exists(anchors, key)
+            if Documenter.anchor_exists(anchors, anchor_key)
                 # Skip entries that already have a canonical bib entry
                 # elsewhere. This is expected behavior, not an error/warning,
                 # allowing to split the canonical bibliography in multiple
@@ -372,8 +372,8 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
                 @debug "Skipping key=$(key) (existing anchor)"
                 continue
             else
-                @debug "Defining anchor for key=$(key)"
-                Documenter.anchor_add!(anchors, entry, key, page.build)
+                @debug "Defining anchor $(repr(anchor_key)) for key=$(repr(key))"
+                Documenter.anchor_add!(anchors, entry, anchor_key, page.build)
             end
         else
             anchor_key = nothing
@@ -403,6 +403,78 @@ function expand_bibliography(node::MarkdownAST.Node, meta, page, doc)
     end
     node.element = bibliography_node
 
+end
+
+
+# Generate a suitably normalized (restricted ASCII) HTML anchor name from a
+# citation key.
+#
+# The [HTML4 standard requires](https://www.w3.org/TR/html4/types.html#type-id)
+# that anchor names must begin with a letter ([A-Za-z]) and may be followed by
+# any number of letters, digits ([0-9]), hyphens ("-"), underscores ("_"),
+# colons (":"), and periods ("."). Dots and colons are further problematic for
+# compatibility with CSS selectors, see https://stackoverflow.com/a/79022.
+# Even more importantly, these characters are not supported by the
+# `Documenter.DOM` framework that we use to generate HTML: it will silently
+# drop anything after a colon or period. The numerical `suffix_index` gets
+# appended to the anchor name if > 0 and can be used to disambiguate labels.
+function get_anchor_key(
+    citation_key::String,
+    cache::Bijections.Bijection{String,String};
+    suffix_index::Int64=1
+)
+    if haskey(cache, citation_key)
+        anchor_key = cache[citation_key]
+    else
+        anchor_key = normalize_anchor(citation_key) # => [A-Za-z0-0_-]
+        if suffix_index > 1
+            anchor_key *= "-$suffix_index"
+        end
+        if !startswith(anchor_key, r"[A-Za-z]")
+            # Anchors must start with a letter. Instead of rejecting "invalid"
+            # anchors, we just prepend something arbitrary.
+            anchor_key = "cit-" * anchor_key
+        end
+        try
+            # The Bijection type takes care of all the work of checking for
+            # duplicates here.
+            cache[citation_key] = anchor_key
+        catch
+            suffix_index += 1
+            msg = "HTML anchor for citation key $(repr(citation_key)) normalizes to ambiguous $(repr(anchor_key)) conflicting with citation key $(repr(cache(anchor_key))). Disambiguating with suffix \"-$(suffix_index)\""
+            @warn(msg)
+            if suffix_index < 100
+                return get_anchor_key(citation_key, cache; suffix_index)
+            else
+                error("Internal error: cannot find disambiguated anchor key")
+            end
+        end
+        @debug "Generated anchor key $(repr(anchor_key)) for citation key $(repr(citation_key))"
+    end
+    return anchor_key
+end
+
+
+# Transform an arbitrary string `s` into a normalized string containing only
+# ASCII letters, numbers, and the symbols `_` and `-`, i.e., matching the
+# regex `r"^[A-Za-z0-9._-]+$"`. Letters with diacritics are normalized into
+# their ASCII equivalents, `:` and `/` are converted to `_`, and all other
+# characters are dropped.
+function normalize_anchor(s::AbstractString)
+    s_norm = Unicode.normalize(s, :NFKD)  # decompose diacritics
+    chars = Char[]
+    for c in s_norm
+        if ('A' <= c <= 'Z') ||
+           ('a' <= c <= 'z') ||
+           ('0' <= c <= '9') ||
+           c == '_' ||
+           c == '-'
+            push!(chars, c)
+        elseif (c == ':') || (c == '/') || (c == '.')
+            push!(chars, '_')
+        end
+    end
+    return String(chars)
 end
 
 
