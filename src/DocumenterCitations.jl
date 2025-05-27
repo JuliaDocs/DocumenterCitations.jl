@@ -27,7 +27,7 @@ bib = CitationBibliography(bibfile; style=:numeric)
 ```
 
 instantiates a plugin object that must be passed as an element of the `plugins`
-keyword argument to [`Documenter.makedocs`](https://documenter.juliadocs.org/stable/lib/public/#Documenter.makedocs).
+keyword argument to [`Documenter.makedocs`](@extref).
 
 # Arguments
 
@@ -46,10 +46,9 @@ should not be considered part of the stable API.
 * `citations`: ordered dict of citation key to citation number
 * `page_citations`: dict of page file name to set of citation keys cited on
   page.
-* `anchor_map`: an [`AnchorMap`](https://documenter.juliadocs.org/stable/lib/internals/anchors/#Documenter.AnchorMap)
-  object that keeps track of the link anchors for references in bibliography
-  blocks
-* `anchor_keys`: a [bijective map](https://github.com/scheinerman/Bijections.jl?tab=readme-ov-file#bijections)
+* `anchor_map`: a [`Documenter.AnchorMap`](@extref) object that keeps track of
+  the link anchors for references in bibliography blocks
+* `anchor_keys`: a [bijective map](@extref Bijections :doc:`index`)
   of citation keys to HTML anchor names. Whenever possible, an anchor name is
   identical to the citation key, but anchor names are restricted to consist
   only of ASCII letters, digits, and the symbols `-`, `_`. Thus, citation keys

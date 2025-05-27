@@ -1,5 +1,6 @@
 using Pkg
 using DocumenterCitations
+using DocumenterInterLinks
 using Documenter
 using Test
 
@@ -61,10 +62,14 @@ end
         joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),
         style=:numeric
     )
+    links = InterLinks(
+        "Documenter" => "https://documenter.juliadocs.org/stable/",
+        "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+    )
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");
         sitename="DocumenterCitations.jl",
-        plugins=[bib],
+        plugins=[bib, links],
         format=Documenter.LaTeX(platform="none"),
         pages=[
             "Home"                   => "index.md",
@@ -126,10 +131,14 @@ end
         joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),
         style=:numeric
     )
+    links = InterLinks(
+        "Documenter" => "https://documenter.juliadocs.org/stable/",
+        "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+    )
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");
         sitename="DocumenterCitations.jl",
-        plugins=[bib],
+        plugins=[bib, links],
         format=Documenter.LaTeX(platform="none"),
         pages=[
             "Home"                   => "index.md",
@@ -194,10 +203,14 @@ end
         joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),
         style=:numeric
     )
+    links = InterLinks(
+        "Documenter" => "https://documenter.juliadocs.org/stable/",
+        "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+    )
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");
         sitename="DocumenterCitations.jl",
-        plugins=[bib],
+        plugins=[bib, links],
         format=Documenter.LaTeX(platform="none"),
         pages=[
             "Home"                   => "index.md",
