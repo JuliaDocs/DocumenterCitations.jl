@@ -1,4 +1,5 @@
 using DocumenterCitations
+using DocumenterInterLinks
 using Documenter
 using Pkg
 
@@ -11,6 +12,11 @@ GITHUB = "https://github.com/JuliaDocs/DocumenterCitations.jl"
 bib = CitationBibliography(
     joinpath(@__DIR__, "src", "refs.bib");
     style=:numeric  # default
+)
+
+links = InterLinks(
+    "Documenter" => "https://documenter.juliadocs.org/stable/",
+    "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
 )
 
 println("Starting makedocs")
@@ -38,7 +44,7 @@ makedocs(
         "Internals"              => "internals.md",
         "References"             => "references.md",
     ],
-    plugins=[bib],
+    plugins=[bib, links],
 )
 
 println("Finished makedocs")

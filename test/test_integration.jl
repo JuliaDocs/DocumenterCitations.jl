@@ -1,4 +1,5 @@
 using DocumenterCitations
+using DocumenterInterLinks
 using Documenter
 using Bijections
 using Test
@@ -21,10 +22,14 @@ include(CUSTOM2)
         joinpath(@__DIR__, "..", "docs", "src", "refs.bib"),
         style=:numeric
     )
+    links = InterLinks(
+        "Documenter" => "https://documenter.juliadocs.org/stable/",
+        "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+    )
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");
         sitename="DocumenterCitations.jl",
-        plugins=[bib],
+        plugins=[bib, links],
         format=Documenter.HTML(;
             prettyurls = true,
             canonical  = "https://juliadocs.github.io/DocumenterCitations.jl",
@@ -96,10 +101,15 @@ end
         anchor_keys
     )
 
+    links = InterLinks(
+        "Documenter" => "https://documenter.juliadocs.org/stable/",
+        "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+    )
+
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");
         sitename="DocumenterCitations.jl",
-        plugins=[bib],
+        plugins=[bib, links],
         pages=[
             "Home"                   => "index.md",
             "Syntax"                 => "syntax.md",
