@@ -32,8 +32,11 @@ devrepl:  ## Start an interactive REPL for testing and building documentation
 test/Manifest.toml:
 	$(JULIA) --project=test --banner=no --startup-file=yes -e 'include("devrepl.jl")'
 
-docs: test/Manifest.toml ## Build the documentation
-	$(JULIA) --project=test docs/make.jl
+docs/Manifest.toml:
+	$(JULIA) --project=docs --banner=no --startup-file=yes -e 'import Pkg; Pkg.instantiate()'
+
+docs: docs/Manifest.toml ## Build the documentation
+	$(JULIA) --project=docs docs/make.jl
 	@echo "Done. Consider using 'make devrepl'"
 
 pdf: test/Manifest.toml ## Build the documentation in PDF format
