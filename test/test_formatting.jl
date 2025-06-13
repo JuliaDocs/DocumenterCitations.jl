@@ -193,7 +193,7 @@ end
     @Test md("TedRyd") ==
           "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
     @Test md("jax") ==
-          "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
+          "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/jax-ml/jax), [`https://numpy.org`](https://numpy.org)."
     @Test md("WP_Schroedinger") ==
           "Wikipedia: [*Schrödinger equation*](https://en.wikipedia.org/wiki/Schrödinger_equation). Accessed on Oct 24, 2023."
     @Test md("SciPy") ==
@@ -313,7 +313,7 @@ end
     @Test md("TedRyd") ==
           "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
     @Test md("jax") ==
-          "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
+          "J. Bradbury, R. Frostig, P. Hawkins, M. J. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. VanderPlas, S. Wanderman-Milne and Q. Zhang. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/jax-ml/jax), [`https://numpy.org`](https://numpy.org)."
     @Test md("WP_Schroedinger") ==
           "Wikipedia: [*Schrödinger equation*](https://en.wikipedia.org/wiki/Schrödinger_equation). Accessed on Oct 24, 2023."
     @Test md("SciPy") ==
@@ -362,7 +362,7 @@ end
     @Test md("TedRyd") ==
           "Corcovilos, T. and Weiss, D. S. *Rydberg Calculations*. Private communication."
     @Test md("jax") ==
-          "Bradbury, J.; Frostig, R.; Hawkins, P.; Johnson, M. J.; Leary, C.; Maclaurin, D.; Necula, G.; Paszke, A.; VanderPlas, J.; Wanderman-Milne, S. and Zhang, Q. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/google/jax), [`https://numpy.org`](https://numpy.org)."
+          "Bradbury, J.; Frostig, R.; Hawkins, P.; Johnson, M. J.; Leary, C.; Maclaurin, D.; Necula, G.; Paszke, A.; VanderPlas, J.; Wanderman-Milne, S. and Zhang, Q. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/jax-ml/jax), [`https://numpy.org`](https://numpy.org)."
     @Test md("SciPy") ==
           "Jones, E.; Oliphant, T.; Peterson, P. and others (2001–). [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/). Project website at [`https://scipy.org`](https://scipy.org)."
     @Test md("BrionPhd2004") ==

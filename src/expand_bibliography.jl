@@ -98,10 +98,10 @@ produces a markdown string for the full reference of a
 [`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry).
 For the default `style=:numeric`, the result is formatted like in
 [REVTeX](https://www.ctan.org/tex-archive/macros/latex/contrib/revtex/auguide)
-and [APS journals](https://journals.aps.org). That is, the full list of authors
-with initials for the first names, the italicized tile, and the journal
-reference (linking to the DOI, if available), ending with the publication year
-in parenthesis.
+and [APS journals](https://journals.aps.org/all_journals). That is, the full
+list of authors with initials for the first names, the italicized tile, and the
+journal reference (linking to the DOI, if available), ending with the
+publication year in parenthesis.
 """
 function format_bibliography_reference(style::Symbol, entry)
     return format_bibliography_reference(Val(style), entry)

@@ -214,7 +214,7 @@ You may be interested in using (or forking) the [`getbibtex` script](https://git
 If the published paper (`Doi` link) is not open-access, but a version of the paper is available on a preprint server like the [arXiv](https://arxiv.org), your are strongly encouraged to add the arXiv ID as `Eprint` in the BibTeX entry. In the rendered bibliography, the preprint information will be shown and automatically link to `https://arxiv.org/abs/<ID>`.
 If necessary, you may also add a `Primaryclass` field to indicate a category, see ["BibTeX and Eprints" in the arXiv documentation](https://info.arxiv.org/help/hypertex/bibstyles/index.html).
 
-Note that unlike in [default](https://tex.stackexchange.com/questions/386078/workaround-for-missing-archiveprefix-in-bib-entry) BibTeX, it is not necessary to define `Archiveprefix` in the `.bib` file. A missing `Archiveprefix` is assumed to be `arXiv`. The field name `Eprinttype` (which in BibTeX is an alias for `Archiveprefix`) is currently not yet supported, nor is `Eprintclass` as an alias for `Primaryclass`.
+Note that unlike in [default](https://tex.stackexchange.com/questions/386078) BibTeX, it is not necessary to define `Archiveprefix` in the `.bib` file. A missing `Archiveprefix` is assumed to be `arXiv`. The field name `Eprinttype` (which in BibTeX is an alias for `Archiveprefix`) is currently not yet supported, nor is `Eprintclass` as an alias for `Primaryclass`.
 
 For documents that are available *only* as an arXiv eprint, the best result is obtained with a BibTeX entry using the `@article` class, with, e.g., `arXiv:2003.10132` in the `Journal` field, and, e.g., `10.48550/ARXIV.2003.10132` in the `Doi` field (but no `Eprint` field) [Wilhelm2003.10132](@cite).
 
