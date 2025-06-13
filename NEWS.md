@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased][]
+## [Version 1.4.0][1.4.0] - 2025-06-14
 
 ### Added
 
@@ -194,7 +194,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.7...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.7...v1.4.0
 [1.3.7]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.4...v1.3.5
