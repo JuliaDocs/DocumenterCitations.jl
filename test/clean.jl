@@ -35,7 +35,6 @@ function clean(; distclean=false, _exit=true)
     for folder in ["", "docs", "test"]
         _push!(DISTCLEAN, joinpath(joinpath(ROOT, folder), "Manifest.toml"))
     end
-    _push!(DISTCLEAN, joinpath(ROOT, "docs", "Project.toml"))
     ###########################################################################
 
     for name in CLEAN

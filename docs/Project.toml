@@ -1,0 +1,12 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
+DocumenterInterLinks = "d12716ef-a0f6-4df4-a9f1-a5a34e75c656"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+
+[sources]
+DocumenterCitations = {path = ".."}
+
+[compat]
+Documenter = "1.4"
+julia = "1.11"
