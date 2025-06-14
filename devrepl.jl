@@ -12,7 +12,6 @@
 # You may also run this in vscode to initialize a development REPL
 #
 using Pkg
-using Downloads: download
 
 cd(@__DIR__)
 Pkg.activate("test")
