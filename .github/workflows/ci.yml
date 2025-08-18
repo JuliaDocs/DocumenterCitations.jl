@@ -79,6 +79,7 @@ jobs:
           Pkg.pin([
               Pkg.PackageSpec(name="AbstractTrees", version="0.4.0"),
               Pkg.PackageSpec(name="Bibliography", version="0.2.15"),
+              Pkg.PackageSpec(name="DocumenterInterLinks", version="1.0.0"),
               Pkg.PackageSpec(name="Documenter", version="1.0.0"),
               Pkg.PackageSpec(name="MarkdownAST", version="0.1.2"),
               Pkg.PackageSpec(name="OrderedCollections", version="1.6.0"),
