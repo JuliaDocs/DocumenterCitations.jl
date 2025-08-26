@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased][]
 
 
+## [Version 1.4.1][1.4.1] - 2025-08-26
+
+### Fixed
+
+* The LaTeX special symbol `\S` in a `.bib` file is now correctly translated to the section sign `§`. [[#102][]]
+
+
 ## [Version 1.4.0][1.4.0] - 2025-06-14
 
 ### Added
@@ -197,7 +204,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.7...v1.4.0
 [1.3.7]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.5...v1.3.6
@@ -211,6 +219,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#102]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/102
 [#95]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/95
 [#89]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/89
 [#87]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/87
