@@ -79,6 +79,9 @@ end
     s = "\\d ox"
     @test _collect_command(s, 1) == (4, "\\d o", "ọ")
 
+    s = "\\S"
+    @test _collect_command(s, 1) == (2, "\\S", "§")
+
     @test_throws BoundsError _collect_command("\\url", 1)
 
     #! format: off
