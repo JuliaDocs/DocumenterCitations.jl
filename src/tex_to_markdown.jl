@@ -111,6 +111,7 @@ const _COMMANDS_TO_MD = Dict{String,Function}(
     "\\AA" => () -> "\u00C5",  # \AA  Å  latin capital letter A with ring above
     "\\oe" => () -> "\u0153",  # \oe  œ  latin small ligature oe
     "\\AE" => () -> "\u00C6",  # \AE  Æ  latin capital letter AE
+    "\\S" => () -> "\u00A7",   # \S  §  section sign
 )
 
 
