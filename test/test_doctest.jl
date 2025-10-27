@@ -1,6 +1,6 @@
 # Evaluate all doctests in docstrings in the package.
 #
-# Also check that `DocumenterCitations` behavors correctly in the context of
+# Also check that `DocumenterCitations` behaves correctly in the context of
 # `doctest` (when no `.bib` plugin is passed).
 # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/34
 
