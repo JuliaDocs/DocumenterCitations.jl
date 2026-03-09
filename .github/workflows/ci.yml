@@ -77,6 +77,7 @@ jobs:
           Pkg.develop(path=pwd())
           println("*** Pinning minimal dependencies")
           Pkg.pin([
+              Pkg.PackageSpec(name="IOCapture", version="0.2.4"),
               Pkg.PackageSpec(name="AbstractTrees", version="0.4.0"),
               Pkg.PackageSpec(name="Bibliography", version="0.2.15"),
               Pkg.PackageSpec(name="DocumenterInterLinks", version="1.0.0"),
