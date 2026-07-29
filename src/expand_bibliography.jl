@@ -95,7 +95,7 @@ mdstr = format_bibliography_reference(style, entry)
 ```
 
 produces a markdown string for the full reference of a
-[`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry).
+[`Bibliography.Entry`](@extref Bibliography :jl:type:`BibInternal.Entry`).
 For the default `style=:numeric`, the result is formatted like in
 [REVTeX](https://www.ctan.org/tex-archive/macros/latex/contrib/revtex/auguide)
 and [APS journals](https://journals.aps.org/all_journals). That is, the full
@@ -118,7 +118,7 @@ mdstr = format_bibliography_label(style, entry, citations)
 
 produces a plain text (technically, markdown) string for the label in the
 bibliography for the given
-[`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry).
+[`Bibliography.Entry`](@extref Bibliography :jl:type:`BibInternal.Entry`).
 The `citations` argument is a dict that maps citation keys (`entry.id`) to the
 order in which citations appear in the documentation, i.e., a numeric citation
 key.
@@ -158,7 +158,7 @@ bib_sorting(style)
 ```
 
 must return `:citation` or any of the `sorting_rules` accepted by
-[`Bibliography.sort_bibliography!`](https://humans-of-julia.github.io/Bibliography.jl/dev/#Bibliography.sort_bibliography!),
+[`Bibliography.sort_bibliography!`](@extref Bibliography Bibliography.sort_bibliography!),
 e.g. `:nyt`.
 """
 bib_sorting(style::Symbol) = bib_sorting(Val(style))

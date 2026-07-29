@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+### Changed
+
+* Widened the `[compat]` bound for `Bibliography` to include the v0.4 release. The v0.4 API is fully compatible with the functions used by this package.
+* Updated links to `Bibliography.jl`, `BibParser.jl`, and `BibInternal.jl`, which have moved from the `Humans-of-Julia` GitHub organization to `JuliaBibliographies`.
+
 
 ## [Version 1.4.1][1.4.1] - 2025-08-26
 
@@ -44,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Compatibility with [BibInternals v0.3.7](https://github.com/Humans-of-Julia/BibInternal.jl/releases/tag/v0.3.7) [[#80][], [#83][]]
+* Compatibility with [BibInternals v0.3.7](https://github.com/JuliaBibliographies/BibInternal.jl/releases/tag/v0.3.7) [[#80][], [#83][]]
 * Allow LaTeX escape codes to appear at the beginning of a first name. That is, names are now un-escaped before generating name initials. [[#78][], [#83][]]
 
 ### Internal Changes
