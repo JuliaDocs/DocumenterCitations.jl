@@ -65,6 +65,7 @@ end
     links = InterLinks(
         "Documenter" => "https://documenter.juliadocs.org/stable/",
         "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+        "Bibliography" => "https://juliabibliographies.github.io/Bibliography.jl/stable/",
     )
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");
@@ -134,6 +135,7 @@ end
     links = InterLinks(
         "Documenter" => "https://documenter.juliadocs.org/stable/",
         "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+        "Bibliography" => "https://juliabibliographies.github.io/Bibliography.jl/stable/",
     )
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");
@@ -206,6 +208,7 @@ end
     links = InterLinks(
         "Documenter" => "https://documenter.juliadocs.org/stable/",
         "Bijections" => "https://docs.juliahub.com/General/Bijections/stable/",
+        "Bibliography" => "https://juliabibliographies.github.io/Bibliography.jl/stable/",
     )
     run_makedocs(
         joinpath(@__DIR__, "..", "docs");

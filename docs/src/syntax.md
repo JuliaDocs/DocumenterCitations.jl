@@ -169,7 +169,7 @@ Note that the numbers [BrifNJP2010, GoerzDiploma2010, GoerzPhd2015](@cite) are f
 
 In the default numeric style, references in a `@bibliography` are rendered (and numbered) in the order in which they are cited. When there are multiple pages in the documentation, the order in which the pages appear in the navigation bar is relevant.
 
-Non-cited references ([`*` in a full bibliography](@ref full_bibliography)) will appear in the order they are listed in the underlying `.bib` file. That order may be changed by [sorting it explicitly](https://humans-of-julia.github.io/Bibliography.jl/stable/#Bibliography.sort_bibliography!):
+Non-cited references ([`*` in a full bibliography](@ref full_bibliography)) will appear in the order they are listed in the underlying `.bib` file. That order may be changed by [sorting it explicitly](@extref Bibliography Bibliography.sort_bibliography!):
 
 ```julia
 bib = CitationBibliography("refs.bib")
@@ -183,7 +183,7 @@ In general, the citation style determines the order of the references, see the [
 
 ## Syntax for the .bib file
 
-The [`refs.bib`](./refs.bib) file is in the standard [BibTeX format](https://www.bibtex.com/g/bibtex-format/). It must be parsable by [BibParser.jl](https://github.com/Humans-of-Julia/BibParser.jl).
+The [`refs.bib`](./refs.bib) file is in the standard [BibTeX format](https://www.bibtex.com/g/bibtex-format/). It must be parsable by [BibParser.jl](https://github.com/JuliaBibliographies/BibParser.jl).
 
 Even in LaTeX, you cannot blindly use `.bib` entries exported from a bibliography manager. [All `.bib` files must be curated by hand](https://clauswilke.com/blog/2015/10/02/bibtex/)! This is true even more so for a project using `DocumenterCitations`.
 A `.bib` file that works well with LaTeX will usually, but not always work well with `DocumenterCitations`: Remember that in LaTeX, the strings inside any BibTeX fields are rendered through the TeX engine. At least in principle, they may contain arbitrary macros.
@@ -203,7 +203,7 @@ Some tips to keep in mind when editing a `.bib` file to be used with `Documenter
 * Use a consistent scheme for citation keys. Shorter keys are better.
 * All entries should have a `Doi` field, or a `Url` field if no DOI is available.
 * When citing websites [WP_Schroedinger](@cite), in addition to the `Url` field, a `Urldate` field may be given in the format `YYYY-MM-DD`. This will be rendered as, e.g., "Accessed on Oct 24, 2023".
-* Use `@string` macros for abbreviated journal names, with the caveat of [#31](https://github.com/Humans-of-Julia/BibParser.jl/issues/31) and [#32](https://github.com/Humans-of-Julia/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/Humans-of-Julia/BibParser.jl/issues).
+* Use `@string` macros for abbreviated journal names, with the caveat of [#31](https://github.com/JuliaBibliographies/BibParser.jl/issues/31) and [#32](https://github.com/JuliaBibliographies/BibParser.jl/issues/32) in the [BibParser.jl issues](https://github.com/JuliaBibliographies/BibParser.jl/issues).
 
 
 You may be interested in using (or forking) the [`getbibtex` script](https://github.com/goerz/getbibtex) to generate consistent `.bib` files.
@@ -212,9 +212,9 @@ You may be interested in using (or forking) the [`getbibtex` script](https://git
 ### Preprint support
 
 If the published paper (`Doi` link) is not open-access, but a version of the paper is available on a preprint server like the [arXiv](https://arxiv.org), your are strongly encouraged to add the arXiv ID as `Eprint` in the BibTeX entry. In the rendered bibliography, the preprint information will be shown and automatically link to `https://arxiv.org/abs/<ID>`.
-If necessary, you may also add a `Primaryclass` field to indicate a category, see ["BibTeX and Eprints" in the arXiv documentation](https://info.arxiv.org/help/hypertex/bibstyles/index.html).
+If necessary, you may also add a `Primaryclass` field to indicate a category, see ["Using BibTeX with hyperlinks" in the arXiv documentation](https://info.arxiv.org/help/hypertex/index.html).
 
-Note that unlike in [default](https://tex.stackexchange.com/questions/386078) BibTeX, it is not necessary to define `Archiveprefix` in the `.bib` file. A missing `Archiveprefix` is assumed to be `arXiv`. The field name `Eprinttype` (which in BibTeX is an alias for `Archiveprefix`) is currently not yet supported, nor is `Eprintclass` as an alias for `Primaryclass`.
+Note that unlike in [default](https://tex.stackexchange.com/questions/386078/workaround-for-missing-archiveprefix-in-bib-entry) BibTeX, it is not necessary to define `Archiveprefix` in the `.bib` file. A missing `Archiveprefix` is assumed to be `arXiv`. The field name `Eprinttype` (which in BibTeX is an alias for `Archiveprefix`) is currently not yet supported, nor is `Eprintclass` as an alias for `Primaryclass`.
 
 For documents that are available *only* as an arXiv eprint, the best result is obtained with a BibTeX entry using the `@article` class, with, e.g., `arXiv:2003.10132` in the `Journal` field, and, e.g., `10.48550/ARXIV.2003.10132` in the `Doi` field (but no `Eprint` field) [Wilhelm2003.10132](@cite).
 

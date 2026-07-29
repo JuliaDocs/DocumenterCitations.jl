@@ -81,7 +81,7 @@ format_citation(:numeric, cit, entries, citations)
 * `cit`: A [`CitationLink`](@ref) instance representing the original citation
   link
 * `entries`: A dict mapping citations `keys` to a
-  [`Bibliography.Entry`](https://humans-of-julia.github.io/Bibliography.jl/stable/internal/#BibInternal.Entry)
+  [`Bibliography.Entry`](@extref Bibliography :jl:type:`BibInternal.Entry`)
 * `citations`: A dict mapping that maps citation keys to the order in
   which citations appear in the documentation, i.e., a numeric citation index.
 """

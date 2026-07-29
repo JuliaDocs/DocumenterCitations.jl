@@ -243,7 +243,7 @@ function format_published_in(
         _push!(3, format_pages(entry))
     elseif entry.type == "eprint"
         error("Invalid bibtex type 'eprint'")
-        # https://github.com/Humans-of-Julia/BibInternal.jl/issues/22
+        # https://github.com/JuliaBibliographies/BibInternal.jl/issues/22
     elseif entry.type in ["inbook", "incollection", "inproceedings"]
         booktitle = get_booktitle(entry)
         if !isempty(booktitle)
