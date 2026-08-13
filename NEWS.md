@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+### Added
+
+* The recommended CSS for formatting the bibliography is now shipped with the package (in `assets/citations.css`) and inserted automatically by a new `DocumenterCitations.InjectAssets` pipeline step. Manually adding `assets=String["assets/citations.css"]` to the `Documenter.HTML` format in `docs/make.jl` is no longer required. Custom CSS can still be added that way, and takes precedence over the bundled stylesheet.
+
+
 ### Changed
 
 * Widened the `[compat]` bound for `Bibliography` to include the v0.4 release. The v0.4 API is fully compatible with the functions used by this package.

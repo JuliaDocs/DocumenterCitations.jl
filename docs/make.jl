@@ -34,7 +34,8 @@ makedocs(
     format=Documenter.HTML(
         prettyurls=true,
         canonical="https://juliadocs.org/DocumenterCitations.jl",
-        assets=String["assets/citations.css"],
+        # No `assets=String["assets/citations.css"]`: the CSS for the citations
+        # is inserted automatically, see `DocumenterCitations.InjectAssets`.
         footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl).",
     ),
     pages=[
