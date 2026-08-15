@@ -14,6 +14,7 @@ using Logging
 using Markdown
 using Bibliography: Bibliography, xyear, xlink, xtitle
 using OrderedCollections: OrderedDict, OrderedSet
+using SHA: sha256
 using Unicode
 using Dates: Dates, @dateformat_str
 
@@ -23,7 +24,7 @@ export CitationBibliography
 """Plugin for enabling bibliographic citations in Documenter.jl.
 
 ```julia
-bib = CitationBibliography(bibfile; style=:numeric)
+bib = CitationBibliography(bibfile; style=:numeric, insert_css=true)
 ```
 
 instantiates a plugin object that must be passed as an element of the `plugins`
@@ -36,6 +37,10 @@ keyword argument to [`Documenter.makedocs`](@extref).
 * `style`: the style to use for the bibliography and all citations. The
   available built-in styles are `:numeric` (default), `:authoryear`, and
   `:alpha`. With user-defined styles, this may be an arbitrary name or object.
+* `insert_css`: whether to automatically insert the bundled `citations.css`
+  stylesheet, see the documentation about [CSS Styling](@ref) and
+  [`DocumenterCitations.InjectAssets`](@ref). Set this to `false` to take full
+  control of the CSS for citations and bibliographies.
 
 # Internal fields
 
@@ -63,6 +68,9 @@ struct CitationBibliography <: Documenter.Plugin
     # be anything)
     style::Any
 
+    # whether to automatically insert the bundled `citations.css`
+    insert_css::Bool
+
     # citation key => entry (set on instantiation; private)
     entries::OrderedDict{String,<:Bibliography.AbstractEntry}
 
@@ -70,7 +78,7 @@ struct CitationBibliography <: Documenter.Plugin
     citations::OrderedDict{String,Int64}
 
     # page file name => set of citation keys (private). The page file names are
-    # relative to `doc.user.source`, which matches `doc.plueprint.pages`
+    # relative to `doc.user.source`, which matches `doc.blueprint.pages`
     page_citations::Dict{String,Set{String}}
 
     # AnchorMap object that stores the link anchors to all references in
@@ -82,7 +90,7 @@ struct CitationBibliography <: Documenter.Plugin
 
 end
 
-function CitationBibliography(bibfile::AbstractString=""; style=nothing)
+function CitationBibliography(bibfile::AbstractString=""; style=nothing, insert_css=true)
     if isnothing(style)
         style = :numeric
         @debug "Using default style=$(repr(style))"
@@ -129,6 +137,7 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing)
     return CitationBibliography(
         bibfile,
         style,
+        insert_css,
         entries,
         citations,
         page_citations,

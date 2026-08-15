@@ -85,6 +85,7 @@ end
 
     bibfile = joinpath(@__DIR__, "..", "docs", "src", "refs.bib")
     style = :alpha
+    insert_css = true
     entries = Bibliography.import_bibtex(bibfile)
     citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
@@ -94,6 +95,7 @@ end
     bib = CitationBibliography(
         bibfile,
         style,
+        insert_css,
         entries,
         citations,
         page_citations,
