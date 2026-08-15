@@ -28,7 +28,7 @@ include("custom_styles/keylabels.jl")
 makedocs(
     authors=AUTHORS,
     linkcheck=(get(ENV, "DOCUMENTER_CHECK_LINKS", "1") != "0"),
-    # Link checking is disabled in REPL, see `devrepl.jl`.
+    # Link checking is disabled for `make servedocs`, see the `Makefile`.
     warnonly=[:linkcheck,],
     sitename="DocumenterCitations.jl",
     format=Documenter.HTML(

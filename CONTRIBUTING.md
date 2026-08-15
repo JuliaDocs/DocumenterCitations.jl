@@ -9,7 +9,7 @@ The best way to contribute code is by opening a Pull Request (PR) that fixes a b
 
 To make a good PR, follow these guidelines:
 
-* Add an adequate description to the PR, citing any corresponding issue by using `#` and the issue number. Keep in concise, and do not let an LLM submit the PR for you.
+* Add an adequate description to the PR, citing any corresponding issue by using `#` and the issue number. Keep it concise, and do not let an LLM submit the PR for you.
 * Ensure all tests pass locally before opening the PR (see [Testing](#testing)). Continuous integration will also run the full test suite on Linux and Windows, against both the latest Julia release and the oldest supported version (the lower `[compat]` bounds in `Project.toml`).
 * Reflect any change or new feature in the documentation, and make sure the documentation builds locally without errors (see [Building the Documentation](#building-the-documentation)).
 * Add a note for any user-facing change to the `[Unreleased]` section of [`NEWS.md`](NEWS.md), linking to the PR or issue number.
@@ -28,13 +28,13 @@ To make a good PR, follow these guidelines:
 
 ## Testing
 
-The package is developed against a dedicated test environment in the [`test/`](test/) subfolder, which has its own `Project.toml` and which sources the local package via a `[sources]` entry (on Julia versions before 1.11, which do not support `[sources]`, `develop` is used instead). This way, the development tooling (test runner, code formatter, coverage tooling) all share a single environment that uses the current checkout. The [`devrepl.jl`](devrepl.jl) script sets up and activates this environment.
+The package is developed against a dedicated test environment in the [`test/`](test/) subfolder, which has its own `Project.toml` and which sources the local package via a `[sources]` entry. This environment also contains the tooling for coverage analysis and code formatting.
 
 The recommended workflow uses the [`Makefile`](Makefile) (run `make help` to see all targets). On systems without `make`, the underlying commands can be read directly from the `Makefile`.
 
 ### How to manually run tests
 
-* Run the full test suite in a subprocess:
+* Run the full test suite in the `test` environment:
 
   ```
   make test
@@ -46,22 +46,11 @@ The recommended workflow uses the [`Makefile`](Makefile) (run `make help` to see
   make coverage
   ```
 
-  Use `make htmlcoverage` to additionally write a browsable HTML report to `./coverage`. That requires the `genhtml` executable from the [lcov](https://github.com/linux-test-project/lcov) package.
+  Use `make htmlcoverage` to instead write a browsable HTML report to `./coverage`. That requires the `genhtml` executable from the [lcov](https://github.com/linux-test-project/lcov) package.
 
-* Or, start an interactive development REPL and run the tests from there:
+* Or, start an [interactive development REPL](#development-repl) (Julia >= 1.12) and run the tests from there.
 
-  ```
-  make devrepl
-  ```
-
-  This loads `Revise`, `JuliaFormatter`, and `LiveServer`, and prints a list of available commands (`help()` to show it again). Inside the REPL:
-
-  - `include("test/runtests.jl")` — run the entire suite in-process (with `Revise` active, this picks up edits to `src/` automatically).
-  - `test()` — run the suite in a fresh subprocess (equivalent to `make test`). Pass `coverage=true` or `genhtml=true` for the coverage variants; coverage data can only be collected in a subprocess.
-  - To run a single test file, include it directly, e.g. `include("test/test_formatting.jl")`. Each `test/test_*.jl` file is self-contained and is wrapped in a `@safetestset` in `runtests.jl`.
-  - `import DocumenterCitations; doctest(DocumenterCitations)` — run the docstring doctests.
-
-Use `make clean` to remove coverage and build artifacts, or `make distclean` to restore a clean checkout.
+Use `make clean` to remove coverage and build artifacts, or `make distclean` to restore a clean checkout. Also run `make distclean` when switching between Julia versions, so that no stale manifests are left behind.
 
 ### How to use `run_makedocs`
 
@@ -81,7 +70,7 @@ run_makedocs(
 end
 ```
 
-The fixture inputs (and any expected-output files) for a test live in the `test/test_*/` subdirectory next to the corresponding `test/test_*.jl` file. Pass `check_success=true` or `check_failure=true` to have an unexpected outcome logged as an error (you must still `@test success` yourself inside the block). To see the captured output of every build, set `ENV["JULIA_DEBUG"] = Main` in the dev REPL (or `JULIA_DEBUG=Main` in the environment).
+The fixture inputs (and any expected-output files) for a test live in the `test/test_*/` subdirectory next to the corresponding `test/test_*.jl` file. Pass `check_success=true` or `check_failure=true` to have an unexpected outcome logged as an error (you must still `@test success` yourself inside the block). To see the captured output of every build, set `ENV["JULIA_DEBUG"] = Main` in the [Development REPL](#development-repl) (or `JULIA_DEBUG=Main` in the environment).
 
 
 ## Building the Documentation
@@ -100,7 +89,7 @@ The documentation is built from the separate [`docs/`](docs/) environment, which
   make servedocs
   ```
 
-  (Use `make servedocs PORT=…` to choose a different port.) You can also call `servedocs()` from within `make devrepl`, which is faster to iterate with, but builds against the test environment rather than the docs environment.
+  (Use `make servedocs PORT=…` to choose a different port.) For one-off builds while developing, `include("docs/make.jl")` inside the [Development REPL](#development-repl) is usually the faster iteration loop.
 
 * Build the PDF (LaTeX) version of the documentation:
 
@@ -108,7 +97,21 @@ The documentation is built from the separate [`docs/`](docs/) environment, which
   make pdf
   ```
 
-Link checking is the slowest part of building the documentation and is disabled for `make servedocs` and in the interactive REPL (the `DOCUMENTER_CHECK_LINKS=0` environment variable, set by `devrepl.jl`). It runs for `make docs` and in continuous integration.
+Link checking is the slowest part of building the documentation and is disabled for `make servedocs` and the [Development REPL](#development-repl). It runs for `make docs` and in continuous integration.
+
+
+## Development REPL
+
+The top-level `Project.toml` declares a Pkg workspace containing the `test` and `docs` projects: on Julia >= 1.12, all environments resolve into a single manifest at the repository root, guaranteeing consistent package versions between running the tests and building the documentation. On older Julia versions, the workspace is ignored and `test/` and `docs/` keep dedicated manifests. Local development requires Julia >= 1.11 (for `[sources]`).
+
+A "development REPL" can be started via `make devrepl`. It is based on the workspace feature and thus requires Julia >= 1.12. The development REPL is the recommended way to work interactively. The REPL activates the `test` project and adds the `docs` project to the `LOAD_PATH`, so the package, the test dependencies, and the documentation dependencies are all available, at the versions pinned in the shared workspace manifest. `Revise` is loaded from your default (global) Julia environment and must be installed there. Inside the REPL:
+
+- `include("test/runtests.jl")` — run the entire suite in-process (with `Revise` active, this picks up edits to `src/` automatically).
+- To run a single test file, include it directly, e.g. `include("test/test_formatting.jl")`. Each `test/test_*.jl` file is self-contained and is wrapped in a `@safetestset` in `runtests.jl`.
+- `using Documenter: doctest; doctest(DocumenterCitations)` — run the docstring doctests.
+- `include("docs/make.jl")` — build the documentation.
+
+Repeated test runs or documentation builds are much faster, since they pay no startup cost. Also, the `Makefile` sets the `DOCUMENTER_CHECK_LINKS=0` environment variable, avoiding the slow link checking.
 
 
 ## Semantic Versioning
@@ -151,7 +154,7 @@ To locally apply the code style, run `make codestyle`, or, if you cannot use `ma
 ```
 julia --project=test
 julia> using JuliaFormatter
-julia> format(["src", "docs", "test", "devrepl.jl"])
+julia> format(["src", "docs", "test"])
 ```
 
 in the project root.

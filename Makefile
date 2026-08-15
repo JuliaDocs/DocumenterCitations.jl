@@ -16,52 +16,77 @@ end
 endef
 export PRINT_HELP_JLSCRIPT
 
+define DEVREPL_INIT_JLSCRIPT
+@assert VERSION >= v"1.12" "The development REPL requires Julia >= 1.12 (Pkg workspace support)"
+# The `docs` project goes after the active `test` project but before the
+# shared `@v#.#` environment, so that docs-only dependencies always load at
+# the versions pinned in the workspace manifest.
+insert!(LOAD_PATH, 2, abspath("docs"))
+ENV["DOCUMENTER_CHECK_LINKS"] = "0"
+using Revise
+println("""
+**Development REPL for DocumenterCitations.jl** (Revise active)
+
+* `include("test/runtests.jl")` – Run the test suite
+* `include("docs/make.jl")` – Build the documentation (link checking disabled)
+""")
+endef
+export DEVREPL_INIT_JLSCRIPT
+
 
 help:  ## show this help
 	@git config --local blame.ignoreRevsFile .git-blame-ignore-revs
 	@julia -e "$$PRINT_HELP_JLSCRIPT" < $(MAKEFILE_LIST)
 
+devrepl: Manifest.toml ## Start an interactive REPL for testing and building documentation (requires Julia >= 1.12)
+	$(JULIA) --project=test -e "$$DEVREPL_INIT_JLSCRIPT" -i
 
 test: test/Manifest.toml ## Run the test suite
-	$(JULIA) --project=test --banner=no --startup-file=yes -e 'include("devrepl.jl"); test()'
-	@echo "Done. Consider using 'make devrepl'"
+	$(JULIA) --project=test --banner=no --startup-file=yes --check-bounds=yes --depwarn=yes -e 'include("test/runtests.jl")'
 
-coverage: test/Manifest.toml ## Run the test suite with coverage and show a summary
-	$(JULIA) --project=test --banner=no --startup-file=yes -e 'include("devrepl.jl"); test(coverage=true)'
+coverage: test/Manifest.toml ## Run the test suite with coverage
+	$(JULIA) --project=test -e 'using LocalCoverage; report = generate_coverage("DocumenterCitations"; run_test = true); show(report)'
 
-htmlcoverage: test/Manifest.toml ## Run the test suite with coverage and write an HTML report to ./coverage
-	$(JULIA) --project=test --banner=no --startup-file=yes -e 'include("devrepl.jl"); test(genhtml=true)'
-
-
-devrepl:  ## Start an interactive REPL for testing and building documentation
-	$(JULIA) --project=test --banner=no --startup-file=yes -i devrepl.jl
-
-test/Manifest.toml: test/Project.toml
-	@git config --local blame.ignoreRevsFile .git-blame-ignore-revs
-	$(JULIA) --project=test --banner=no --startup-file=yes -e 'include("devrepl.jl")'
-
-docs/Manifest.toml: docs/Project.toml
-	@git config --local blame.ignoreRevsFile .git-blame-ignore-revs
-	$(JULIA) --project=docs --banner=no --startup-file=yes -e 'import Pkg; Pkg.instantiate()'
+htmlcoverage: test/Manifest.toml ## Run the test suite with coverage and generate an HTML report in ./coverage
+	$(JULIA) --project=test -e 'using LocalCoverage; html_coverage("DocumenterCitations"; dir = "coverage")'
 
 docs: docs/Manifest.toml ## Build the documentation
 	$(JULIA) --project=docs docs/make.jl
-	@echo "Done. Consider using 'make devrepl'"
 
 pdf: docs/Manifest.toml ## Build the documentation in PDF format
 	$(JULIA) --project=docs docs/makepdf.jl
-	@echo "Done. Consider using 'make devrepl'"
 
 servedocs: docs/Manifest.toml  ## Build (auto-rebuild) and serve documentation at PORT=8000
 	$(JULIA) --project=docs -e 'ENV["DOCUMENTER_CHECK_LINKS"] = "0"; using LiveServer; servedocs(port=$(PORT), verbose=true)'
 
 clean: ## Clean up build/doc/testing artifacts
-	$(JULIA) -e 'include("test/clean.jl"); clean()'
+	rm -f *.jl.*.cov src/*.jl.*.cov test/*.jl.*.cov
+	rm -f *.jl.cov src/*.jl.cov test/*.jl.cov
+	rm -f *.jl.mem src/*.jl.mem test/*.jl.mem
+	rm -f lcov.info
+	rm -rf coverage
+	rm -rf docs/build
 	make -C docs/latex clean
 
 codestyle: test/Manifest.toml ## Apply the codestyle to the entire project
-	$(JULIA) --project=test -e 'using JuliaFormatter; format(["src", "docs", "test", "devrepl.jl"], verbose=true)'
-	@echo "Done. Consider using 'make devrepl'"
+	$(JULIA) --project=test -e 'using JuliaFormatter; format(["src", "docs", "test"], verbose=true)'
 
 distclean: clean ## Restore to a clean checkout state
-	$(JULIA) -e 'include("test/clean.jl"); clean(distclean=true)'
+	rm -f Manifest.toml
+	rm -f test/Manifest.toml
+	rm -f docs/Manifest.toml
+
+test/Manifest.toml: test/Project.toml
+	@git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+	$(JULIA) --project=test -e 'using Pkg; Pkg.resolve(); Pkg.instantiate()'
+	@touch $@  # mark as instantiated (empty file) on Julia >= 1.12 
+
+docs/Manifest.toml: docs/Project.toml
+	@git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+	$(JULIA) --project=docs -e 'using Pkg; Pkg.resolve(); Pkg.instantiate()'
+	@touch $@  # mark as instantiated (empty file) on Julia >= 1.12
+
+# The shared workspace manifest (Julia >= 1.12 only), used by `make devrepl`.
+Manifest.toml: Project.toml test/Project.toml docs/Project.toml
+	@git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+	$(JULIA) --project=. -e 'using Pkg; Pkg.resolve(); Pkg.instantiate()'
