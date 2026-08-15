@@ -47,8 +47,6 @@ to the `[deps]` section of the relevant `Project.toml` file.
 
     In older versions of [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl), `bib` had to be passed as a positional argument to `makedocs`.
 
-*   Optional: [override the default CSS](https://juliadocs.github.io/DocumenterCitations.jl/dev/styling/) that formats the bibliography. The default stylesheet is inserted automatically.
-
 *   Somewhere in your documentation include a markdown block
 
     ~~~markdown
