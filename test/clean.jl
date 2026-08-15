@@ -6,28 +6,26 @@ Clean up build/doc/testing artifacts. Restore to clean checkout state
 """
 function clean(; distclean=false, _exit=true)
 
-    _glob(folder, ending) =
-        [name for name in readdir(folder; join=true) if (name |> endswith(ending))]
-    _glob_star(folder; except=[]) = [
-        joinpath(folder, name) for
-        name in readdir(folder) if !(name |> startswith(".") || name ∈ except)
-    ]
     _exists(name) = isfile(name) || isdir(name)
     _push!(lst, name) = _exists(name) && push!(lst, name)
 
     ROOT = dirname(@__DIR__)
+    # Directories that are never searched for artifacts (either because they
+    # are removed wholesale below, or because they are not ours).
+    PRUNE = [".git", "build", "node_modules"]
+    ARTIFACTS = [".cov", ".mem", ".info"]
 
     ###########################################################################
     CLEAN = String[]
-    src_folders =
-        ["", "src", joinpath("src", "styles"), "test", joinpath("docs", "custom_styles")]
-    for folder in src_folders
-        append!(CLEAN, _glob(joinpath(ROOT, folder), ".cov"))
+    for (folder, subfolders, files) in walkdir(ROOT)
+        filter!(!in(PRUNE), subfolders)
+        for name in files
+            any(endswith(name, ending) for ending in ARTIFACTS) &&
+                push!(CLEAN, joinpath(folder, name))
+        end
     end
     _push!(CLEAN, joinpath(ROOT, "coverage"))
     _push!(CLEAN, joinpath(ROOT, "docs", "build"))
-    append!(CLEAN, _glob(ROOT, ".info"))
-    append!(CLEAN, _glob(joinpath(ROOT, ".coverage"), ".info"))
     ###########################################################################
 
     ###########################################################################

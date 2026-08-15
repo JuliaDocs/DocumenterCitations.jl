@@ -1,0 +1,7 @@
+# Commits listed here are skipped by `git blame`. Add the full SHA of any
+# commit that only reformats code (e.g., the result of `make codestyle` after a
+# JuliaFormatter update), one per line, with a comment naming the commit.
+#
+# `make help` wires this file up via
+#
+#     git config --local blame.ignoreRevsFile .git-blame-ignore-revs

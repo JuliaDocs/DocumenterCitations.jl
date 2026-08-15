@@ -1,7 +1,7 @@
 using DocumenterCitations
 using Documenter
 using Test
-using TestingUtilities: @Test  # much better at comparing strings
+include("word_diff.jl")
 
 include("run_makedocs.jl")
 
@@ -31,13 +31,13 @@ const CSS_LINK = "<link href=\"assets/documentercitations/citations.css\" rel=\"
             joinpath(dir, "build", "assets", "documentercitations", "citations.css")
         @test isfile(css_outfile)
         packaged_css = joinpath(DocumenterCitations.ASSETS_FOLDER, "citations.css")
-        @Test read(css_outfile, String) == read(packaged_css, String)
+        @test_diff read(css_outfile, String) == read(packaged_css, String)
 
         index_html = read(joinpath(dir, "build", "index.html"), String)
-        @Test contains(index_html, CSS_LINK)
+        @test contains(index_html, CSS_LINK)
 
         references_html = read(joinpath(dir, "build", "references.html"), String)
-        @Test contains(references_html, CSS_LINK)
+        @test contains(references_html, CSS_LINK)
 
     end
 
@@ -67,8 +67,8 @@ end
 
         index_html = read(joinpath(dir, "build", "index.html"), String)
         custom_link = "<link href=\"assets/citations.css\" rel=\"stylesheet\" type=\"text/css\"/>"
-        @Test contains(index_html, CSS_LINK)
-        @Test contains(index_html, custom_link)
+        @test contains(index_html, CSS_LINK)
+        @test contains(index_html, custom_link)
         # The custom stylesheet must come *after* the bundled one, so that its
         # rules take precedence
         @test findfirst(CSS_LINK, index_html).start <
@@ -158,7 +158,7 @@ end
         index_html = read(joinpath(dir, "build", "index.html"), String)
         custom_link = "<link href=\"assets/citations.css\" rel=\"stylesheet\" type=\"text/css\"/>"
         @test !contains(index_html, CSS_LINK)
-        @Test contains(index_html, custom_link)
+        @test contains(index_html, custom_link)
         # With the automatic insertion disabled, the user's stylesheet is the
         # intended one, not a leftover, even if it is an unmodified copy
         @test !contains(output, "unmodified copy")
@@ -209,8 +209,8 @@ end
             # The warning does not change the build in any way
             index_html = read(joinpath(dir, "build", "index.html"), String)
             custom_link = "<link href=\"assets/citations.css\" rel=\"stylesheet\" type=\"text/css\"/>"
-            @Test contains(index_html, CSS_LINK)
-            @Test contains(index_html, custom_link)
+            @test contains(index_html, CSS_LINK)
+            @test contains(index_html, custom_link)
 
         end
 
@@ -245,7 +245,7 @@ end
             @test !contains(output, "unmodified copy")
 
             index_html = read(joinpath(dir, "build", "index.html"), String)
-            @Test contains(index_html, CSS_LINK)
+            @test contains(index_html, CSS_LINK)
             # … exactly once, even in the second run
             @test length(findall(CSS_LINK, index_html)) == 1
 
@@ -264,17 +264,18 @@ end
     # the existing entries, so that copies of the previous version are still
     # recognized in a user's `docs/src/assets` folder.
     css = read(joinpath(DocumenterCitations.ASSETS_FOLDER, "citations.css"), String)
-    @Test DocumenterCitations._css_hash(css) == DocumenterCitations.KNOWN_CSS_HASHES[1]
+    @test_diff DocumenterCitations._css_hash(css) == DocumenterCitations.KNOWN_CSS_HASHES[1]
 
     # Normalization: line endings and trailing whitespace are irrelevant. Note
     # that `css` itself may have been checked out with either LF or CRLF line
     # endings, so the variants must be derived from an explicit LF baseline.
     css_lf = replace(css, "\r\n" => "\n")
-    @Test DocumenterCitations._css_hash(css_lf) == DocumenterCitations._css_hash(css)
-    @Test DocumenterCitations._css_hash(replace(css_lf, "\n" => "\r\n")) ==
-          DocumenterCitations._css_hash(css)
-    @Test DocumenterCitations._css_hash(replace(css_lf, "\n" => "\r")) ==
-          DocumenterCitations._css_hash(css)
-    @Test DocumenterCitations._css_hash(css * "\n\n") == DocumenterCitations._css_hash(css)
+    @test_diff DocumenterCitations._css_hash(css_lf) == DocumenterCitations._css_hash(css)
+    @test_diff DocumenterCitations._css_hash(replace(css_lf, "\n" => "\r\n")) ==
+               DocumenterCitations._css_hash(css)
+    @test_diff DocumenterCitations._css_hash(replace(css_lf, "\n" => "\r")) ==
+               DocumenterCitations._css_hash(css)
+    @test_diff DocumenterCitations._css_hash(css * "\n\n") ==
+               DocumenterCitations._css_hash(css)
 
 end

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Widened the `[compat]` bound for `Bibliography` to include the v0.4 release. The v0.4 API is fully compatible with the functions used by this package.
+* Widened the `[compat]` bound for `OrderedCollections` to include the v2 release. [[#117][], in lieu of [#111][]]
 * Updated links to `Bibliography.jl`, `BibParser.jl`, and `BibInternal.jl`, which have moved from the `Humans-of-Julia` GitHub organization to `JuliaBibliographies`.
 
 
@@ -236,6 +237,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#111]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/117
+[#111]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/111
 [#102]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/102
 [#95]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/95
 [#89]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/89

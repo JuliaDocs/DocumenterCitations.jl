@@ -2,9 +2,13 @@ using Test
 using SafeTestsets
 using DocumenterCitations
 
-
 # Note: comment outer @testset to stop after first @safetestset failure
 @time @testset verbose = true "DocumenterCitations" begin
+
+    println("\n* word diff test helper (test_word_diff.jl):")
+    @time @safetestset "word_diff" begin
+        include("test_word_diff.jl")
+    end
 
     println("\n* formatting (test_formatting.jl):")
     @time @safetestset "formatting" begin

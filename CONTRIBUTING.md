@@ -28,17 +28,25 @@ To make a good PR, follow these guidelines:
 
 ## Testing
 
-The package is developed against a dedicated test environment in the [`test/`](test/) subfolder, which has its own `Project.toml` and which `develop`s the local package. This way, the development tooling (test runner, code formatter, documentation builder, coverage tooling) all share a single environment that uses the current checkout. The [`devrepl.jl`](devrepl.jl) script sets up and activates this environment.
+The package is developed against a dedicated test environment in the [`test/`](test/) subfolder, which has its own `Project.toml` and which sources the local package via a `[sources]` entry (on Julia versions before 1.11, which do not support `[sources]`, `develop` is used instead). This way, the development tooling (test runner, code formatter, coverage tooling) all share a single environment that uses the current checkout. The [`devrepl.jl`](devrepl.jl) script sets up and activates this environment.
 
 The recommended workflow uses the [`Makefile`](Makefile) (run `make help` to see all targets). On systems without `make`, the underlying commands can be read directly from the `Makefile`.
 
 ### How to manually run tests
 
-* Run the full test suite in a subprocess with a coverage summary:
+* Run the full test suite in a subprocess:
 
   ```
   make test
   ```
+
+* Run it with coverage tracking and print a per-file summary:
+
+  ```
+  make coverage
+  ```
+
+  Use `make htmlcoverage` to additionally write a browsable HTML report to `./coverage`. That requires the `genhtml` executable from the [lcov](https://github.com/linux-test-project/lcov) package.
 
 * Or, start an interactive development REPL and run the tests from there:
 
@@ -49,9 +57,8 @@ The recommended workflow uses the [`Makefile`](Makefile) (run `make help` to see
   This loads `Revise`, `JuliaFormatter`, and `LiveServer`, and prints a list of available commands (`help()` to show it again). Inside the REPL:
 
   - `include("test/runtests.jl")` — run the entire suite in-process (with `Revise` active, this picks up edits to `src/` automatically).
-  - `test()` — run the suite in a fresh subprocess with coverage (equivalent to `make test`; coverage data can only be collected in a subprocess).
+  - `test()` — run the suite in a fresh subprocess (equivalent to `make test`). Pass `coverage=true` or `genhtml=true` for the coverage variants; coverage data can only be collected in a subprocess.
   - To run a single test file, include it directly, e.g. `include("test/test_formatting.jl")`. Each `test/test_*.jl` file is self-contained and is wrapped in a `@safetestset` in `runtests.jl`.
-  - `show_coverage()` — print a per-file coverage table from existing coverage data.
   - `import DocumenterCitations; doctest(DocumenterCitations)` — run the docstring doctests.
 
 Use `make clean` to remove coverage and build artifacts, or `make distclean` to restore a clean checkout.
@@ -93,7 +100,7 @@ The documentation is built from the separate [`docs/`](docs/) environment, which
   make servedocs
   ```
 
-  (Use `make servedocs PORT=…` to choose a different port.) You can also call `servedocs()` from within `make devrepl`.
+  (Use `make servedocs PORT=…` to choose a different port.) You can also call `servedocs()` from within `make devrepl`, which is faster to iterate with, but builds against the test environment rather than the docs environment.
 
 * Build the PDF (LaTeX) version of the documentation:
 
@@ -101,7 +108,7 @@ The documentation is built from the separate [`docs/`](docs/) environment, which
   make pdf
   ```
 
-Link checking is the slowest part of building the documentation and is disabled in the interactive REPL (the `DOCUMENTER_CHECK_LINKS=0` environment variable, set by `devrepl.jl`). It runs in continuous integration.
+Link checking is the slowest part of building the documentation and is disabled for `make servedocs` and in the interactive REPL (the `DOCUMENTER_CHECK_LINKS=0` environment variable, set by `devrepl.jl`). It runs for `make docs` and in continuous integration.
 
 
 ## Semantic Versioning
@@ -144,7 +151,7 @@ To locally apply the code style, run `make codestyle`, or, if you cannot use `ma
 ```
 julia --project=test
 julia> using JuliaFormatter
-julia> format(["src", "docs", "test"])
+julia> format(["src", "docs", "test", "devrepl.jl"])
 ```
 
 in the project root.

@@ -10,6 +10,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 concurrency:
   # Skip intermediate builds: always.
   # Cancel intermediate builds: only if it is a pull request build.
@@ -19,6 +20,10 @@ jobs:
   test:
     name: Test ${{ matrix.title }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    permissions: # needed to allow julia-actions/cache to proactively delete old caches that it has created
+      actions: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -36,14 +41,21 @@ jobs:
           version: ${{ matrix.version }}
       - uses: julia-actions/cache@v3
       - name: "Instantiate test environment"
-        run: julia --project=test devrepl.jl
+        shell: julia --project=test --color=yes {0}
+        run: |
+          using Pkg
+          Pkg.instantiate()
       - name: "Run tests"
         shell: julia --color=yes --project=test --code-coverage="@" --depwarn="yes" --check-bounds="yes" {0}
         run: |
           include(joinpath(pwd(), "test", "runtests.jl"))
       - uses: julia-actions/julia-processcoverage@v1
       - name: "Summarize coverage"
-        run: julia --project=test -L devrepl.jl -e 'show_coverage()'
+        shell: julia --project=test --color=yes {0}
+        run: |
+          using LocalCoverage: CoverageTools, eval_coverage_metrics
+          coverage = CoverageTools.LCOV.readfile("lcov.info")
+          show(eval_coverage_metrics(coverage, "."))
       - uses: codecov/codecov-action@v7
         with:
           files: lcov.info
@@ -55,34 +67,38 @@ jobs:
   testoldest:
     name: Test Lower Compat Bounds
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions: # needed to allow julia-actions/cache to proactively delete old caches that it has created
+      actions: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
+      # The minimal versions are the lower `[compat]` bounds declared in
+      # `Project.toml` (the package's own dependencies) and in
+      # `test/Project.toml` (the test-only dependencies). Resolver.jl, which
+      # julia-downgrade-compat uses to find them, needs Julia >= 1.9, so the
+      # resolution runs on the current release. Both it and the second
+      # `setup-julia` take the oldest supported Julia from the `julia` compat
+      # entry in `Project.toml` via `min`, and the resulting manifest is
+      # instantiated and tested with that Julia.
       - uses: julia-actions/setup-julia@v3
         with:
-          version: 1.6
+          version: '1'
       - uses: julia-actions/cache@v3
-      - name: "Instantiate test environment"
-        shell: julia --project=test {0}
-        run: |
-          import Pkg
-          println("*** Dev-Installing DocumenterCitations")
-          Pkg.develop(path=pwd())
-          println("*** Pinning minimal dependencies")
-          Pkg.pin([
-              Pkg.PackageSpec(name="IOCapture", version="0.2.4"),
-              Pkg.PackageSpec(name="AbstractTrees", version="0.4.0"),
-              Pkg.PackageSpec(name="Bibliography", version="0.2.15"),
-              Pkg.PackageSpec(name="DocumenterInterLinks", version="1.0.0"),
-              Pkg.PackageSpec(name="Documenter", version="1.0.0"),
-              Pkg.PackageSpec(name="MarkdownAST", version="0.1.2"),
-              Pkg.PackageSpec(name="OrderedCollections", version="1.6.0"),
-              Pkg.PackageSpec(name="Bijections", version="0.1.4"),
-          ])
-          Pkg.precompile()
-          Pkg.status()
+      - uses: julia-actions/julia-downgrade-compat@v2
+        with:
+          projects: .,test
+          mode: forcedeps
+          julia_version: min
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: 'min'
       - name: "Run tests"
         shell: julia --color=yes --project=test {0}
         run: |
+          import Pkg
+          Pkg.instantiate()
+          Pkg.status(; mode=Pkg.PKGMODE_MANIFEST)
           include(joinpath(pwd(), "test", "runtests.jl"))
   docs:
     name: Documentation
@@ -136,7 +152,7 @@ jobs:
               exit(1)
           end
       - name: Spell Check
-        uses: crate-ci/typos@master
+        uses: crate-ci/typos@v1
       - name: Version Check
         shell: julia {0}
         run: |
@@ -155,7 +171,9 @@ jobs:
                   @error "Invalid version $VERSION on release branch"
                   exit(1)
               end
-          elseif (ENV["GITHUB_REF_TYPE"] == "branch") && (BRANCH != "master")
+          elseif ENV["GITHUB_REF_TYPE"] == "branch"
+              # Any branch other than a release branch (master included) must
+              # carry a dev suffix; release versions live only on release-* branches.
               if ("dev" in VERSION.prerelease) || ("dev" in VERSION.build)
                   println("Version $VERSION OK with dev-suffix on $BRANCH")
               else

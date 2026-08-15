@@ -17,7 +17,12 @@ cd(@__DIR__)
 Pkg.activate("test")
 
 function _instantiate()
-    Pkg.develop(path=".")
+    if VERSION < v"1.11"
+        # The `[sources]` section in `test/Project.toml` is only honored on
+        # Julia 1.11 and later.
+        Pkg.develop(path=".")
+    end
+    Pkg.instantiate()
 end
 
 if !isfile(joinpath("test", "Manifest.toml"))

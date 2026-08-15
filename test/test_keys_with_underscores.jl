@@ -1,6 +1,5 @@
 using DocumenterCitations
 using Test
-using TestingUtilities: @Test  # much better at comparing strings
 using IOCapture: IOCapture
 
 include("run_makedocs.jl")
@@ -27,12 +26,12 @@ include("run_makedocs.jl")
 
         #! format: off
         index_html = read(joinpath(dir, "build", "index.html"), String)
-        @Test contains(index_html, "[<a href=\"references/#rabiner_tutorial_1989\">1</a>]")
-        @Test contains(index_html, "[<a href=\"references/#GoerzQ2022\">2</a>, with <em>emphasis</em>]")
+        @test contains(index_html, "[<a href=\"references/#rabiner_tutorial_1989\">1</a>]")
+        @test contains(index_html, "[<a href=\"references/#GoerzQ2022\">2</a>, with <em>emphasis</em>]")
 
         references_html = read(joinpath(dir, "build", "references", "index.html"), String)
-        @Test contains(references_html, "<div id=\"rabiner_tutorial_1989\">")
-        @Test contains(references_html, "<div id=\"GoerzQ2022\">")
+        @test contains(references_html, "<div id=\"rabiner_tutorial_1989\">")
+        @test contains(references_html, "<div id=\"GoerzQ2022\">")
         #! format: on
 
     end
@@ -75,13 +74,13 @@ end
 
         #! format: off
         index_html = read(joinpath(dir, "build", "index.html"), String)
-        @Test contains(index_html, "[<a href=\"references/#rabiner_tutorial_1989\">1</a>]")
-        @Test contains(index_html, "[<a href=\"references/#Goerz_Q_2022\">2</a>]")
+        @test contains(index_html, "[<a href=\"references/#rabiner_tutorial_1989\">1</a>]")
+        @test contains(index_html, "[<a href=\"references/#Goerz_Q_2022\">2</a>]")
         @test !contains(index_html, "*")  # everything was normalized to "_"
 
         references_html = read(joinpath(dir, "build", "references", "index.html"), String)
-        @Test contains(references_html, "<div id=\"rabiner_tutorial_1989\">")
-        @Test contains(references_html, "<div id=\"Goerz_Q_2022\">")
+        @test contains(references_html, "<div id=\"rabiner_tutorial_1989\">")
+        @test contains(references_html, "<div id=\"Goerz_Q_2022\">")
         @test !contains(references_html, "*")  # everything was normalized to "_"
         #! format: on
 

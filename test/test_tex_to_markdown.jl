@@ -1,7 +1,6 @@
 using Printf
 using Test
 using IOCapture: IOCapture
-using TestingUtilities: @Test  # much better at comparing long strings
 
 import DocumenterCitations:
     DocumenterCitations,

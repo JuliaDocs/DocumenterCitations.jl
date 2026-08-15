@@ -2,7 +2,6 @@ using DocumenterCitations
 using DocumenterCitations: get_anchor_key
 using Test
 using Bijections
-using TestingUtilities: @Test  # much better at comparing strings
 using IOCapture: IOCapture
 
 include("run_makedocs.jl")
@@ -85,12 +84,12 @@ end
 
         #! format: off
         index_html = read(joinpath(dir, "build", "index.html"), String)
-        @Test contains(index_html, "<a href=\"references/#Chirikjian_2012\">")
-        @Test contains(index_html, "<a href=\"references/#Chirikjian_2012-2\">")
+        @test contains(index_html, "<a href=\"references/#Chirikjian_2012\">")
+        @test contains(index_html, "<a href=\"references/#Chirikjian_2012-2\">")
 
         references_html = read(joinpath(dir, "build", "references", "index.html"), String)
-        @Test contains(references_html, "<div id=\"Chirikjian_2012\">")
-        @Test contains(references_html, "<div id=\"Chirikjian_2012-2\">")
+        @test contains(references_html, "<div id=\"Chirikjian_2012\">")
+        @test contains(references_html, "<div id=\"Chirikjian_2012-2\">")
         #! format: on
 
     end

@@ -5,7 +5,7 @@
 
 
 using Test
-using TestingUtilities: @Test  # much better at comparing long strings
+include("word_diff.jl")
 using DocumenterCitations
 using DocumenterCitations: ast_linktext, ast_to_str
 using IOCapture: IOCapture
@@ -74,14 +74,14 @@ end
     # AST and a stable text after the first roundtrip)
 
     mdast2 = parse_md_page_str(MD_FULL)
-    @Test mdast2 == mdast
+    @test_diff mdast2 == mdast
 
     text = ast_to_str(mdast)
     mdast3 = parse_md_page_str(text)
-    @Test mdast3 == mdast
+    @test_diff mdast3 == mdast
 
     text2 = ast_to_str(mdast3)
-    @Test text2 == text
+    @test_diff text2 == text
 
 end
 

@@ -1,5 +1,5 @@
 using Test
-using TestingUtilities: @Test  # much better at comparing strings
+include("word_diff.jl")
 using OrderedCollections: OrderedDict
 using IOCapture: IOCapture
 import DocumenterCitations:
@@ -34,7 +34,7 @@ end
     entry(key) = bib.entries[key]
 
     lbl1 = format_bibliography_label(dumb, entry("GraceJPB2007"), _c)
-    @Test lbl1 == "[GBR+07]"
+    @test_diff lbl1 == "[GBR+07]"
     # The dumb style can generate labels without any any initialization, while
     # the smart style *requires* that init_bibliography! was called.
     c = IOCapture.capture(rethrow=InterruptException) do
@@ -51,8 +51,8 @@ end
 
     l1 = format_citation(dumb, cit("GraceJPB2007"), bib.entries, _c)
     l2 = format_citation(dumb, cit("GraceJMO2007"), bib.entries, _c)
-    @Test l1 == "[[GBR+07](@cite GraceJPB2007)]"
-    @Test l2 == "[[GBR+07](@cite GraceJMO2007)]"
+    @test_diff l1 == "[[GBR+07](@cite GraceJPB2007)]"
+    @test_diff l2 == "[[GBR+07](@cite GraceJMO2007)]"
 
     lbl1 = format_bibliography_label(dumb, entry("GraceJPB2007"), _c)
     lbl2 = format_bibliography_label(dumb, entry("GraceJMO2007"), _c)
@@ -60,12 +60,12 @@ end
 
     l1 = format_citation(smart, cit("GraceJPB2007"), bib.entries, _c)
     l2 = format_citation(smart, cit("GraceJMO2007"), bib.entries, _c)
-    @Test l1 == "[[GBR+07a](@cite GraceJPB2007)]"
-    @Test l2 == "[[GBR+07b](@cite GraceJMO2007)]"
+    @test_diff l1 == "[[GBR+07a](@cite GraceJPB2007)]"
+    @test_diff l2 == "[[GBR+07b](@cite GraceJMO2007)]"
 
     lbl1 = format_bibliography_label(smart, entry("GraceJPB2007"), _c)
     lbl2 = format_bibliography_label(smart, entry("GraceJMO2007"), _c)
-    @Test lbl1 == "[GBR+07a]"
-    @Test lbl2 == "[GBR+07b]"
+    @test_diff lbl1 == "[GBR+07a]"
+    @test_diff lbl2 == "[GBR+07b]"
 
 end
