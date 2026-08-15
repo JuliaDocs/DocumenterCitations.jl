@@ -34,7 +34,7 @@ By default, [DocumenterCitations.jl](https://github.com/JuliaDocs/DocumenterCita
 
 You can install the latest version of [DocumenterCitations.jl](https://github.com/JuliaDocs/DocumenterCitations.jl) using the [built-in package manager](https://docs.julialang.org/en/v1/stdlib/Pkg/)
 
-```julia
+```julia-repl
 pkg> add DocumenterCitations
 ```
 

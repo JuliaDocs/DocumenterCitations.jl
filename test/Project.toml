@@ -19,16 +19,9 @@ SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [sources]
-# Only honored on Julia >= 1.11. Local development (`make devrepl`) assumes
-# Julia >= 1.12.
 DocumenterCitations = {path = ".."}
 
 [compat]
-# The "Test Lower Compat Bounds" CI job resolves against these lower bounds, via
-# julia-actions/julia-downgrade-compat. Bounds for the package's own
-# dependencies live in the top-level `Project.toml` and define what this package
-# actually supports; the bounds here only need to be new enough to be useful and
-# old enough to remain compatible with those.
 DocumenterInterLinks = "1.0"
 IOCapture = "0.2.5, 1"
 JuliaFormatter = "1.0.62, 2"

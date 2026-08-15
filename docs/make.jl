@@ -1,4 +1,5 @@
 using DocumenterCitations
+using DocumenterCodeBlocks
 using DocumenterInterLinks
 using Documenter
 using Pkg
@@ -13,6 +14,16 @@ bib = CitationBibliography(
     joinpath(@__DIR__, "src", "refs.bib");
     style=:numeric  # default
 )
+
+# Syntax highlighting, line numbers, and docstring reference links for the Julia
+# code blocks. `min_lines=3` keeps the gutter off the many one- and two-line
+# configuration snippets.
+codeblocks = CodeBlocks(; min_lines=3)
+
+# Tweak the built-in CSS for codeblocks: no underline at all until
+# hover, and then only a lightly dotted underline
+codeblocks_css = "assets/codeblocks.css"
+
 
 links = InterLinks(
     "Documenter" => "https://documenter.juliadocs.org/stable/",
@@ -34,8 +45,7 @@ makedocs(
     format=Documenter.HTML(
         prettyurls=true,
         canonical="https://juliadocs.org/DocumenterCitations.jl",
-        # No `assets=String["assets/citations.css"]`: the CSS for the citations
-        # is inserted automatically, see `DocumenterCitations.InjectAssets`.
+        assets=String[codeblocks_css],
         footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl).",
     ),
     pages=[
@@ -46,7 +56,7 @@ makedocs(
         "Internals"              => "internals.md",
         "References"             => "references.md",
     ],
-    plugins=[bib, links],
+    plugins=[bib, links, codeblocks],
 )
 
 println("Finished makedocs")
