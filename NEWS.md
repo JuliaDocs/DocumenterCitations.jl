@@ -6,10 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+### Added
+
+* The recommended CSS for formatting the bibliography is now shipped with the package (in `assets/citations.css`) and inserted automatically by a new `DocumenterCitations.InjectAssets` pipeline step. Manually adding `assets=String["assets/citations.css"]` to the `Documenter.HTML` format in `docs/make.jl` is no longer required. Custom CSS can still be added that way, and takes precedence over the bundled stylesheet.
+* An `insert_css` keyword argument for `CitationBibliography`. The default is `insert_css=true`. With `insert_css=false`, the bundled `citations.css` is not inserted, which gives full control over the CSS for citations and bibliographies to the `assets` of `Documenter.HTML`.
+* A warning if any of the `assets` of `Documenter.HTML` is an unmodified copy of a `citations.css` bundled with some version of `DocumenterCitations`. Such a copy is redundant, as the stylesheet is now inserted automatically, and it would mask any future update of the bundled stylesheet. Customized stylesheets do not trigger the warning.
+
+
 ### Changed
 
 * Widened the `[compat]` bound for `Bibliography` to include the v0.4 release. The v0.4 API is fully compatible with the functions used by this package.
 * Updated links to `Bibliography.jl`, `BibParser.jl`, and `BibInternal.jl`, which have moved from the `Humans-of-Julia` GitHub organization to `JuliaBibliographies`.
+
+
+**Upgrade guidelines**:
+
+If you followed the instructions in previous versions of `DocumenterCitations` to create a `citations.css` file (based on the content given in the documentation), and passed it as a member of the list of `assets` to `Documenter.HTML`, you should now either _delete_ that file from your `docs/src/assets/` folder and from the `assets` list, or change the instantiation of `CitationBibliography` to have `insert_css=false`. Otherwise, the existing `citations.css` will be applied on top of the new built-in `citations.css`. Most likely, this is harmless (the two files are identical), but it may lead to conflicts and unexpected behavior if the built-in CSS ever changes in future versions. If you are deliberately using a custom CSS, you should investigate how your CSS interacts with the built-in definitions, and whether they should be applied on top (`insert_css=true`) or whether you want to take over the CSS styling completely (`insert_css=false`).
 
 
 ## [Version 1.4.1][1.4.1] - 2025-08-26

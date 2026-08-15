@@ -101,7 +101,6 @@ makedocs(;
     format=Documenter.HTML(
         prettyurls=true,
         canonical="https://juliaquantumcontrol.github.io/DocumenterCitations.jl",
-        assets=String["assets/citations.css"],
         footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl)."
     ),
     pages=[

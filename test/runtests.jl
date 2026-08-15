@@ -61,6 +61,11 @@ using DocumenterCitations
         include("test_anchor_keys.jl")
     end
 
+    println("\n* assets (test_assets.jl):")
+    @time @safetestset "assets" begin
+        include("test_assets.jl")
+    end
+
     println("\n* integration test (test_integration.jl):")
     @time @safetestset "integration" begin
         include("test_integration.jl")

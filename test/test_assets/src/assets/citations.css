@@ -1,0 +1,3 @@
+/* Custom CSS overriding the stylesheet bundled with DocumenterCitations */
+.citation dl {
+  display: block; }
