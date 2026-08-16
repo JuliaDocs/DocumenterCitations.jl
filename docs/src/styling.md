@@ -58,3 +58,16 @@ bib = CitationBibliography("refs.bib"; show_hover=false)
 ```
 
 This is independent of the `insert_css` option.
+
+
+## Bibliography backlinks
+
+Every entry in a [canonical `@bibliography` block](@ref canonical) ends with a list of backlinks (`↩`) to the places where the reference is cited, in the order in which the citations appear in the documentation. Hovering over a backlink names the section it leads to. See the [References](@ref) for how this looks for a reference that is cited a few dozen times.
+
+After following a citation, the backlink that leads back to it is outlined, so that it can be picked out among the others. The outline is applied by the bundled [`citations-backlinks.js`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/assets/citations-backlinks.js), which adds the class `is-current-citation` to that backlink; the styling is part of `citations.css`. Readers without JavaScript, and readers who reach the bibliography by other means than following a citation, see all backlinks alike. To omit the backlinks:
+
+```julia
+bib = CitationBibliography("refs.bib"; show_backlinks=false)
+```
+
+The backlinks are an HTML feature: they never appear in the LaTeX output.

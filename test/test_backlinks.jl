@@ -164,6 +164,41 @@ end
 end
 
 
+@testset "citations in a heading" begin
+
+    # A citation inside a heading belongs to the section that the heading
+    # opens, not to the preceding one, and the title of that section must not
+    # contain the rendered form of that citation
+
+    bib = CitationBibliography(BIBFILE)
+
+    run_makedocs(
+        joinpath(@__DIR__, "test_backlinks_headings");
+        sitename="Test",
+        plugins=[bib],
+        pages=["Home" => "index.md", "References" => "references.md"],
+        format=Documenter.HTML(edit_link="master", repolink=" ", prettyurls=false),
+        check_success=true
+    ) do dir, result, success, backtrace, output
+
+        @test success
+
+        section = "A section citing BrifNJP2010"
+        @test [site.section for site in bib.backlinks["BrifNJP2010"]] == [section]
+        @test [site.section for site in bib.backlinks["GoerzQ2022"]] == ["Introduction", section]
+
+        references_html = read(joinpath(dir, "build", "references.html"), String)
+        @test contains(references_html, "title=\"Cited in $section\">↩<sup>1</sup></a>")
+        @test contains(references_html, "title=\"Cited in $section\">↩<sup>2</sup></a>")
+        # The section title is taken before the citations in the heading are
+        # expanded, so it cannot pick up a citation label like "[1]"
+        @test !contains(references_html, "title=\"Cited in A section citing [")
+
+    end
+
+end
+
+
 @testset "backlinks do not affect the LaTeX output" begin
 
     tex_files = Dict{String,String}()

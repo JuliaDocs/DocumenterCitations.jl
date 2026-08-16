@@ -210,8 +210,13 @@
       found = true;
     });
     if (!found) return; // no citations on this page
+    // The jump fires `hashchange` right after the focus it caused, so the
+    // state that focus has just set must survive it: the reader is still at
+    // that citation, and tabbing back to it should describe it. Moving on to
+    // another fragment does clear the state, so that returning to the citation
+    // later is again recognized as a jump.
     window.addEventListener("hashchange", function () {
-      jumpedTo = null;
+      if ("#" + jumpedTo !== window.location.hash) jumpedTo = null;
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") hidePopup();

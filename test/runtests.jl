@@ -80,6 +80,11 @@ using DocumenterCitations
         include("test_backlinks.jl")
     end
 
+    println("\n* bundled browser assets (test_js_assets.jl):")
+    @time @safetestset "js_assets" begin
+        include("test_js_assets.jl")
+    end
+
     println("\n* integration test (test_integration.jl):")
     @time @safetestset "integration" begin
         include("test_integration.jl")

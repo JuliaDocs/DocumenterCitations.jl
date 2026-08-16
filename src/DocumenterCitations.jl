@@ -52,8 +52,9 @@ keyword argument to [`Documenter.makedocs`](@extref).
   [Citation hover popups](@ref). Set this to `false` to disable the popups.
 * `show_backlinks`: whether each entry in a canonical `@bibliography` block in
   the HTML documentation ends with a list of backlinks (`↩`) to the places
-  where the reference is cited. After following a citation, the backlink that
-  leads back to it is marked. Set this to `false` to omit the backlinks.
+  where the reference is cited, see [Bibliography backlinks](@ref). After
+  following a citation, the backlink that leads back to it is marked. Set this
+  to `false` to omit the backlinks.
 
 # Internal fields
 

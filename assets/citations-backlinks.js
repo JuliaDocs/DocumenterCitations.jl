@@ -47,47 +47,82 @@
     }
   }
 
-  // Mark the backlink that points at the citation with the given id, if the
-  // page has one. Any id that no backlink refers to is ignored, which is what
-  // keeps this from reacting to unrelated links.
-  function mark(id) {
+  function mark(backlink) {
     unmark();
-    if (!id) return;
+    if (!backlink) return;
+    backlink.classList.add(CLASS);
+    marked = backlink;
+  }
+
+  // The backlink pointing at the citation with the given id, if the page has
+  // one. Any id that no backlink refers to gives `null`, which is what keeps
+  // this from reacting to unrelated links.
+  function findBacklink(id) {
+    if (!id) return null;
     var backlinks = document.querySelectorAll(".citation-backlinks a");
     for (var i = 0; i < backlinks.length; i++) {
-      if (backlinks[i].hash === "#" + id) {
-        backlinks[i].classList.add(CLASS);
-        marked = backlinks[i];
-        return;
-      }
+      if (backlinks[i].hash === "#" + id) return backlinks[i];
     }
+    return null;
+  }
+
+  // The name of the anchor of the bibliography entry containing the given
+  // backlink, i.e., the target of the citations of that reference
+  function entryOf(backlink) {
+    var element = backlink;
+    while (element) {
+      if (element.id) return element.id;
+      element = element.parentNode;
+    }
+    return "";
+  }
+
+  // Whether following the given link means following a citation. Carrying an
+  // `id` is not sufficient: `Documenter` gives one to some of its own
+  // controls, e.g., the settings button, and clicking those must not be
+  // remembered as a citation (nor unmark the backlink of an actual one). A
+  // citation also links to the anchor of the bibliography entry.
+  function isCitation(link) {
+    return Boolean(link.id) && Boolean(link.hash);
+  }
+
+  // Mark the backlink for the citation remembered from an earlier click, but
+  // only if the reader has in fact arrived at the entry that this citation
+  // links to. Coming to the bibliography by other means — the sidebar, the
+  // search, a link to a section — shows all backlinks alike, even though the
+  // citation followed earlier in the session is still remembered.
+  function markOnArrival() {
+    var backlink = findBacklink(readFollowed());
+    if (backlink && "#" + entryOf(backlink) !== window.location.hash) {
+      backlink = null;
+    }
+    mark(backlink);
   }
 
   function init() {
-    // A click on a citation records where to come back to. The link is not
-    // checked for being a citation: `mark` only reacts to an id that some
-    // backlink points at.
+    // A click on a citation records where to come back to
     document.addEventListener("click", function (e) {
       var element = e.target;
       while (element && element !== document) {
         if (element.tagName === "A") {
-          if (element.id) {
+          if (isCitation(element)) {
             writeFollowed(element.id);
             // With the bibliography on the same page as the citation there is
-            // no page load that would pick the id up again
-            mark(element.id);
+            // no page load that would pick the id up again. The hash is only
+            // updated after this handler has run, so `markOnArrival` cannot be
+            // used here — but a click on a citation is arrival enough.
+            mark(findBacklink(element.id));
           }
           return;
         }
         element = element.parentNode;
       }
     });
-    mark(readFollowed());
+    markOnArrival();
     // Following a backlink, or any other jump within the page, leaves the mark
-    // in place: it still shows where the reader came from
-    window.addEventListener("pageshow", function () {
-      mark(readFollowed());
-    });
+    // in place: it still shows where the reader came from. Coming back through
+    // the history restores it, for a page served from the back/forward cache.
+    window.addEventListener("pageshow", markOnArrival);
   }
 
   if (document.readyState === "loading") {

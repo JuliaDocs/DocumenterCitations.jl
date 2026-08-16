@@ -38,34 +38,67 @@ function expand_citations!(doc::Documenter.Document)
 end
 
 # Expand all citations in one page (modify `mdast` in-place). The `section` is
-# the title of the section that contains the citations, tracked for the
-# backlinks. Since `replace!` traverses the children of any node before the
-# node itself, a heading is always processed before the citations that follow
-# it.
+# the title of the section containing any citation that is not preceded by a
+# heading (the name of the docstring anchor, for a docstring AST).
 function expand_citations!(
     doc::Documenter.Document,
     page,
     mdast::MarkdownAST.Node,
     src,
-    section=Ref("")
+    section=""
 )
     bib = Documenter.getplugin(doc, CitationBibliography)
+    sections = citation_sections(mdast, section)
     replace!(mdast) do node
-        if node.element isa Documenter.AnchoredHeader
-            section[] = Documenter.MDFlatten.mdflatten(first(node.children))
-            node
-        elseif node.element isa Documenter.DocsNode
+        if node.element isa Documenter.DocsNode
             # The docstring AST trees are not part of the tree of the page, so
             # we need to expand them explicitly
-            docstring_section = Ref(node.element.anchor.id)
             for (docstr, meta) in zip(node.element.mdasts, node.element.metas)
-                expand_citations!(doc, page, docstr, src, docstring_section)
+                expand_citations!(doc, page, docstr, src, node.element.anchor.id)
             end
             node
         else
-            expand_citation(node, page, bib; src=src, section=section[])
+            expand_citation(
+                node,
+                page,
+                bib;
+                src=src,
+                section=get(sections, node.element, section)
+            )
         end
     end
+end
+
+
+# Map the element of every link in `mdast` to the title of the section that
+# contains it, for the backlinks.
+#
+# This has to happen before the expansion: `replace!` traverses the children of
+# a node before the node itself, so tracking the current heading while
+# expanding would attribute a citation *inside* a heading to the preceding
+# section, and would flatten the heading only after the citations in it had
+# been replaced by their rendered form.
+#
+# Note that the elements of the nodes are shared between the tree that
+# `replace!` walks and the tree given here, which is what allows the result to
+# be used as a lookup table during the expansion.
+function citation_sections(mdast::MarkdownAST.Node, section="")
+    sections = IdDict{MarkdownAST.AbstractElement,String}()
+    _citation_sections!(sections, mdast, section)
+    return sections
+end
+
+function _citation_sections!(sections, node::MarkdownAST.Node, section)
+    for child in node.children
+        if child.element isa Documenter.AnchoredHeader
+            # A citation in the heading belongs to the section it opens
+            section = Documenter.MDFlatten.mdflatten(first(child.children))
+        elseif child.element isa MarkdownAST.Link
+            sections[child.element] = section
+        end
+        _citation_sections!(sections, child, section)
+    end
+    return sections
 end
 
 

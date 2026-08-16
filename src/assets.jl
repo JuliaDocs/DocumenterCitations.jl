@@ -11,11 +11,16 @@ The assets shipped with the package are copied into
 [`Documenter.HTML`](@extref Documenter.HTMLWriter.HTML) format, so that
 `Documenter` emits the corresponding `<link>` and `<script>` tags in the
 `<head>` of every page. Thus, no manual `assets` entry is required in
-[`Documenter.makedocs`](@extref). These are the `citations.css` stylesheet
-(unless the [`CitationBibliography`](@ref) plugin was instantiated with
-`insert_css=false`) and the stylesheet and script for the [Citation hover
-popups](@ref) (unless `show_hover=false`). The two options are independent of
-each other.
+[`Documenter.makedocs`](@extref). These are
+
+* the `citations.css` stylesheet, unless the [`CitationBibliography`](@ref)
+  plugin was instantiated with `insert_css=false`,
+* the stylesheet and the script for the [Citation hover popups](@ref), unless
+  `show_hover=false`,
+* the script that marks the followed citation in the [Bibliography
+  backlinks](@ref), unless `show_backlinks=false`.
+
+The three options are independent of each other.
 
 Stylesheets are inserted *before* any user-defined assets, so that custom CSS
 still takes precedence over the bundled ones, see [CSS Styling](@ref).
