@@ -25,7 +25,7 @@ include("run_makedocs.jl")
         @test success
 
         #! format: off
-        index_html = read(joinpath(dir, "build", "index.html"), String)
+        index_html = strip_cite_ids(read(joinpath(dir, "build", "index.html"), String))
         @test contains(index_html, "[<a href=\"references/#rabiner_tutorial_1989\">1</a>]")
         @test contains(index_html, "[<a href=\"references/#GoerzQ2022\">2</a>, with <em>emphasis</em>]")
 
@@ -73,7 +73,7 @@ end
         @test success
 
         #! format: off
-        index_html = read(joinpath(dir, "build", "index.html"), String)
+        index_html = strip_cite_ids(read(joinpath(dir, "build", "index.html"), String))
         @test contains(index_html, "[<a href=\"references/#rabiner_tutorial_1989\">1</a>]")
         @test contains(index_html, "[<a href=\"references/#Goerz_Q_2022\">2</a>]")
         @test !contains(index_html, "*")  # everything was normalized to "_"

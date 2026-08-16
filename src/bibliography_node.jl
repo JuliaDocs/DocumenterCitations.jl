@@ -66,7 +66,7 @@ end
 
 
 function domify_bib(dctx::Documenter.HTMLWriter.DCtx, bibliography::BibliographyNode)
-    Documenter.DOM.@tags dl ul ol li div dt dd
+    Documenter.DOM.@tags dl ul ol li div dt dd span sup a
     list_tag = dl
     if bibliography.list_style == :ul
         list_tag = ul
@@ -78,21 +78,45 @@ function domify_bib(dctx::Documenter.HTMLWriter.DCtx, bibliography::Bibliography
     # Collect the rendered entries for the hover popups (`WriteHoverData`).
     # Only canonical blocks define anchors, and thus link targets to hover over
     capture_hover = bib.show_hover && bibliography.canonical
-    page = ""
-    if capture_hover
-        # the page being rendered, relative to the root of the site (the
-        # separators are normalized for the benefit of Windows)
-        url = Documenter.HTMLWriter.get_url(dctx.ctx, dctx.navnode)
-        page = replace(url, '\\' => '/')
-    end
+    # Only canonical blocks list the places where a reference is cited
+    show_backlinks = bib.show_backlinks && bibliography.canonical
+    url = Documenter.HTMLWriter.get_url(dctx.ctx, dctx.navnode)
+    # the page being rendered, relative to the root of the site (the separators
+    # are normalized for the benefit of Windows)
+    page = replace(url, '\\' => '/')
     for item in bibliography.items
         anchor_id = isnothing(item.anchor_key) ? "" : "#$(item.anchor_key)"
         html_reference = Documenter.HTMLWriter.domify(dctx, item.reference.children)
         if capture_hover && !isnothing(item.anchor_key)
             # Note that we store the rendered entry only, without the
             # surrounding `div` that carries the anchor: the popup content must
-            # not duplicate any element ID
+            # not duplicate any element ID. The backlinks are appended after
+            # this, so that they do not show up in the popups either
             bib.hover_entries[item.anchor_key] = (join(string.(html_reference)), page)
+        end
+        if show_backlinks && !isnothing(item.anchor_key)
+            sites = get(bib.backlinks, item.anchor_key, CitationSite[])
+            backlinks = []
+            for (i, site) in enumerate(sites)
+                href = Documenter.HTMLWriter.pretty_url(
+                    dctx.ctx,
+                    Documenter.HTMLWriter.relhref(
+                        url,
+                        Documenter.HTMLWriter.get_url(dctx.ctx, site.src)
+                    )
+                )
+                attributes = Pair{Symbol,String}[:href=>"$href#$(site.id)"]
+                if !isempty(site.section)
+                    push!(attributes, :title => "Cited in $(site.section)")
+                end
+                # The space separates the backlinks and, for a reference that
+                # is cited very often, allows them to wrap onto the next line
+                push!(backlinks, " ")
+                push!(backlinks, a[attributes...]("↩", sup(string(i))))
+            end
+            if !isempty(backlinks)
+                push!(html_reference, span[".citation-backlinks"](backlinks))
+            end
         end
         if bibliography.list_style == :dl
             html_label = Documenter.HTMLWriter.domify(dctx, item.label.children)

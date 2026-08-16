@@ -20,11 +20,17 @@ using Dates: Dates, @dateformat_str
 
 export CitationBibliography
 
+# `CitationSite` is a field type of `CitationBibliography` and thus must be
+# defined before it. All other files are included at the end of the module.
+include("citation_site.jl")
+
 
 """Plugin for enabling bibliographic citations in Documenter.jl.
 
 ```julia
-bib = CitationBibliography(bibfile; style=:numeric, insert_css=true, show_hover=true)
+bib = CitationBibliography(
+    bibfile; style=:numeric, insert_css=true, show_hover=true, show_backlinks=true
+)
 ```
 
 instantiates a plugin object that must be passed as an element of the `plugins`
@@ -44,6 +50,11 @@ keyword argument to [`Documenter.makedocs`](@extref).
 * `show_hover`: whether hovering over a citation link in the HTML
   documentation shows the corresponding bibliography entry in a popup, see
   [Citation hover popups](@ref). Set this to `false` to disable the popups.
+* `show_backlinks`: whether each entry in a canonical `@bibliography` block in
+  the HTML documentation ends with a list of backlinks (`↩`) to the places
+  where the reference is cited, see [Bibliography backlinks](@ref). After
+  following a citation, the backlink that leads back to it is marked. Set this
+  to `false` to omit the backlinks.
 
 # Internal fields
 
@@ -65,6 +76,10 @@ should not be considered part of the stable API.
   bibliography entry and the path of the page containing it. Collected during
   HTML rendering and written out by
   [`DocumenterCitations.WriteHoverData`](@ref).
+* `backlinks`: dict of anchor name to the list of
+  `DocumenterCitations.CitationSite` objects for the places where the
+  corresponding reference is cited, in the order in which the citations appear
+  in the documentation. Collected by [`ExpandCitations`](@ref).
 """
 struct CitationBibliography <: Documenter.Plugin
 
@@ -81,6 +96,10 @@ struct CitationBibliography <: Documenter.Plugin
     # whether to show bibliography entries in popups when hovering over
     # citation links (HTML only)
     show_hover::Bool
+
+    # whether to show backlinks from the bibliography to the citations
+    # (HTML only)
+    show_backlinks::Bool
 
     # citation key => entry (set on instantiation; private)
     entries::OrderedDict{String,<:Bibliography.AbstractEntry}
@@ -103,13 +122,18 @@ struct CitationBibliography <: Documenter.Plugin
     # bibliography block, relative to the root of the site); private
     hover_entries::Dict{String,Tuple{String,String}}
 
+    # anchor name => list of places where the reference is cited, in the order
+    # in which the citations appear in the documentation; private
+    backlinks::Dict{String,Vector{CitationSite}}
+
 end
 
 function CitationBibliography(
     bibfile::AbstractString="";
     style=nothing,
     insert_css=true,
-    show_hover=true
+    show_hover=true,
+    show_backlinks=true
 )
     if isnothing(style)
         style = :numeric
@@ -155,17 +179,20 @@ function CitationBibliography(
     anchor_map = Documenter.AnchorMap()
     anchor_keys = Bijections.Bijection{String,String}()
     hover_entries = Dict{String,Tuple{String,String}}()
+    backlinks = Dict{String,Vector{CitationSite}}()
     return CitationBibliography(
         bibfile,
         style,
         insert_css,
         show_hover,
+        show_backlinks,
         entries,
         citations,
         page_citations,
         anchor_map,
         anchor_keys,
-        hover_entries
+        hover_entries,
+        backlinks
     )
 end
 

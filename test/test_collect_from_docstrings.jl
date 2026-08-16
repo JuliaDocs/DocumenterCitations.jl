@@ -24,7 +24,7 @@ include("run_makedocs.jl")
 
         index_outfile = joinpath(dir, "build", "index.html")
         @test isfile(index_outfile)
-        html = read(index_outfile, String)
+        html = strip_cite_ids(read(index_outfile, String))
         nbsp = "\u00A0"  # non-breaking space
         @test occursin("citing Ref.$(nbsp)[<a href=\"references/#GoerzQ2022\">1</a>]", html)
 

@@ -3,6 +3,13 @@ using Documenter: Documenter, makedocs
 import Logging
 
 
+# Remove the `id` attributes that the `show_backlinks` feature puts on the
+# citation links, so that a test can check the rendered HTML of a citation
+# without depending on how often the reference is cited elsewhere. The
+# attributes themselves are covered in `test_backlinks.jl`.
+strip_cite_ids(html) = replace(html, r" id=\"[^\"]+-cite-[0-9]+\"" => "")
+
+
 # Run `makedocs` as part of a test.
 #
 # Use as:

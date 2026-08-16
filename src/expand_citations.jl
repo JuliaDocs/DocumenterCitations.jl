@@ -22,28 +22,83 @@ end
 
 # Expand all citations in document
 function expand_citations!(doc::Documenter.Document)
-    for (src, page) in doc.blueprint.pages
+    bib = Documenter.getplugin(doc, CitationBibliography)
+    empty!(bib.backlinks)  # so that repeated builds give identical results
+    # We walk the pages in the same order as `CollectCitations`, so that the
+    # backlinks of each reference are in the order in which the citations
+    # appear in the documentation
+    nav_sources = [node.page for node in doc.internal.navlist]
+    other_sources = filter(src -> !(src in nav_sources), keys(doc.blueprint.pages))
+    for src in Iterators.flatten([nav_sources, other_sources])
+        page = doc.blueprint.pages[src]
         @debug "ExpandCitations: resolving links and replacement text for @cite entries in $(src)"
         empty!(page.globals.meta)
-        expand_citations!(doc, page, page.mdast)
+        expand_citations!(doc, page, page.mdast, src)
     end
 end
 
-# Expand all citations in one page (modify `mdast` in-place)
-function expand_citations!(doc::Documenter.Document, page, mdast::MarkdownAST.Node)
+# Expand all citations in one page (modify `mdast` in-place). The `section` is
+# the title of the section containing any citation that is not preceded by a
+# heading (the name of the docstring anchor, for a docstring AST).
+function expand_citations!(
+    doc::Documenter.Document,
+    page,
+    mdast::MarkdownAST.Node,
+    src,
+    section=""
+)
     bib = Documenter.getplugin(doc, CitationBibliography)
+    sections = citation_sections(mdast, section)
     replace!(mdast) do node
         if node.element isa Documenter.DocsNode
             # The docstring AST trees are not part of the tree of the page, so
             # we need to expand them explicitly
             for (docstr, meta) in zip(node.element.mdasts, node.element.metas)
-                expand_citations!(doc, page, docstr)
+                expand_citations!(doc, page, docstr, src, node.element.anchor.id)
             end
             node
         else
-            expand_citation(node, page, bib)
+            expand_citation(
+                node,
+                page,
+                bib;
+                src=src,
+                section=get(sections, node.element, section)
+            )
         end
     end
+end
+
+
+# Map the element of every link in `mdast` to the title of the section that
+# contains it, for the backlinks.
+#
+# This has to happen before the expansion: `replace!` traverses the children of
+# a node before the node itself, so tracking the current heading while
+# expanding would attribute a citation *inside* a heading to the preceding
+# section, and would flatten the heading only after the citations in it had
+# been replaced by their rendered form.
+#
+# Note that the elements of the nodes are shared between the tree that
+# `replace!` walks and the tree given here, which is what allows the result to
+# be used as a lookup table during the expansion.
+function citation_sections(mdast::MarkdownAST.Node, section="")
+    sections = IdDict{MarkdownAST.AbstractElement,String}()
+    _citation_sections!(sections, mdast, section)
+    return sections
+end
+
+function _citation_sections!(sections, node::MarkdownAST.Node, section)
+    for child in node.children
+        if child.element isa Documenter.AnchoredHeader
+            # A citation in the heading belongs to the section it opens
+            section = Documenter.MDFlatten.mdflatten(first(child.children))
+        elseif child.element isa MarkdownAST.Link
+            sections[child.element] = section
+        end
+        _citation_sections!(sections, child, section)
+    end
+    return sections
 end
 
 
@@ -96,6 +151,8 @@ function expand_citation(
     node::MarkdownAST.Node,
     page,
     bib::CitationBibliography;
+    src="",       # name of the page file, for the backlinks
+    section="",   # title of the section containing the citation
     _recursive=true  # internal: expand each expanded sibling again?
 )
     (node.element isa MarkdownAST.Link) || return node
@@ -121,7 +178,14 @@ function expand_citation(
         end
         expanded_nodes = []
         for sibling in expanded_nodes1
-            expanded_sibling = expand_citation(sibling, page, bib; _recursive=false)
+            expanded_sibling = expand_citation(
+                sibling,
+                page,
+                bib;
+                src=src,
+                section=section,
+                _recursive=false
+            )
             if expanded_sibling isa Vector
                 append!(expanded_nodes, expanded_sibling)
             else
@@ -141,6 +205,16 @@ function expand_citation(
             expanded_node.element.destination =
                 string(path, Documenter.anchor_fragment(anchor))
             @debug "expand_citation$rec: $cit → link to $(expanded_node.element.destination)"
+            if bib.show_backlinks
+                # Wrap the link in a node that gives it an HTML anchor, so that
+                # the bibliography can link back to this exact citation
+                sites = get!(bib.backlinks, anchor_key, CitationSite[])
+                id = "$(anchor_key)-cite-$(length(sites) + 1)"
+                push!(sites, CitationSite(src, id, section))
+                citation_site = MarkdownAST.Node(CitationSiteNode(id))
+                push!(citation_site.children, expanded_node)
+                return citation_site
+            end
             return expanded_node
         else
             link_text = ast_linktext(cit.node)

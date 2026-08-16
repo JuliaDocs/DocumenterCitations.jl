@@ -11,11 +11,16 @@ The assets shipped with the package are copied into
 [`Documenter.HTML`](@extref Documenter.HTMLWriter.HTML) format, so that
 `Documenter` emits the corresponding `<link>` and `<script>` tags in the
 `<head>` of every page. Thus, no manual `assets` entry is required in
-[`Documenter.makedocs`](@extref). These are the `citations.css` stylesheet
-(unless the [`CitationBibliography`](@ref) plugin was instantiated with
-`insert_css=false`) and the stylesheet and script for the [Citation hover
-popups](@ref) (unless `show_hover=false`). The two options are independent of
-each other.
+[`Documenter.makedocs`](@extref). These are
+
+* the `citations.css` stylesheet, unless the [`CitationBibliography`](@ref)
+  plugin was instantiated with `insert_css=false`,
+* the stylesheet and the script for the [Citation hover popups](@ref), unless
+  `show_hover=false`,
+* the script that marks the followed citation in the [Bibliography
+  backlinks](@ref), unless `show_backlinks=false`.
+
+The three options are independent of each other.
 
 Stylesheets are inserted *before* any user-defined assets, so that custom CSS
 still takes precedence over the bundled ones, see [CSS Styling](@ref).
@@ -54,7 +59,7 @@ _asset_uri(filename) = "assets/$ASSETS_SUBFOLDER/$filename"
 # format object
 function inject_assets!(doc::Documenter.Document)
     bib = Documenter.getplugin(doc, CitationBibliography)
-    (bib.insert_css || bib.show_hover) || return  # nothing to inject
+    (bib.insert_css || bib.show_hover || bib.show_backlinks) || return  # nothing to do
     html = _find_html_format(doc.user.format)
     isnothing(html) && return  # no HTML output
     destination = joinpath(doc.user.build, "assets", ASSETS_SUBFOLDER)
@@ -74,6 +79,9 @@ function inject_assets!(doc::Documenter.Document)
         # already here. It must come before the script that reads it.
         _register_asset!(html, _asset_uri(HOVER_DATA_FILENAME))
         _insert_asset!(html, "citations-hover.js", destination)
+    end
+    if bib.show_backlinks
+        _insert_asset!(html, "citations-backlinks.js", destination)
     end
     return
 end
@@ -154,7 +162,8 @@ _css_hash(str::AbstractString) = bytes2hex(sha256(_normalize_css(str)))
 # `test/test_assets.jl` fails if the first entry does not match the current
 # `assets/citations.css`.
 const KNOWN_CSS_HASHES = (
-    "ad197a59c8c6e614024dd464d9b9693a0ab5bb8479bcb2c1d423fb30ff7ee87b",  # since v1.3.3
+    "bc8cdcc413ba5b92d6547a7185bcb7fe02d8df6b3879a18b25d28b64cddb8e40",  # since v1.5.0
+    "ad197a59c8c6e614024dd464d9b9693a0ab5bb8479bcb2c1d423fb30ff7ee87b",  # v1.3.3 – v1.4.1
     "f2986976ab24cbac4d387e85c0c87c297591d0a153160913ee4bf01551402763",  # v1.0 – v1.3.2
     "a84156754fe3efcce021d9be813b2d3fa4e1cd83ef5669e9aac013c44b543b74",  # before v1.0
 )
