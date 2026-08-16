@@ -74,9 +74,26 @@ function domify_bib(dctx::Documenter.HTMLWriter.DCtx, bibliography::Bibliography
         list_tag = ol
     end
     html_list = list_tag()
+    bib = Documenter.getplugin(dctx.ctx.doc, CitationBibliography)
+    # Collect the rendered entries for the hover popups (`WriteHoverData`).
+    # Only canonical blocks define anchors, and thus link targets to hover over
+    capture_hover = bib.show_hover && bibliography.canonical
+    page = ""
+    if capture_hover
+        # the page being rendered, relative to the root of the site (the
+        # separators are normalized for the benefit of Windows)
+        url = Documenter.HTMLWriter.get_url(dctx.ctx, dctx.navnode)
+        page = replace(url, '\\' => '/')
+    end
     for item in bibliography.items
         anchor_id = isnothing(item.anchor_key) ? "" : "#$(item.anchor_key)"
         html_reference = Documenter.HTMLWriter.domify(dctx, item.reference.children)
+        if capture_hover && !isnothing(item.anchor_key)
+            # Note that we store the rendered entry only, without the
+            # surrounding `div` that carries the anchor: the popup content must
+            # not duplicate any element ID
+            bib.hover_entries[item.anchor_key] = (join(string.(html_reference)), page)
+        end
         if bibliography.list_style == :dl
             html_label = Documenter.HTMLWriter.domify(dctx, item.label.children)
             push!(html_list.nodes, dt(html_label))

@@ -8,16 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* The recommended CSS for formatting the bibliography is now shipped with the package (in `assets/citations.css`) and inserted automatically by a new `DocumenterCitations.InjectAssets` pipeline step. Manually adding `assets=String["assets/citations.css"]` to the `Documenter.HTML` format in `docs/make.jl` is no longer required. Custom CSS can still be added that way, and takes precedence over the bundled stylesheet.
-* An `insert_css` keyword argument for `CitationBibliography`. The default is `insert_css=true`. With `insert_css=false`, the bundled `citations.css` is not inserted, which gives full control over the CSS for citations and bibliographies to the `assets` of `Documenter.HTML`.
-* A warning if any of the `assets` of `Documenter.HTML` is an unmodified copy of a `citations.css` bundled with some version of `DocumenterCitations`. Such a copy is redundant, as the stylesheet is now inserted automatically, and it would mask any future update of the bundled stylesheet. Customized stylesheets do not trigger the warning.
+* The recommended CSS for formatting the bibliography is now shipped with the package (in `assets/citations.css`) and inserted automatically by a new `DocumenterCitations.InjectAssets` pipeline step. Manually adding `assets=String["assets/citations.css"]` to the `Documenter.HTML` format in `docs/make.jl` is no longer required. Custom CSS can still be added that way, and takes precedence over the bundled stylesheet. [[#115][], [#116][]]
+* An `insert_css` keyword argument for `CitationBibliography`. The default is `insert_css=true`. With `insert_css=false`, the bundled `citations.css` is not inserted, which gives full control over the CSS for citations and bibliographies to the `assets` of `Documenter.HTML`. [[#116][]]
+* A warning if any of the `assets` of `Documenter.HTML` is an unmodified copy of a `citations.css` bundled with some version of `DocumenterCitations`. Such a copy is redundant, as the stylesheet is now inserted automatically, and it would mask any future update of the bundled stylesheet. Customized stylesheets do not trigger the warning. [[#116][]]
+* Hovering over a citation link in the HTML documentation now shows the corresponding bibliography entry in a popup, similar to the footnote previews in `Documenter`. This is enabled by default; instantiate the plugin with `show_hover=false` to disable it. [[#67][], [#119][]]
 
 
 ### Changed
 
-* Widened the `[compat]` bound for `Bibliography` to include the v0.4 release. The v0.4 API is fully compatible with the functions used by this package.
+* Widened the `[compat]` bound for `Bibliography` to include the v0.4 release. The v0.4 API is fully compatible with the functions used by this package. [[#114][]]
 * Widened the `[compat]` bound for `OrderedCollections` to include the v2 release. [[#117][], in lieu of [#111][]]
-* Updated links to `Bibliography.jl`, `BibParser.jl`, and `BibInternal.jl`, which have moved from the `Humans-of-Julia` GitHub organization to `JuliaBibliographies`.
+* Updated links to `Bibliography.jl`, `BibParser.jl`, and `BibInternal.jl`, which have moved from the `Humans-of-Julia` GitHub organization to `JuliaBibliographies`. [[#114][]]
 
 
 **Upgrade guidelines**:
@@ -237,7 +238,11 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
-[#111]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/117
+[#119]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/119
+[#117]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/117
+[#116]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/116
+[#115]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/115
+[#114]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/114
 [#111]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/111
 [#102]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/102
 [#95]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/95
@@ -251,6 +256,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [#74]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/74
 [#73]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/73
 [#70]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/70
+[#67]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/67
 [#65]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/65
 [#62]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/62
 [#61]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/61

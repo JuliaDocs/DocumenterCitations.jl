@@ -85,21 +85,25 @@ end
     bibfile = joinpath(@__DIR__, "..", "docs", "src", "refs.bib")
     style = :alpha
     insert_css = true
+    show_hover = true
     entries = Bibliography.import_bibtex(bibfile)
     citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
     anchor_map = Documenter.AnchorMap()
     anchor_keys = Bijections.Bijection{String,String}()
+    hover_entries = Dict{String,Tuple{String,String}}()
 
     bib = CitationBibliography(
         bibfile,
         style,
         insert_css,
+        show_hover,
         entries,
         citations,
         page_citations,
         anchor_map,
-        anchor_keys
+        anchor_keys,
+        hover_entries
     )
 
     links = InterLinks(
