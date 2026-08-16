@@ -24,7 +24,7 @@ export CitationBibliography
 """Plugin for enabling bibliographic citations in Documenter.jl.
 
 ```julia
-bib = CitationBibliography(bibfile; style=:numeric, insert_css=true)
+bib = CitationBibliography(bibfile; style=:numeric, insert_css=true, show_hover=true)
 ```
 
 instantiates a plugin object that must be passed as an element of the `plugins`
@@ -41,6 +41,9 @@ keyword argument to [`Documenter.makedocs`](@extref).
   stylesheet, see the documentation about [CSS Styling](@ref) and
   [`DocumenterCitations.InjectAssets`](@ref). Set this to `false` to take full
   control of the CSS for citations and bibliographies.
+* `show_hover`: whether hovering over a citation link in the HTML
+  documentation shows the corresponding bibliography entry in a popup, see
+  [Citation hover popups](@ref). Set this to `false` to disable the popups.
 
 # Internal fields
 
@@ -58,6 +61,10 @@ should not be considered part of the stable API.
   identical to the citation key, but anchor names are restricted to consist
   only of ASCII letters, digits, and the symbols `-`, `_`. Thus, citation keys
   are normalized to meet that restriction.
+* `hover_entries`: dict of anchor name to a tuple of the rendered HTML of the
+  bibliography entry and the path of the page containing it. Collected during
+  HTML rendering and written out by
+  [`DocumenterCitations.WriteHoverData`](@ref).
 """
 struct CitationBibliography <: Documenter.Plugin
 
@@ -70,6 +77,10 @@ struct CitationBibliography <: Documenter.Plugin
 
     # whether to automatically insert the bundled `citations.css`
     insert_css::Bool
+
+    # whether to show bibliography entries in popups when hovering over
+    # citation links (HTML only)
+    show_hover::Bool
 
     # citation key => entry (set on instantiation; private)
     entries::OrderedDict{String,<:Bibliography.AbstractEntry}
@@ -88,9 +99,18 @@ struct CitationBibliography <: Documenter.Plugin
     # Map citation key => anchor name
     anchor_keys::Bijections.Bijection{String,String}
 
+    # anchor name => (rendered entry HTML, path of the page with the canonical
+    # bibliography block, relative to the root of the site); private
+    hover_entries::Dict{String,Tuple{String,String}}
+
 end
 
-function CitationBibliography(bibfile::AbstractString=""; style=nothing, insert_css=true)
+function CitationBibliography(
+    bibfile::AbstractString="";
+    style=nothing,
+    insert_css=true,
+    show_hover=true
+)
     if isnothing(style)
         style = :numeric
         @debug "Using default style=$(repr(style))"
@@ -134,15 +154,18 @@ function CitationBibliography(bibfile::AbstractString=""; style=nothing, insert_
     page_citations = Dict{String,Set{String}}()
     anchor_map = Documenter.AnchorMap()
     anchor_keys = Bijections.Bijection{String,String}()
+    hover_entries = Dict{String,Tuple{String,String}}()
     return CitationBibliography(
         bibfile,
         style,
         insert_css,
+        show_hover,
         entries,
         citations,
         page_citations,
         anchor_map,
-        anchor_keys
+        anchor_keys,
+        hover_entries
     )
 end
 

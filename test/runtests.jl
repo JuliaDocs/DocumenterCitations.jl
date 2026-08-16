@@ -70,6 +70,11 @@ using DocumenterCitations
         include("test_assets.jl")
     end
 
+    println("\n* show_hover (test_show_hover.jl):")
+    @time @safetestset "show_hover" begin
+        include("test_show_hover.jl")
+    end
+
     println("\n* integration test (test_integration.jl):")
     @time @safetestset "integration" begin
         include("test_integration.jl")

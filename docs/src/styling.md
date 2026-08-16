@@ -45,3 +45,16 @@ This prevents the bundled stylesheet from being copied into the build folder or 
 !!! warning
 
     Only have a `citations.css` file in the `assets` list if you intend to customize the styling of the bibliography. Be deliberate about whether your customization augments the built-in styles (e.g., to customize non-canonical bibliographies), or _replaces_ them, and set the `insert_css` flag accordingly.
+
+
+## Citation hover popups
+
+Hovering over (or tabbing to) a citation link shows the bibliography entry in a popup, in the same form in which it appears in the [`@bibliography` block](@ref canonical) that defines it. This saves the reader from leaving the current page, and ties in with the [footnote previews](@extref Documenter `Footnotes`) that `Documenter` shows for footnote links. The popup stays open while the mouse is over it, so that long entries can be scrolled and links inside them can be clicked. Pressing `Escape` closes it. Try hovering over the citation of Ref. [GoerzQ2022](@cite).
+
+The popups are styled by the bundled [`citations-hover.css`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/assets/citations-hover.css), which defines the `.citation-hover-popup` class and a set of `--citation-hover-*` custom properties for the colors of the built-in `Documenter` themes. As for `citations.css`, a custom stylesheet in the `assets` of `Documenter.HTML` takes precedence. To disable the popups entirely:
+
+```julia
+bib = CitationBibliography("refs.bib"; show_hover=false)
+```
+
+This is independent of the `insert_css` option.

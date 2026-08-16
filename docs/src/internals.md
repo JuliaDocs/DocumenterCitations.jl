@@ -18,7 +18,7 @@ The [`DocumenterCitations.CitationBibliography`](@ref) plugin hooks into the [`D
 2. [`ExpandBibliography`](@ref)
 3. [`ExpandCitations`](@ref)
 
-In addition, the plugin adds a fourth step, [`InjectAssets`](@ref), which runs just before [`RenderDocument`](https://documenter.juliadocs.org/stable/lib/internals/builder/#Documenter.Builder.RenderDocument) and takes care of the [CSS styling](@ref "CSS Styling") of the rendered citations and bibliographies.
+In addition, the plugin adds a fourth step, [`InjectAssets`](@ref), which runs just before [`RenderDocument`](https://documenter.juliadocs.org/stable/lib/internals/builder/#Documenter.Builder.RenderDocument) and inserts the assets for the [CSS styling](@ref "CSS Styling") of the rendered citations and bibliographies and for the [citation hover popups](@ref "Citation hover popups"). A fifth step, [`WriteHoverData`](@ref), runs after `RenderDocument` and writes the data for those popups.
 
 
 ```@docs
@@ -26,6 +26,7 @@ CollectCitations
 ExpandBibliography
 ExpandCitations
 InjectAssets
+WriteHoverData
 ```
 
 ## [Customization](@id customization)
