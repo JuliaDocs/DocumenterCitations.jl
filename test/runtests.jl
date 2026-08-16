@@ -60,6 +60,11 @@ using DocumenterCitations
         include("test_keys_with_underscores.jl")
     end
 
+    println("\n* multiple_bibfiles (test_multiple_bibfiles.jl):")
+    @time @safetestset "multiple_bibfiles" begin
+        include("test_multiple_bibfiles.jl")
+    end
+
     println("\n* anchor_keys (test_anchor_keys.jl):")
     @time @safetestset "anchor_keys" begin
         include("test_anchor_keys.jl")

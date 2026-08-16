@@ -128,12 +128,28 @@ struct CitationBibliography <: Documenter.Plugin
 
 end
 
+# Read the entries from `bibfile`. This is the default for the `_entries`
+# keyword argument of `CitationBibliography`, so that `bibfile` is checked for
+# existence only if it is actually read.
+function _read_bibfile(bibfile)
+    if (length(bibfile) > 0) && !isfile(bibfile)
+        error("bibfile $(repr(bibfile)) does not exist")
+    end
+    return Bibliography.import_bibtex(bibfile)
+end
+
+
 function CitationBibliography(
     bibfile::AbstractString="";
     style=nothing,
     insert_css=true,
     show_hover=true,
-    show_backlinks=true
+    show_backlinks=true,
+    _entries=_read_bibfile(bibfile),
+    # `_entries` is deliberate undocumented, intended to give people a "hack"
+    # into enabling the unsupported use of multiple bib files,
+    # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/72. If given,
+    # `bibfile` is not read and serves only as a label in log messages.
 )
     if isnothing(style)
         style = :numeric
@@ -142,9 +158,8 @@ function CitationBibliography(
         @debug "Auto-upgrading :alpha to AlphaStyle()"
         style = AlphaStyle()
     end
-    bibfile_entries = Bibliography.import_bibtex(bibfile)
-    entries = OrderedDict{String,eltype(values(bibfile_entries))}()
-    for (bibfile_key, entry) in bibfile_entries
+    entries = OrderedDict{String,eltype(values(_entries))}()
+    for (bibfile_key, entry) in _entries
         # The `text` in `[text](@cite)` has to be unambiguous when
         # round-tripping between String and MarkdownAST.Node. Since `_` and `*`
         # can both indicate emphasis in markdown, we normalize to `_` (which
@@ -166,13 +181,8 @@ function CitationBibliography(
         # `makedocs`, and then `Documenter.getplugin` instantiated a new object
         # with the default (empty) constructor
         @warn "No `bibfile`. Did you instantiate `bib = CitationBibliography(bibfile)` and pass `bib` to `makedocs` as an element of the `plugins` keyword argument?"
-    else
-        if !isfile(bibfile)
-            error("bibfile $(repr(bibfile)) does not exist")
-        end
-        if length(entries) == 0
-            @warn "No entries loaded from $(repr(bibfile))"
-        end
+    elseif length(entries) == 0
+        @warn "No entries loaded from $(repr(bibfile))"
     end
     citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
