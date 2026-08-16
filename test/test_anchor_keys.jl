@@ -83,7 +83,7 @@ end
         @test contains(output, "normalizes to ambiguous \"Chirikjian_2012\"")
 
         #! format: off
-        index_html = read(joinpath(dir, "build", "index.html"), String)
+        index_html = strip_cite_ids(read(joinpath(dir, "build", "index.html"), String))
         @test contains(index_html, "<a href=\"references/#Chirikjian_2012\">")
         @test contains(index_html, "<a href=\"references/#Chirikjian_2012-2\">")
 

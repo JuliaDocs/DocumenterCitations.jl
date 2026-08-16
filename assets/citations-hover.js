@@ -36,6 +36,7 @@
   var trigger = null; // the link the popup currently belongs to
   var pageURL = {}; // anchor name -> absolute URL of the bibliography page
   var pageKey = {}; // anchor name -> that URL in the form used for comparison
+  var jumpedTo = null; // citation whose jump-focus was already skipped
 
   // A form of the URL that identifies the page, for comparing a link with the
   // recorded path of a bibliography page: without the fragment, and with a
@@ -166,11 +167,25 @@
   }
 
   // Keyboard focus shows the popup without delay, so that a screen reader
-  // picks up the `aria-describedby` description when it announces the link
+  // picks up the `aria-describedby` description when it announces the link.
+  //
+  // Following a link *to* a citation, e.g. one of the backlinks at the end of
+  // a bibliography entry, also focuses it. That must not open a popup: the
+  // reader asked to be taken to the citation, not to be shown the entry they
+  // are coming from. Only the first focus is skipped, so that tabbing back to
+  // the link later still describes it.
   function onLinkFocus(e) {
+    var link = e.currentTarget;
+    // The hash is up to date by the time the focus event fires (`hashchange`
+    // only comes afterwards), so the link being the current fragment target
+    // identifies the focus as the one that follows the jump
+    if (link.id && "#" + link.id === window.location.hash && link.id !== jumpedTo) {
+      jumpedTo = link.id;
+      return;
+    }
     cancelHide();
     if (showTimer) clearTimeout(showTimer);
-    showPopupFor(e.currentTarget);
+    showPopupFor(link);
   }
 
   function init() {
@@ -195,6 +210,9 @@
       found = true;
     });
     if (!found) return; // no citations on this page
+    window.addEventListener("hashchange", function () {
+      jumpedTo = null;
+    });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") hidePopup();
     });

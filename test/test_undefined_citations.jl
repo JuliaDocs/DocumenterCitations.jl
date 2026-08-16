@@ -32,7 +32,7 @@ include("run_makedocs.jl")
         @test isfile(index_html_file)
         if isfile(index_html_file)
             #! format: off
-            index_html = read(index_html_file, String)
+            index_html = strip_cite_ids(read(index_html_file, String))
             @test occursin("and a non-existing key [?]", index_html)
             @test occursin("[?, ?, ?, <a href=\"references/#BrumerShapiro2003\">2</a>–<a href=\"references/#KochEPJQT2022\">6</a>, and references therein]", index_html)
             @test occursin("<a href=\"references/#BrumerShapiro2003\">Brumer and Shapiro [2]</a>, <a href=\"references/#BrifNJP2010\">Brif <em>et al.</em> [3]</a>, [?], [?], <a href=\"references/#SolaAAMOP2018\">Sola <em>et al.</em> [4]</a>, [?], <a href=\"references/#Wilhelm2003_10132\">Wilhelm <em>et al.</em> [5]</a>, <a href=\"references/#KochEPJQT2022\">Koch <em>et al.</em> [6]</a>, and references therein", index_html)
@@ -89,7 +89,7 @@ end
         @test isfile(index_html_file)
         if isfile(index_html_file)
            #! format: off
-           index_html = read(index_html_file, String)
+           index_html = strip_cite_ids(read(index_html_file, String))
            @test occursin("and a non-existing key [?]", index_html)
            @test occursin("[?], [?], <a href=\"references/#SolaAAMOP2018\">Sola <em>et al.</em> [SCMM18]</a>, [?], <a href=\"references/#Wilhelm2003_10132\">Wilhelm <em>et al.</em> [WKM+20]</a>, <a href=\"references/#KochEPJQT2022\">Koch <em>et al.</em> [KBC+22]</a>, and references therein", index_html)
            @test occursin("<a href=\"references/#BrumerShapiro2003\">Brumer and Shapiro [BS03]</a>, <a href=\"references/#BrifNJP2010\">Brif <em>et al.</em> [BCR10]</a>, [?], [?], <a href=\"references/#SolaAAMOP2018\">Sola <em>et al.</em> [SCMM18]</a>, [?], <a href=\"references/#Wilhelm2003_10132\">Wilhelm <em>et al.</em> [WKM+20]</a>, <a href=\"references/#KochEPJQT2022\">Koch <em>et al.</em> [KBC+22]</a>, and references therein", index_html)
@@ -123,7 +123,7 @@ end
         @test isfile(index_html_file)
         if isfile(index_html_file)
            #! format: off
-           index_html = read(index_html_file, String)
+           index_html = strip_cite_ids(read(index_html_file, String))
            @test occursin("and a non-existing key (???)", index_html)
            @test occursin("(<a href=\"references/#BrumerShapiro2003\">Brumer and Shapiro, 2003</a>; <a href=\"references/#BrifNJP2010\">Brif <em>et al.</em>, 2010</a>; ???; ???; <a href=\"references/#SolaAAMOP2018\">Sola <em>et al.</em>, 2018</a>; ???; <a href=\"references/#Wilhelm2003_10132\">Wilhelm <em>et al.</em>, 2020</a>; <a href=\"references/#KochEPJQT2022\">Koch <em>et al.</em>, 2022</a>; and references therein)", index_html)
            @test occursin("<a href=\"references/#BrumerShapiro2003\">Brumer and Shapiro (2003)</a>, <a href=\"references/#BrifNJP2010\">Brif <em>et al.</em> (2010)</a>, ???, ???, <a href=\"references/#SolaAAMOP2018\">Sola <em>et al.</em> (2018)</a>, ???, <a href=\"references/#Wilhelm2003_10132\">Wilhelm <em>et al.</em> (2020)</a>, <a href=\"references/#KochEPJQT2022\">Koch <em>et al.</em> (2022)</a>, and references therein", index_html)

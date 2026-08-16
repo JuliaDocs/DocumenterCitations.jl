@@ -105,11 +105,13 @@ end
 
 @testset "insert_css=false" begin
 
-    # `show_hover=false` as well, so that no other asset is inserted either
+    # `show_hover` and `show_backlinks` are off as well, so that no other asset
+    # is inserted either
     bib = CitationBibliography(
         joinpath(@__DIR__, "test_assets", "src", "refs.bib");
         insert_css=false,
-        show_hover=false
+        show_hover=false,
+        show_backlinks=false
     )
 
     run_makedocs(
@@ -137,7 +139,8 @@ end
     bib = CitationBibliography(
         joinpath(@__DIR__, "test_assets", "src", "refs.bib");
         insert_css=false,
-        show_hover=false
+        show_hover=false,
+        show_backlinks=false
     )
 
     run_makedocs(

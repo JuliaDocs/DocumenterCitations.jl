@@ -197,7 +197,7 @@ end
 
         @test success
 
-        index_html = read(joinpath(dir, "build", "index.html"), String)
+        index_html = strip_cite_ids(read(joinpath(dir, "build", "index.html"), String))
         @test contains(index_html, "<a href=\"index.html#GoerzQ2022\">")
 
         data_file =

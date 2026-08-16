@@ -86,24 +86,28 @@ end
     style = :alpha
     insert_css = true
     show_hover = true
+    show_backlinks = true
     entries = Bibliography.import_bibtex(bibfile)
     citations = OrderedDict{String,Int64}()
     page_citations = Dict{String,Set{String}}()
     anchor_map = Documenter.AnchorMap()
     anchor_keys = Bijections.Bijection{String,String}()
     hover_entries = Dict{String,Tuple{String,String}}()
+    backlinks = Dict{String,Vector{DocumenterCitations.CitationSite}}()
 
     bib = CitationBibliography(
         bibfile,
         style,
         insert_css,
         show_hover,
+        show_backlinks,
         entries,
         citations,
         page_citations,
         anchor_map,
         anchor_keys,
-        hover_entries
+        hover_entries,
+        backlinks
     )
 
     links = InterLinks(
@@ -135,7 +139,8 @@ end
         @test !contains(references_html, "<div id=\"Wilhelm2003\">")  # pre-#95
         @test contains(references_html, "<div id=\"Wilhelm2003_10132\">")
 
-        syntax_html = read(joinpath(dir, "build", "syntax", "index.html"), String)
+        syntax_html =
+            strip_cite_ids(read(joinpath(dir, "build", "syntax", "index.html"), String))
         @test contains(syntax_html, "<a href=\"../references/#Wilhelm2003_10132\">")
 
     end

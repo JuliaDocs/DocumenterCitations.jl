@@ -70,7 +70,8 @@ end
         #! format: on
 
         build(paths...) = joinpath(dir, "build", paths...)
-        citation(n) = Regex("\\[<a href=\"[^\"]+\">$n</a>\\]")
+        # the `[^>]*` skips the `id` attribute added for the backlinks
+        citation(n) = Regex("\\[<a href=\"[^\"]+\"[^>]*>$n</a>\\]")
         contentlink(name) = ".html#$(replace(name, " " => "-"))\">$name"
 
         index_html = FileContent(build("index.html"))

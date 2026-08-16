@@ -75,6 +75,11 @@ using DocumenterCitations
         include("test_show_hover.jl")
     end
 
+    println("\n* backlinks (test_backlinks.jl):")
+    @time @safetestset "backlinks" begin
+        include("test_backlinks.jl")
+    end
+
     println("\n* integration test (test_integration.jl):")
     @time @safetestset "integration" begin
         include("test_integration.jl")
