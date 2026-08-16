@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * A warning if any of the `assets` of `Documenter.HTML` is an unmodified copy of a `citations.css` bundled with some version of `DocumenterCitations`. Such a copy is redundant, as the stylesheet is now inserted automatically, and it would mask any future update of the bundled stylesheet. Customized stylesheets do not trigger the warning. [[#116][]]
 * Hovering over a citation link in the HTML documentation now shows the corresponding bibliography entry in a popup, similar to the footnote previews in `Documenter`. This is enabled by default; instantiate the plugin with `show_hover=false` to disable it. [[#67][], [#119][]]
 * Each entry in a canonical `@bibliography` block in the HTML documentation now ends with backlinks (`↩`) to the places where the reference is cited. After following a citation, the backlink that leads back to it is marked. This is enabled by default; instantiate the plugin with `show_backlinks=false` to disable it. [[#69][], [#120][]]
+* An unofficial and unsupported hook that allows seeding the plugin from multiple `.bib` files. See `test/test_multiple_bibfiles.jl` for a worked example. [[#72][], [#121][]]
 
 
 ### Changed
@@ -239,6 +240,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [1.2.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v0.2.12...v1.0.0
+[#121]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/121
 [#120]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/120
 [#119]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/119
 [#117]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/117
@@ -257,6 +259,7 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 [#78]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/78
 [#74]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/74
 [#73]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/73
+[#72]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/72
 [#70]: https://github.com/JuliaDocs/DocumenterCitations.jl/pull/70
 [#69]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/69
 [#67]: https://github.com/JuliaDocs/DocumenterCitations.jl/issues/67
