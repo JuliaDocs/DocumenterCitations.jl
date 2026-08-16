@@ -131,12 +131,14 @@ Clicking on the citations takes you to the bibliography ("[References](@ref)").
 
 The following is a list of some projects that use `DocumenterCitations`:
 
+* [JuMP](https://jump.dev/JuMP.jl/stable/)
+* [Manifolds](https://juliamanifolds.github.io/Manifolds.jl/stable/) and [Manopt](https://manoptjl.org/stable/)
 * [Oceananigans](https://clima.github.io/OceananigansDocumentation/stable/)
 * [OSCAR](https://docs.oscar-system.org/stable/)
-* [QuantumPropagators](https://juliaquantumcontrol.github.io/QuantumPropagators.jl/)
+* [QuantumClifford](https://qc.quantumsavory.org/stable/) and the parent [QuantumSavory organization](https://github.com/QuantumSavory)
 * [QuantumControl](https://juliaquantumcontrol.github.io/QuantumControl.jl/)
+* [QuantumPropagators](https://juliaquantumcontrol.github.io/QuantumPropagators.jl/)
 * [TwoQubitWeylChamber](https://juliaquantumcontrol.github.io/TwoQubitWeylChamber.jl/)
-* [QuantumClifford](https://qc.quantumsavory.org/stable/references/) and the parent [QuantumSavory organization](https://github.com/QuantumSavory)
 
 ## Home References
 
