@@ -135,7 +135,16 @@ function _read_bibfile(bibfile)
     if (length(bibfile) > 0) && !isfile(bibfile)
         error("bibfile $(repr(bibfile)) does not exist")
     end
-    return Bibliography.import_bibtex(bibfile)
+    try
+        return Bibliography.import_bibtex(bibfile)
+    catch exc
+        if exc isa KeyError
+            msg = "Failed to parse bibfile $(repr(bibfile)): $exc. This is likely caused by a known bug in BibParser.jl (https://github.com/Humans-of-Julia/BibParser.jl/issues/31) where an `@string` macro defined with braces, e.g., `@string{name = {value}}`, is not recognized when later referenced without quotes, e.g., `field = name`. As a workaround, define `@string` macros using quotes instead: `@string{name = \"value\"}`."
+            error(msg)
+        else
+            rethrow()
+        end
+    end
 end
 
 

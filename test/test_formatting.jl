@@ -149,11 +149,12 @@ end
     bib = CitationBibliography(DocumenterCitations.example_bibfile)
     md(key; kwargs...) = format_names(bib.entries[key]; kwargs...)
     @test_diff md("SciPy"; names=:lastfirst) ==
-               "Jones, E.; Oliphant, T.; Peterson, P. and others"
-    @test_diff md("SciPy"; names=:last) == "E. Jones, T. Oliphant, P. Peterson and others"
+               "Jones, E.; Oliphant, T. E.; Peterson, P. and others"
+    @test_diff md("SciPy"; names=:last) ==
+               "E. Jones, T. E. Oliphant, P. Peterson and others"
     @test_diff md("SciPy"; names=:lastonly) == "Jones, Oliphant, Peterson and others"
     @test_diff md("SciPy"; names=:full) ==
-               "Eric Jones, Travis Oliphant, Pearu Peterson and others"
+               "Eric Jones, Travis E. Oliphant, Pearu Peterson and others"
     @test_throws ArgumentError md("SciPy"; names=:first)
 end
 
@@ -183,13 +184,13 @@ end
     @test_diff md("GoerzNPJQI2017") ==
                "M. H. Goerz, F. Motzoi, K. B. Whaley and C. P. Koch. *Charting the circuit QED design landscape using optimal control theory*, [npj Quantum Inf **3**, 37](https://doi.org/10.1038/s41534-017-0036-0) (2017)."
     @test_diff md("Wilhelm2003.10132") ==
-               "F. K. Wilhelm, S. Kirchhoff, S. Machnes, N. Wittler and D. Sugny. *An introduction into optimal control for quantum technologies*, [arXiv:2003.10132](https://doi.org/10.48550/ARXIV.2003.10132) (2020)."
+               "F. K. Wilhelm, S. Kirchhoff, S. Machnes, N. Wittler and D. Sugny. *An introduction into optimal control for quantum technologies*, [arXiv:2003.10132](https://doi.org/10.48550/ARXIV.2003.10132) (2020), lecture notes."
     @test_diff md("Evans1983") ==
                "L. C. Evans. [*An Introduction to Mathematical Optimal Control Theory*](https://math.berkeley.edu/~evans/control.course.pdf). Lecture Notes, University of California, Berkeley."
     @test_diff md("Giles2008b") ==
                "M. B. Giles. [*An extended collection of matrix derivative results for forward and reverse mode automatic differentiation*](https://people.maths.ox.ac.uk/gilesm/files/NA-08-01.pdf). Technical Report NA-08-01 (Oxford University Computing Laboratory, Jan 2008)."
     @test_diff md("QCRoadmap") ==
-               "[*Quantum Computation Roadmap*](http://qist.lanl.gov) (2004). Version 2.0; April 2, 2004."
+               "[*Quantum Computation Roadmap*](https://web.archive.org/web/20251116175041/https://qist.lanl.gov/) (2004). Version 2.0; April 2, 2004."
     @test_diff md("TedRyd") ==
                "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
     @test_diff md("jax") ==
@@ -197,7 +198,7 @@ end
     @test_diff md("WP_Schroedinger") ==
                "Wikipedia: [*Schrödinger equation*](https://en.wikipedia.org/wiki/Schrödinger_equation). Accessed on Oct 24, 2023."
     @test_diff md("SciPy") ==
-               "E. Jones, T. Oliphant, P. Peterson and others. [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/) (2001–). Project website at [`https://scipy.org`](https://scipy.org)."
+               "E. Jones, T. E. Oliphant, P. Peterson and others. [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/) (2001–). Project website at [`https://scipy.org`](https://scipy.org)."
     @test_diff md("BrionPhd2004") ==
                "E. Brion. *Contrôle Quantique et Protection de la Cohérence par effet Zénon, Applications à l'Informatique Quantique*. Ph.D. Thesis, Université Pierre et Marie Curie - Paris VI (2014). [HAL:tel-00007910v2](https://hal.science/tel-00007910v2)."
     @test_diff md("Tannor2007") ==
@@ -303,13 +304,13 @@ end
     @test_diff md("GoerzNPJQI2017") ==
                "M. H. Goerz, F. Motzoi, K. B. Whaley and C. P. Koch. [*Charting the circuit QED design landscape using optimal control theory*](https://doi.org/10.1038/s41534-017-0036-0), npj Quantum Inf **3**, 37 (2017)."
     @test_diff md("Wilhelm2003.10132") ==
-               "F. K. Wilhelm, S. Kirchhoff, S. Machnes, N. Wittler and D. Sugny. [*An introduction into optimal control for quantum technologies*](https://doi.org/10.48550/ARXIV.2003.10132), arXiv:2003.10132 (2020)."
+               "F. K. Wilhelm, S. Kirchhoff, S. Machnes, N. Wittler and D. Sugny. [*An introduction into optimal control for quantum technologies*](https://doi.org/10.48550/ARXIV.2003.10132), arXiv:2003.10132 (2020), lecture notes."
     @test_diff md("Evans1983") ==
                "L. C. Evans. [*An Introduction to Mathematical Optimal Control Theory*](https://math.berkeley.edu/~evans/control.course.pdf). Lecture Notes, University of California, Berkeley."
     @test_diff md("Giles2008b") ==
                "M. B. Giles. [*An extended collection of matrix derivative results for forward and reverse mode automatic differentiation*](https://people.maths.ox.ac.uk/gilesm/files/NA-08-01.pdf). Technical Report NA-08-01 (Oxford University Computing Laboratory, Jan 2008)."
     @test_diff md("QCRoadmap") ==
-               "[*Quantum Computation Roadmap*](http://qist.lanl.gov) (2004). Version 2.0; April 2, 2004."
+               "[*Quantum Computation Roadmap*](https://web.archive.org/web/20251116175041/https://qist.lanl.gov/) (2004). Version 2.0; April 2, 2004."
     @test_diff md("TedRyd") ==
                "T. Corcovilos and D. S. Weiss. *Rydberg Calculations*. Private communication."
     @test_diff md("jax") ==
@@ -317,7 +318,7 @@ end
     @test_diff md("WP_Schroedinger") ==
                "Wikipedia: [*Schrödinger equation*](https://en.wikipedia.org/wiki/Schrödinger_equation). Accessed on Oct 24, 2023."
     @test_diff md("SciPy") ==
-               "E. Jones, T. Oliphant, P. Peterson and others. [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/) (2001–). Project website at [`https://scipy.org`](https://scipy.org)."
+               "E. Jones, T. E. Oliphant, P. Peterson and others. [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/) (2001–). Project website at [`https://scipy.org`](https://scipy.org)."
     @test_diff md("BrionPhd2004") ==
                "E. Brion. *Contrôle Quantique et Protection de la Cohérence par effet Zénon, Applications à l'Informatique Quantique*. Ph.D. Thesis, Université Pierre et Marie Curie - Paris VI (2014). [HAL:tel-00007910v2](https://hal.science/tel-00007910v2)."
     @test_diff md("Tannor2007") ==
@@ -352,19 +353,19 @@ end
     @test_diff md("GoerzNPJQI2017") ==
                "Goerz, M. H.; Motzoi, F.; Whaley, K. B. and Koch, C. P. (2017). *Charting the circuit QED design landscape using optimal control theory*, [npj Quantum Inf **3**, 37](https://doi.org/10.1038/s41534-017-0036-0)."
     @test_diff md("Wilhelm2003.10132") ==
-               "Wilhelm, F. K.; Kirchhoff, S.; Machnes, S.; Wittler, N. and Sugny, D. (2020). *An introduction into optimal control for quantum technologies*, [arXiv:2003.10132](https://doi.org/10.48550/ARXIV.2003.10132)."
+               "Wilhelm, F. K.; Kirchhoff, S.; Machnes, S.; Wittler, N. and Sugny, D. (2020). *An introduction into optimal control for quantum technologies*, [arXiv:2003.10132](https://doi.org/10.48550/ARXIV.2003.10132), lecture notes."
     @test_diff md("Evans1983") ==
                "Evans, L. C. (1983). [*An Introduction to Mathematical Optimal Control Theory*](https://math.berkeley.edu/~evans/control.course.pdf). Lecture Notes, University of California, Berkeley."
     @test_diff md("Giles2008b") ==
                "Giles, M. B. (Jan 2008). [*An extended collection of matrix derivative results for forward and reverse mode automatic differentiation*](https://people.maths.ox.ac.uk/gilesm/files/NA-08-01.pdf). Technical Report NA-08-01 (Oxford University Computing Laboratory)."
     @test_diff md("QCRoadmap") ==
-               "— (2004). [*Quantum Computation Roadmap*](http://qist.lanl.gov). Version 2.0; April 2, 2004."
+               "— (2004). [*Quantum Computation Roadmap*](https://web.archive.org/web/20251116175041/https://qist.lanl.gov/). Version 2.0; April 2, 2004."
     @test_diff md("TedRyd") ==
                "Corcovilos, T. and Weiss, D. S. *Rydberg Calculations*. Private communication."
     @test_diff md("jax") ==
                "Bradbury, J.; Frostig, R.; Hawkins, P.; Johnson, M. J.; Leary, C.; Maclaurin, D.; Necula, G.; Paszke, A.; VanderPlas, J.; Wanderman-Milne, S. and Zhang, Q. [*`JAX`: composable transformations of Python+NumPy programs*](https://github.com/jax-ml/jax), [`https://numpy.org`](https://numpy.org)."
     @test_diff md("SciPy") ==
-               "Jones, E.; Oliphant, T.; Peterson, P. and others (2001–). [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/). Project website at [`https://scipy.org`](https://scipy.org)."
+               "Jones, E.; Oliphant, T. E.; Peterson, P. and others (2001–). [*SciPy: Open source scientific tools for Python*](https://docs.scipy.org/doc/scipy/). Project website at [`https://scipy.org`](https://scipy.org)."
     @test_diff md("BrionPhd2004") ==
                "Brion, E. (2014). *Contrôle Quantique et Protection de la Cohérence par effet Zénon, Applications à l'Informatique Quantique*. Ph.D. Thesis, Université Pierre et Marie Curie - Paris VI. [HAL:tel-00007910v2](https://hal.science/tel-00007910v2)."
     @test_diff md("Tannor2007") ==

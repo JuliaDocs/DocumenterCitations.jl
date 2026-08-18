@@ -96,7 +96,7 @@ end
         @test r"\\hypertarget{\d+}{}" in tex
         @test contains(
             tex,
-            r"\\hypertarget{\d+}{}\\href{http://qist\.lanl\.gov}{\\emph{Quantum Computation Roadmap}} \(2004\)"
+            r"\\hypertarget{\d+}{}\\href{https://web\.archive\.org/web/20251116175041/https://qist\.lanl\.gov/}{\\emph{Quantum Computation Roadmap}} \(2004\)"
         )
         @test contains(
             tex,
@@ -109,7 +109,7 @@ end
         end
         @test contains(
             tex,
-            "\\hangindent=0.33in Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
+            "\\hangindent=0.33in Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H.$(nbsp)A. (2010)."
         ) # authoryear :ul
 
     end
@@ -169,7 +169,7 @@ end
         end
         @test contains(
             tex,
-            "\\begin{itemize}\n\\item Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
+            "\\begin{itemize}\n\\item Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H.$(nbsp)A. (2010)."
         ) # authoryear :ul
 
     end
@@ -242,7 +242,7 @@ end
         end
         @test contains(
             tex,
-            "\\hangindent=1cm Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H. (2010)."
+            "\\hangindent=1cm Brif,$(nbsp)C.; Chakrabarti,$(nbsp)R. and Rabitz,$(nbsp)H.$(nbsp)A. (2010)."
         ) # authoryear :ul
         @test contains(
             tex,
