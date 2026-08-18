@@ -53,12 +53,11 @@ First, place a BibTeX [`refs.bib`](./refs.bib) file in the `docs/src` folder of 
 ```julia
 using DocumenterCitations
 
-bib = CitationBibliography(
-    joinpath(@__DIR__, "src", "refs.bib");
-    style=:numeric
-)
+bib = CitationBibliography("src/refs.bib"; style=:numeric)
 makedocs(; plugins=[bib], ...)
 ```
+
+The relative path is relative to the `make.jl` file in this setup. An absolute path, e.g., `joinpath(@__DIR__, "src", "refs.bib")`, is equally valid and unambiguous in any setup.
 
 In older versions of [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl), `bib` had to be passed as a positional argument to `makedocs`.
 
@@ -90,10 +89,7 @@ NAME = PROJECT_TOML["name"]
 AUTHORS = join(PROJECT_TOML["authors"], ", ") * " and contributors"
 GITHUB = "https://github.com/JuliaDocs/DocumenterCitations.jl"
 
-bib = CitationBibliography(
-    joinpath(@__DIR__, "src", "refs.bib"),
-    style=:numeric  # default
-)
+bib = CitationBibliography("src/refs.bib"; style=:numeric)  # `:numeric` is the default
 
 makedocs(;
     authors=AUTHORS,

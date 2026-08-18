@@ -41,7 +41,7 @@ to the `[deps]` section of the relevant `Project.toml` file.
     ```julia
     using DocumenterCitations
 
-    bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
+    bib = CitationBibliography("src/refs.bib")
     makedocs(; plugins=[bib], ...)
     ```
 

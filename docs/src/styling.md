@@ -37,7 +37,7 @@ makedocs(;
 Since the bundled stylesheet is inserted *before* any user-defined assets, the rules in such a file take precedence over the default styling. However, rules from the built-in and the custom stylesheet are still _combined_. To take full control of the styling, instantiate the plugin with `insert_css=false`:
 
 ```julia
-bib = CitationBibliography("refs.bib"; insert_css=false)
+bib = CitationBibliography("src/refs.bib"; insert_css=false)
 ```
 
 This prevents the bundled stylesheet from being copied into the build folder or being referenced in the generated HTML, leaving a manually declared CSS file in the `assets` of `Documenter.HTML` as the only source of styling.
@@ -54,7 +54,7 @@ Hovering over (or tabbing to) a citation link shows the bibliography entry in a 
 The popups are styled by the bundled [`citations-hover.css`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/assets/citations-hover.css), which defines the `.citation-hover-popup` class and a set of `--citation-hover-*` custom properties for the colors of the built-in `Documenter` themes. As for `citations.css`, a custom stylesheet in the `assets` of `Documenter.HTML` takes precedence. To disable the popups entirely:
 
 ```julia
-bib = CitationBibliography("refs.bib"; show_hover=false)
+bib = CitationBibliography("src/refs.bib"; show_hover=false)
 ```
 
 This is independent of the `insert_css` option.
@@ -67,7 +67,7 @@ Every entry in a [canonical `@bibliography` block](@ref canonical) ends with a l
 After following a citation, the backlink that leads back to it is outlined, so that it can be picked out among the others. The outline is applied by the bundled [`citations-backlinks.js`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/assets/citations-backlinks.js), which adds the class `is-current-citation` to that backlink; the styling is part of `citations.css`. Readers without JavaScript, and readers who reach the bibliography by other means than following a citation, see all backlinks alike. To omit the backlinks:
 
 ```julia
-bib = CitationBibliography("refs.bib"; show_backlinks=false)
+bib = CitationBibliography("src/refs.bib"; show_backlinks=false)
 ```
 
 The backlinks are an HTML feature: they never appear in the LaTeX output.

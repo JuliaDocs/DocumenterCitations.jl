@@ -60,6 +60,11 @@ using DocumenterCitations
         include("test_keys_with_underscores.jl")
     end
 
+    println("\n* bibfile_path (test_bibfile_path.jl):")
+    @time @safetestset "bibfile_path" begin
+        include("test_bibfile_path.jl")
+    end
+
     println("\n* multiple_bibfiles (test_multiple_bibfiles.jl):")
     @time @safetestset "multiple_bibfiles" begin
         include("test_multiple_bibfiles.jl")
