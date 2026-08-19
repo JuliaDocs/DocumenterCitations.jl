@@ -8,6 +8,7 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [sources]
 DocumenterCitations = {path = ".."}
+DocumenterCodeBlocks = {url = "https://github.com/goerz/DocumenterCodeBlocks.jl", rev = "external-interlinks"}
 
 [compat]
 Documenter = "1.17"
