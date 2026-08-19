@@ -38,8 +38,12 @@ keyword argument to [`Documenter.makedocs`](@extref).
 
 # Arguments
 
-* `bibfile`: the name of the [BibTeX](https://www.bibtex.com/g/bibtex-format/)
-  file from which to read the data.
+* `bibfile`: the path of the [BibTeX](https://www.bibtex.com/g/bibtex-format/)
+  file from which to read the data. A relative path is resolved relative to the
+  file Julia is currently executing when it instantiates the plugin. In any
+  normal setup, that is the project's `docs/make.jl` file. An absolute path,
+  e.g., `joinpath(@__DIR__, "src", "refs.bib")`, is equally valid and
+  completely unambiguous.
 * `style`: the style to use for the bibliography and all citations. The
   available built-in styles are `:numeric` (default), `:authoryear`, and
   `:alpha`. With user-defined styles, this may be an arbitrary name or object.
@@ -128,13 +132,51 @@ struct CitationBibliography <: Documenter.Plugin
 
 end
 
-# Read the entries from `bibfile`. This is the default for the `_entries`
-# keyword argument of `CitationBibliography`, so that `bibfile` is checked for
-# existence only if it is actually read.
-function _read_bibfile(bibfile)
-    if (length(bibfile) > 0) && !isfile(bibfile)
-        error("bibfile $(repr(bibfile)) does not exist")
+
+# Resolve the path of `bibfile` and check that it exists.
+#
+# A relative path is resolved relative to the directory of the script that is
+# currently running or being included, which can be assumed to be the
+# `make.jl` file that instantiates the plugin. That directory is
+# `Base.source_dir()`.
+#
+# There is an undocumented fallback for a relative path that is not found in
+# that directory but exists relative to the current working directory (which
+# under realistic circumstances is probably the project root). This is an
+# accommodation for anyone who was relying on the previous undefined behavior
+# of relative paths. Do not document it: the supported relative path is the
+# one relative to `make.jl`.
+#
+# This is called only when `bibfile` is actually read, see `_read_bibfile`.
+function _resolve_bibfile(bibfile)
+    if length(bibfile) == 0
+        return bibfile
     end
+    if isabspath(bibfile)
+        if !isfile(bibfile)
+            error("bibfile $(repr(bibfile)) does not exist")
+        end
+        return bibfile
+    end
+    srcdir = Base.source_dir()
+    candidate = normpath(joinpath(srcdir, bibfile))
+    if isfile(candidate)
+        @debug "Resolved relative bibfile $(repr(bibfile)) to $(repr(candidate))"
+        return candidate
+    end
+    if isfile(bibfile)
+        @warn "The bibfile $(repr(bibfile)) does not exist relative to $(srcdir), but it exists relative to the current working directory. Reading $(abspath(bibfile)). A relative bibfile should be given relative to the folder containing the `make.jl` file that instantiates `CitationBibliography`. Consider an absolute path, e.g., `joinpath(@__DIR__, $(repr(bibfile)))`."
+        return bibfile
+    end
+    msg = "bibfile $(repr(bibfile)) does not exist. A relative path is resolved relative to $(srcdir), the folder containing the running `make.jl` file. Consider an absolute path, e.g., `joinpath(@__DIR__, $(repr(bibfile)))`."
+    error(msg)
+end
+
+
+# Read the entries from `bibfile`, which must have been resolved with
+# `_resolve_bibfile`. This is called from `CitationBibliography` only if the
+# private `_entries` keyword argument is not given.
+function _read_bibfile(bibfile)
     try
         return Bibliography.import_bibtex(bibfile)
     catch exc
@@ -154,12 +196,16 @@ function CitationBibliography(
     insert_css=true,
     show_hover=true,
     show_backlinks=true,
-    _entries=_read_bibfile(bibfile),
+    _entries=nothing,
     # `_entries` is deliberate undocumented, intended to give people a "hack"
     # into enabling the unsupported use of multiple bib files,
     # https://github.com/JuliaDocs/DocumenterCitations.jl/issues/72. If given,
     # `bibfile` is not read and serves only as a label in log messages.
 )
+    if isnothing(_entries)
+        bibfile = _resolve_bibfile(bibfile)
+        _entries = _read_bibfile(bibfile)
+    end
     if isnothing(style)
         style = :numeric
         @debug "Using default style=$(repr(style))"

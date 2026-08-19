@@ -10,10 +10,7 @@ NAME = PROJECT_TOML["name"]
 AUTHORS = join(PROJECT_TOML["authors"], ", ") * " and contributors"
 GITHUB = "https://github.com/JuliaDocs/DocumenterCitations.jl"
 
-bib = CitationBibliography(
-    joinpath(@__DIR__, "src", "refs.bib");
-    style=:numeric  # default
-)
+bib = CitationBibliography("./src/refs.bib"; style=:numeric)
 
 # Syntax highlighting, line numbers, and docstring reference links for the Julia
 # code blocks. `min_lines=3` keeps the gutter off the many one- and two-line

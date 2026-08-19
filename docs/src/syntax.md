@@ -172,7 +172,7 @@ In the default numeric style, references in a `@bibliography` are rendered (and 
 Non-cited references ([`*` in a full bibliography](@ref full_bibliography)) will appear in the order they are listed in the underlying `.bib` file. That order may be changed by [sorting it explicitly](@extref Bibliography Bibliography.sort_bibliography!):
 
 ```julia
-bib = CitationBibliography("refs.bib")
+bib = CitationBibliography("src/refs.bib")
 
 using Bibliography
 sort_bibliography!(bib.entries, :nyt)  # name-year-title
