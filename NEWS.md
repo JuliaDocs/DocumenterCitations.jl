@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][]
 
+
+## [Version 1.5.0][1.5.0] - 2026-08-19
+
 ### Added
 
 * The recommended CSS for formatting the bibliography is now shipped with the package (in `assets/citations.css`) and inserted automatically by a new `DocumenterCitations.InjectAssets` pipeline step. Manually adding `assets=String["assets/citations.css"]` to the `Documenter.HTML` format in `docs/make.jl` is no longer required. Custom CSS can still be added that way, and takes precedence over the bundled stylesheet. [[#115][], [#116][]]
@@ -226,7 +229,8 @@ There were several bugs and limitations in version `1.2.x` for which some existi
 * [DocumenterCitations](https://github.com/JuliaDocs/DocumenterCitations.jl) is now hosted under the [JuliaDocs](https://github.com/JuliaDocs) organization.
 
 
-[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.7...v1.4.0
 [1.3.7]: https://github.com/JuliaDocs/DocumenterCitations.jl/compare/v1.3.6...v1.3.7
