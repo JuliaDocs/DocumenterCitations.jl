@@ -105,3 +105,12 @@ pre:hover code a.julia-ref {
   text-decoration-style: solid;
   text-decoration-color: currentColor;
 }
+
+/* External-documentation links (DocumenterInterLinks fallback): a small
+ * north-east arrow marks that the link leaves the site. */
+pre code a.julia-ref.external::after {
+  content: "\2197\FE0E";
+  font-size: 0.7em;
+  vertical-align: super;
+  opacity: 0.6;
+}

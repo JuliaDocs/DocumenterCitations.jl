@@ -19,3 +19,12 @@ html pre:hover code a.julia-ref {
   text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
   text-underline-offset: 2px;
 }
+
+/* The plugin marks links into external documentation (the
+ * DocumenterInterLinks fallback) with a small north-east arrow. Suppress it:
+ * inside a code block the arrow reads as part of the code.
+ */
+
+html pre code a.julia-ref.external::after {
+  content: none;
+}
