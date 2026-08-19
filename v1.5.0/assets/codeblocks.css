@@ -1,0 +1,30 @@
+/* Overrides for DocumenterCodeBlocks' `juliasyntax-tokens.css`.
+ *
+ * The plugin underlines reference links in code blocks with a dotted line at
+ * rest, going solid while the pointer is inside the block. We want no underline
+ * at rest, and the dotted line only on hover.
+ *
+ * The leading `html` is required: the plugin appends its stylesheet to
+ * `Documenter.HTML(assets=...)` during its own pipeline step, so it is loaded
+ * after this file and wins any tie on specificity.
+ */
+
+html pre code a.julia-ref {
+  text-decoration: none;
+}
+
+html pre:hover code a.julia-ref {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+  text-underline-offset: 2px;
+}
+
+/* The plugin marks links into external documentation (the
+ * DocumenterInterLinks fallback) with a small north-east arrow. Suppress it:
+ * inside a code block the arrow reads as part of the code.
+ */
+
+html pre code a.julia-ref.external::after {
+  content: none;
+}
