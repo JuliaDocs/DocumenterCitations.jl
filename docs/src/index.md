@@ -96,7 +96,7 @@ makedocs(;
     sitename="DocumenterCitations.jl",
     format=Documenter.HTML(
         prettyurls=true,
-        canonical="https://juliaquantumcontrol.github.io/DocumenterCitations.jl",
+        canonical="https://juliadocs.org/DocumenterCitations.jl",
         footer="[$NAME.jl]($GITHUB) v$VERSION docs powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl)."
     ),
     pages=[
@@ -109,8 +109,9 @@ makedocs(;
     ],
     plugins=[bib],
 )
-deploydocs(; repo="github.com/JuliaDocs/DocumenterCitations.jl.git")
 ```
+
+The `DocumenterCitations` package itself deploys its documentation from a separate script, [`docs/deploy.jl`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/deploy.jl), which runs in its own CI job. That way, the code that builds the documentation never has write access to the repository.
 
 Bibliographies are also supported in [PDFs generated via LaTeX](https://documenter.juliadocs.org/stable/man/other-formats/#pdf-output). All that is required is to replace `format=Documenter.HTML(…)` in the above code with `format=Documenter.LaTeX()`.  See [`docs/makepdf.jl`](https://github.com/JuliaDocs/DocumenterCitations.jl/blob/master/docs/makepdf.jl) for an example. The resulting PDF files for the `DocumenterCitations` package are available as attachments to the [Releases](https://github.com/JuliaDocs/DocumenterCitations.jl/releases).
 

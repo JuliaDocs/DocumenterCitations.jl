@@ -16,6 +16,8 @@ concurrency:
   # Cancel intermediate builds: only if it is a pull request build.
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+permissions:
+  contents: read
 jobs:
   test:
     name: Test ${{ matrix.title }}
@@ -36,6 +38,8 @@ jobs:
             version: '1'
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
@@ -75,6 +79,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       # The minimal versions are the lower `[compat]` bounds declared in
       # `Project.toml` (the package's own dependencies) and in
       # `test/Project.toml` (the test-only dependencies). Resolver.jl, which
@@ -103,36 +109,82 @@ jobs:
           Pkg.status(; mode=Pkg.PKGMODE_MANIFEST)
           include(joinpath(pwd(), "test", "runtests.jl"))
   docs:
+    # Builds the documentation. This runs the package, the docs environment, and
+    # all their dependencies, so it gets no write access and no secrets.
+    # The `docs-deploy` job deploys the result.
     name: Documentation
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: write
-      statuses: write
-      pages: write
+      actions: write  # for julia-actions/cache to delete the caches it created
+      contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: julia-actions/setup-julia@v3
         with:
           version: '1'
+      - uses: julia-actions/cache@v3
       - name: Configure doc environment
         shell: julia --project=docs --color=yes {0}
         run: |
           using Pkg
           Pkg.instantiate()
-      - uses: julia-actions/julia-docdeploy@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-      - uses: actions/upload-artifact@v7
+      - name: Build documentation
+        run: julia --color=yes --project=docs docs/make.jl
+      - name: Upload documentation
+        # For the `docs-deploy` job, and for reviewing pull requests from forks,
+        # which get no preview. The `docs` project is part of the workspace, so
+        # its manifest is the one at the repository root.
+        uses: actions/upload-artifact@v7
         with:
           name: documenter-citations-docs
-          path: docs/build/
+          path: |
+            docs/build
+            Manifest.toml
+          include-hidden-files: true  # for `.documenter-siteinfo.json`
+          if-no-files-found: error
+  docs-deploy:
+    name: Deploy documentation
+    needs: docs
+    # Previews are deployed only for pull requests from branches of this
+    # repository, not from forks (which cannot get a write token) or from
+    # Dependabot (to not give write access to new versions of dependencies
+    # before review). The author of a pull request, unlike `github.actor`,
+    # cannot be spoofed.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # for Documenter to deploy to the `gh-pages` branch
+      pull-requests: read  # for Documenter to check the origin of a pull request
+      statuses: write  # for Documenter to report the deployment status
+    steps:
+      # No `julia-actions/cache`: a cache written by the `docs` job must not be
+      # restored in a job with write access
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: documenter-citations-docs
+          path: .
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1'
+      - name: Deploy documentation
+        run: julia --startup-file=no docs/deploy.jl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   codestyle:
     name: Codestyle
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: julia-actions/setup-julia@v3
         with:
           version: '1'

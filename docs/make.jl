@@ -58,4 +58,4 @@ makedocs(
 
 println("Finished makedocs")
 
-deploydocs(; repo="github.com/JuliaDocs/DocumenterCitations.jl.git", push_preview=true)
+# The documentation is deployed by `docs/deploy.jl`, in a separate CI job
